@@ -139,6 +139,17 @@ class MemeCharacter {
   /// The original meme photo.
   String get photoAsset => 'assets/images/portraits/$id.jpg';
 
+  /// Meme of the day: playing with it doubles the likes earned for the shop.
+  static MemeCharacter ofTheDay([DateTime? now]) {
+    final d = now ?? DateTime.now();
+    final days =
+        DateTime.utc(d.year, d.month, d.day).millisecondsSinceEpoch ~/
+        Duration.millisecondsPerDay;
+    return all[(days * 7) % all.length];
+  }
+
+  bool get isOfTheDay => id == ofTheDay().id;
+
   static MemeCharacter byId(String id) =>
       all.firstWhere((c) => c.id == id, orElse: () => all.first);
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
@@ -148,6 +149,15 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                       ),
                       const SizedBox(width: 8),
                       PixelButton(
+                        icon: 'dice',
+                        color: PixelColor.mint,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        onPressed: () => _select(
+                          1 + Random().nextInt(MemeCharacter.all.length - 1),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      PixelButton(
                         label: 'Scegli',
                         icon: 'play',
                         color: PixelColor.pink,
@@ -256,6 +266,17 @@ class _Info extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+          if (c.isOfTheDay)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: PixelText(
+                'Meme del giorno: like doppi nel portafoglio!',
+                size: 12,
+                color: Color(0xFFFF82B4),
+                outline: false,
+                align: TextAlign.left,
+              ),
+            ),
           _Ability(title: c.passiveName, text: c.passiveDescription),
           _Ability(
             title: '${c.specialName} (${c.specialCooldown}s)',
@@ -343,10 +364,24 @@ class _Thumb extends StatelessWidget {
               : 'assets/images/ui/panel.png',
           px: 2,
         ),
-        child: Image.asset(
-          character.portraitAsset,
-          filterQuality: FilterQuality.none,
-          fit: BoxFit.contain,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                character.portraitAsset,
+                filterQuality: FilterQuality.none,
+                fit: BoxFit.contain,
+              ),
+            ),
+            // Meme of the day: double likes.
+            if (character.isOfTheDay)
+              const Positioned(
+                right: -8,
+                top: -8,
+                child: PixelIcon('star', scale: 1.5),
+              ),
+          ],
         ),
       ),
     );

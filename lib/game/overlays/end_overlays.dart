@@ -342,6 +342,8 @@ class _Stats extends StatelessWidget {
           ),
           const Divider(color: Color(0x553A2440), height: 8),
           row('star', 'Totale', '${game.score}'),
+          if (game.walletGain != game.likes)
+            row('like', 'Bonus negozio', '+${game.walletGain}'),
         ],
       ),
     );

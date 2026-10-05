@@ -59,4 +59,12 @@ void main() {
     expect(l.isSolid(l.cols, 5), isTrue);
     expect(l.isSolid(5, l.rows), isFalse);
   });
+
+  test('meme of the day changes every day and covers everyone', () {
+    final seen = <String>{};
+    for (var d = 0; d < MemeCharacter.all.length; d++) {
+      seen.add(MemeCharacter.ofTheDay(DateTime(2026, 1, 1 + d)).id);
+    }
+    expect(seen.length, MemeCharacter.all.length);
+  });
 }

@@ -473,14 +473,19 @@ class MemesGame extends FlameGame with KeyboardEvents {
     pauseEngine();
   }
 
+  /// Likes this run adds to the shop wallet (hen hustle, meme of the day).
+  int get walletGain =>
+      (likes *
+              (character.passive == Passive.hustle ? 1.5 : 1) *
+              (character.isOfTheDay ? 2 : 1))
+          .round();
+
   /// Saves likes (to the shop wallet) and stomps from this run.
   void recordRunStats() {
     if (!LocalStore.ready || _statsRecorded) return;
     _statsRecorded = true;
     final s = LocalStore.instance;
-    s.addToWallet(
-      character.passive == Passive.hustle ? (likes * 1.5).round() : likes,
-    );
+    s.addToWallet(walletGain);
     s.addStat('likes', likes);
     s.addStat('stomps', kills);
     Achievements.checkStats();
