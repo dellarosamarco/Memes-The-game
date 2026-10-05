@@ -76,6 +76,12 @@ class Player extends PositionComponent
   /// released; springs and stomps keep their full bounce.
   bool _cuttable = false;
 
+  // Juice: squash & stretch (1 = normal height) and dust puffs.
+  double _squash = 1;
+  bool _wasOnGround = true;
+  double _dustTimer = 0;
+  bool _splashed = false;
+
   @override
   void onCeiling(int col, int row) => game.bumpBlock(col, row);
 
@@ -152,12 +158,47 @@ class Player extends PositionComponent
     }
 
     moveAndCollide(dt);
+    _juice(dt);
     _checkEnemies(prevBottom);
     _checkSpikes();
+    if (!_splashed && position.y > game.level.height + 4) {
+      _splashed = true;
+      game.world.add(
+        Confetti(
+          position: Vector2(position.x, game.level.height),
+          count: 18,
+          splash: true,
+        ),
+      );
+    }
+    if (position.y < game.level.height) _splashed = false;
     if (position.y > game.level.height + 80) game.fellInPit();
   }
 
+  void _juice(double dt) {
+    if (onGround && !_wasOnGround) {
+      _squash = 0.78;
+      game.world.add(Dust(position: position + Vector2(-8, 0), dx: -18));
+      game.world.add(Dust(position: position + Vector2(8, 0), dx: 18));
+    }
+    _wasOnGround = onGround;
+    _squash += (1 - _squash) * min(1.0, dt * 12);
+    if (onGround && velocity.x.abs() > 90) {
+      _dustTimer -= dt;
+      if (_dustTimer <= 0) {
+        _dustTimer = 0.16;
+        game.world.add(
+          Dust(
+            position: position + Vector2(facingRight ? -10 : 10, 0),
+            dx: facingRight ? -14 : 14,
+          ),
+        );
+      }
+    }
+  }
+
   void _jump(double speed) {
+    _squash = 1.18;
     velocity.y = -speed;
     _cuttable = true;
     _coyote = 0;
@@ -297,8 +338,17 @@ class Player extends PositionComponent
 
   @override
   void render(Canvas canvas) {
+    if (onGround) {
+      canvas.drawOval(
+        const Rect.fromLTRB(-14, -3, 14, 3),
+        Paint()..color = const Color(0x333A2440),
+      );
+    }
     final blink = _invulnerable > 0 && !dashing && (_t * 16).floor().isEven;
     if (blink) return;
+    // Squash & stretch around the feet.
+    canvas.save();
+    canvas.scale(1 + (1 - _squash) * 0.7, _squash);
     // Frame is 60x60, feet at y=58, centered at x=30.
     _strip.draw(
       canvas,
@@ -314,5 +364,6 @@ class Player extends PositionComponent
               ))
           : null,
     );
+    canvas.restore();
   }
 }

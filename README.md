@@ -94,6 +94,14 @@ Tutta la grafica è pixel art in palette pastello con contorno color prugna, gen
 - `tool/pixel_world.py`: nemici, 10 temi (tile, piattaforme mobili, sfondi parallax con colline
   e nuvole con le faccine), oggetti e il kit dell'interfaccia (icone, pannelli e pulsanti
   9-slice in `assets/images/ui/`).
+- `tool/pixel_details.py`: bordi arrotondati del terreno (auto-tiling) e varianti, liquidi
+  animati nelle buche (acqua, lava, sciroppo...), 8 decorazioni animate per ogni mondo
+  (fiori, funghi, cespugli con la faccina, pinguini, granchi, cupcake...), un livello di
+  parallasse intermedio e la polvere.
+
+In gioco ci sono anche: sole/luna sorridente, particelle d'ambiente per ogni mondo (petali,
+neve, foglie, braci, bit...), ombre, squash & stretch del personaggio, polvere, coriandoli
+a checkpoint e traguardo, schizzi quando si cade in una buca e punteggi fluttuanti.
 - Font: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) (licenza OFL, in `assets/fonts/`).
 
 Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy`).

@@ -113,13 +113,15 @@ class FinishFlag extends PositionComponent with HasGameReference<MemesGame> {
   }
 }
 
-/// Draws the tiles that are on screen.
+/// Draws the tiles that are on screen, with auto-tiled edges, a bit of
+/// random variety and animated liquid at the bottom of the pits.
 class LevelMap extends Component with HasGameReference<MemesGame> {
   LevelMap() : super(priority: 1);
 
   late final Strip _tiles;
+  double _t = 0;
 
-  // Tile order in the tileset (see tool/generate_sprites.py).
+  // Tile order in the tileset (see tool/pixel_world.py + pixel_details.py).
   static const _groundTop = 0;
   static const _ground = 1;
   static const _brick = 2;
@@ -130,6 +132,18 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
   static const _gate = 7;
   static const _spring = 8;
   static const _springUp = 9;
+  static const _topL = 10;
+  static const _topR = 11;
+  static const _topLR = 12;
+  static const _sideL = 13;
+  static const _sideR = 14;
+  static const _sideLR = 15;
+  static const _topV2 = 16;
+  static const _topV3 = 17;
+  static const _dirtV2 = 18;
+  static const _liquid0 = 19;
+  static const _liquid1 = 20;
+  static const _liquidDeep = 21;
 
   @override
   Future<void> onLoad() async {
@@ -141,37 +155,139 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
   }
 
   @override
+  void update(double dt) => _t += dt;
+
+  static int _hash(int c, int r) => ((c * 73856093) ^ (r * 19349663)) & 0xffff;
+
+  bool _isGround(int c, int r) {
+    final level = game.level;
+    if (c < 0 || c >= level.cols) return true;
+    if (r >= level.rows) return level.tileAt(c, level.rows - 1) == '#';
+    return level.tileAt(c, r) == '#';
+  }
+
+  int _groundTile(int c, int r) {
+    final open = !_isGround(c, r - 1) || r == 0;
+    final l = !_isGround(c - 1, r);
+    final rr = !_isGround(c + 1, r);
+    final h = _hash(c, r);
+    if (open) {
+      if (l && rr) return _topLR;
+      if (l) return _topL;
+      if (rr) return _topR;
+      return h % 7 == 0 ? _topV2 : (h % 11 == 0 ? _topV3 : _groundTop);
+    }
+    if (l && rr) return _sideLR;
+    if (l) return _sideL;
+    if (rr) return _sideR;
+    return h % 31 == 0 ? _dirtV2 : _ground;
+  }
+
+  @override
   void render(Canvas canvas) {
     final level = game.level;
     final cam = game.camera.visibleWorldRect;
     final c0 = max(0, (cam.left / kTile).floor() - 1);
     final c1 = min(level.cols - 1, (cam.right / kTile).ceil() + 1);
     final extraRows = (kGroundBelow / kTile).ceil();
+    final wave = (_t * 2).floor().isEven ? _liquid0 : _liquid1;
     for (var r = 0; r < level.rows + extraRows; r++) {
       for (var c = c0; c <= c1; c++) {
-        final t = r < level.rows
-            ? level.tileAt(c, r)
-            : level.tileAt(c, level.rows - 1);
-        final idx = switch (t) {
-          '#' =>
-            r >= level.rows || level.tileAt(c, r - 1) == '#'
-                ? _ground
-                : _groundTop,
-          'B' => _brick,
-          '=' => _platform,
-          '^' => _spikes,
-          '?' => _block,
-          'U' => _blockUsed,
-          'G' => _gate,
-          'S' =>
-            game.elapsed - (game.springTimes[r * 10000 + c] ?? -9) < 0.25
-                ? _springUp
-                : _spring,
-          _ => -1,
-        };
+        int idx;
+        if (r >= level.rows) {
+          if (_isGround(c, r)) {
+            idx = _groundTile(c, r);
+          } else {
+            // Pit bottom: water, lava, syrup... depending on the world.
+            idx = r == level.rows ? wave : _liquidDeep;
+          }
+        } else {
+          idx = switch (level.tileAt(c, r)) {
+            '#' => _groundTile(c, r),
+            'B' => _brick,
+            '=' => _platform,
+            '^' => _spikes,
+            '?' => _block,
+            'U' => _blockUsed,
+            'G' => _gate,
+            'S' =>
+              game.elapsed - (game.springTimes[r * 10000 + c] ?? -9) < 0.25
+                  ? _springUp
+                  : _spring,
+            _ => -1,
+          };
+        }
         if (idx < 0) continue;
-        _tiles.draw(canvas, idx, Offset(c * kTile, r * kTile));
+        final at = Offset(c * kTile, r * kTile);
+        _tiles.draw(canvas, idx, at, bleed: 0.6);
+        // Deeper dirt gets gradually darker, for a sense of depth.
+        if (idx == _ground ||
+            idx == _dirtV2 ||
+            idx == _sideL ||
+            idx == _sideR ||
+            idx == _sideLR) {
+          var depth = 0;
+          while (depth < 4 && _isGround(c, r - depth - 1)) {
+            depth++;
+          }
+          if (depth >= 2) {
+            canvas.drawRect(
+              Rect.fromLTWH(at.dx, at.dy, kTile + 0.6, kTile + 0.6),
+              Paint()..color = Color.fromRGBO(58, 36, 64, (depth - 1) * 0.07),
+            );
+          }
+        }
       }
+    }
+  }
+}
+
+/// Cute non-solid decorations (flowers, mushrooms, penguins...) sprinkled
+/// on the grass. They sway a little.
+class Props extends Component with HasGameReference<MemesGame> {
+  Props() : super(priority: 2);
+
+  late final Strip _sheet;
+  final List<(double, double, int, double)> _items = [];
+  double _t = 0;
+
+  @override
+  Future<void> onLoad() async {
+    final level = game.level;
+    _sheet = Strip(
+      game.images.fromCache('sprites/props_${level.theme.name}.png'),
+      kTile,
+      kTile,
+    );
+    final busy = <int>{
+      for (final s in level.spawns)
+        for (var dc = -1; dc <= 1; dc++) s.row * 10000 + s.col + dc,
+    };
+    for (var c = 1; c < level.cols - 1; c++) {
+      for (var r = 1; r < level.rows; r++) {
+        final t = level.tileAt(c, r);
+        if (t != '#' && t != 'B') continue;
+        if (level.tileAt(c, r - 1) != ' ' ||
+            busy.contains((r - 1) * 10000 + c)) {
+          continue;
+        }
+        final h = LevelMap._hash(c * 7, r * 3);
+        if (h % 100 >= 28) continue;
+        _items.add((c * kTile, (r - 1) * kTile, (h ~/ 100) % 8, (h % 17) / 3));
+      }
+    }
+  }
+
+  @override
+  void update(double dt) => _t += dt;
+
+  @override
+  void render(Canvas canvas) {
+    final cam = game.camera.visibleWorldRect;
+    for (final (x, y, idx, phase) in _items) {
+      if (x < cam.left - kTile || x > cam.right) continue;
+      final frame = ((_t + phase) * 1.5).floor() % 2;
+      _sheet.draw(canvas, idx * 2 + frame, Offset(x, y));
     }
   }
 }

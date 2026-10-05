@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../models/meme_character.dart';
@@ -106,8 +108,15 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (final c in MemeCharacter.all)
-                      CharacterSpriteView(character: c, scale: 1.6),
+                    for (var i = 0; i < MemeCharacter.all.length; i++)
+                      _Hopper(
+                        anim: _bob,
+                        phase: i * 0.25,
+                        child: CharacterSpriteView(
+                          character: MemeCharacter.all[i],
+                          scale: 1.6,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -122,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen>
                   child: const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      PixelText('MEMES', size: 64, color: Color(0xFFFF82B4)),
+                      BouncyText('MEMES', size: 64, color: Color(0xFFFF82B4)),
                       PixelText('the game', size: 26, color: Color(0xFFFFE07A)),
                     ],
                   ),
@@ -221,6 +230,28 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Makes its child do a little happy hop now and then.
+class _Hopper extends StatelessWidget {
+  const _Hopper({required this.anim, required this.phase, required this.child});
+
+  final Animation<double> anim;
+  final double phase;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: anim,
+      builder: (context, child) {
+        final v = (anim.value + phase) % 1.0;
+        final hop = v < .25 ? sin(v / .25 * pi) * 10 : 0.0;
+        return Transform.translate(offset: Offset(0, -hop), child: child);
+      },
+      child: child,
     );
   }
 }

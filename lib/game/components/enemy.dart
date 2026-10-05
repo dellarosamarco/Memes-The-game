@@ -203,6 +203,12 @@ class Enemy extends PositionComponent
   @override
   void render(Canvas canvas) {
     final fw = _strip.frameWidth;
+    if (onGround) {
+      canvas.drawOval(
+        Rect.fromLTRB(-bodyWidth * .6, -2.5, bodyWidth * .6, 2.5),
+        Paint()..color = const Color(0x333A2440),
+      );
+    }
     final frame = frozen ? 0 : ((_t * (kind.isBoss ? 4 : 6)).floor() % 2);
     Paint? paint;
     if (_flash > 0 || (_hurtCooldown > 0 && (_t * 16).floor().isEven)) {

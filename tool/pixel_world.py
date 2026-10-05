@@ -290,16 +290,22 @@ def tileset(theme: str) -> Image.Image:
         d = ImageDraw.Draw(t)
         if name in ('ground_top', 'ground'):
             d.rectangle([0, 0, T - 1, T - 1], fill=dirt)
-            for _ in range(5):
-                x, y = rnd.integers(1, T - 3, 2)
-                d.rectangle([x, y, x + 1, y + 1], fill=darken(dirt, .18))
-                d.point((x, y), fill=lighten(dirt, .2))
+            # Soft strata lines (tile seamlessly) and little pebbles.
+            for y0 in (9, 18):
+                for x in range(0, T, 2):
+                    yy = y0 + (1 if (x // 4) % 2 else 0)
+                    d.point((x, yy), fill=darken(dirt, .1))
+            for _ in range(3):
+                x, y = rnd.integers(2, T - 5, 2)
+                d.ellipse([x, y, x + 3, y + 2], fill=lighten(dirt, .18),
+                          outline=darken(dirt, .22))
+                d.point((x + 1, y), fill=lighten(dirt, .4))
             if name == 'ground_top':
                 d.rectangle([0, 0, T - 1, 5], fill=top)
                 for x in range(0, T, 6):  # scalloped edge
                     d.ellipse([x - 1, 3, x + 5, 9], fill=top)
                 d.line([(0, 1), (T - 1, 1)], fill=lighten(top, .45))
-                d.line([(0, 0), (T - 1, 0)], fill=lighten(top, .25))
+                d.line([(0, 0), (T - 1, 0)], fill=PLUM)
                 for _ in range(2):
                     x = int(rnd.integers(3, T - 3))
                     _deco(d, theme, rnd, x, 3)
@@ -360,7 +366,15 @@ def tileset(theme: str) -> Image.Image:
         img.alpha_composite(outline(t) if name in ('spikes', 'spring',
                                                     'spring_up', 'platform')
                             else t, (i * T, 0))
-    return img
+    # Auto-tile edges, variants and liquids (see pixel_details.py).
+    import pixel_details
+    extras = pixel_details.extra_tiles(theme, img.crop((0, 0, T, T)),
+                                       img.crop((T, 0, 2 * T, T)))
+    full = Image.new('RGBA', (T * (len(TILE_NAMES) + len(extras)), T))
+    full.alpha_composite(img, (0, 0))
+    for j, t in enumerate(extras):
+        full.alpha_composite(t, ((len(TILE_NAMES) + j) * T, 0))
+    return full
 
 
 def moving_platform(theme: str) -> Image.Image:
@@ -759,8 +773,12 @@ def write_all(out: str):
     for kind in ['normie', 'cringe', 'hater', 'boomer']:
         files[f'enemy_{kind}'] = enemy_strip(kind)
     files['enemy_algorithm'] = boss_strip()
+    import pixel_details
+    files['dust'] = pixel_details.dust()
     for theme in THEMES:
         files[f'tiles_{theme}'] = tileset(theme)
+        files[f'props_{theme}'] = pixel_details.props_sheet(theme)
+        files[f'bg_{theme}_mid'] = pixel_details.mid_layer(theme)
         files[f'moving_{theme}'] = moving_platform(theme)
         files.update(backgrounds(theme))
     files.update(items())

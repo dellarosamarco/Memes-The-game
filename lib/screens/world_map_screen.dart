@@ -46,6 +46,11 @@ class _WorldMapScreenState extends State<WorldMapScreen> {
         top: colors.skyTop,
         bottom: colors.skyBottom,
         theme: theme.name,
+        night: const {
+          LevelTheme.comments,
+          LevelTheme.volcano,
+          LevelTheme.server,
+        }.contains(theme),
         ground: false,
         child: SafeArea(
           child: Padding(
@@ -235,6 +240,11 @@ class _LevelGridScreenState extends State<LevelGridScreen> {
         top: colors.skyTop,
         bottom: colors.skyBottom,
         theme: theme.name,
+        night: const {
+          LevelTheme.comments,
+          LevelTheme.volcano,
+          LevelTheme.server,
+        }.contains(theme),
         ground: false,
         child: SafeArea(
           child: Padding(

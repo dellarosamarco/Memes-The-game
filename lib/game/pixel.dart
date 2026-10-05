@@ -23,10 +23,13 @@ class Strip {
     bool flip = false,
     Paint? paint,
     double scale = 1,
+    double bleed = 0,
   }) {
     final src = Rect.fromLTWH(frame * frameWidth, 0, frameWidth, frameHeight);
-    final w = frameWidth * scale;
-    final h = frameHeight * scale;
+    // [bleed] slightly enlarges the destination to hide hairline seams
+    // between adjacent tiles at fractional zoom levels.
+    final w = frameWidth * scale + bleed;
+    final h = frameHeight * scale + bleed;
     if (!flip) {
       canvas.drawImageRect(
         image,

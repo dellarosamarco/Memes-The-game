@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -326,8 +327,9 @@ class PixelStars extends StatelessWidget {
   }
 }
 
-/// Cute pastel sky + hills + grass backdrop used by the menus.
-class PixelBackdrop extends StatelessWidget {
+/// Cute pastel sky + hills + grass backdrop used by the menus, alive with
+/// drifting clouds, a smiling sun, floating hearts and twinkles.
+class PixelBackdrop extends StatefulWidget {
   const PixelBackdrop({
     super.key,
     required this.child,
@@ -335,6 +337,7 @@ class PixelBackdrop extends StatelessWidget {
     this.bottom = const Color(0xFFD6F2FF),
     this.theme = 'feed',
     this.ground = true,
+    this.night = false,
   });
 
   final Widget child;
@@ -342,36 +345,72 @@ class PixelBackdrop extends StatelessWidget {
   final Color bottom;
   final String theme;
   final bool ground;
+  final bool night;
+
+  @override
+  State<PixelBackdrop> createState() => _PixelBackdropState();
+}
+
+class _PixelBackdropState extends State<PixelBackdrop>
+    with SingleTickerProviderStateMixin {
+  late final _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 60),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     const px = 3.0;
+    final w = widget;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [top, bottom],
+          colors: [w.top, w.bottom],
         ),
       ),
       child: Stack(
         fit: StackFit.expand,
         children: [
+          Positioned.fill(
+            child: CustomPaint(painter: _SkyPainter(_ctrl, night: w.night)),
+          ),
           Positioned(
             left: 0,
             right: 0,
             top: 6,
             height: 100 * px / 1.5,
-            child: _Repeat('assets/images/sprites/bg_${theme}_clouds.png', 1.5),
+            child: AnimatedBuilder(
+              animation: _ctrl,
+              builder: (context, child) => _Repeat(
+                'assets/images/sprites/bg_${w.theme}_clouds.png',
+                1.5,
+                offset: _ctrl.value * 480 * 1.5 * 2,
+              ),
+            ),
           ),
           Positioned(
             left: 0,
             right: 0,
-            bottom: ground ? 24 * px - 6 : 0,
+            bottom: w.ground ? 24 * px - 6 : 0,
             height: 160 * px / 1.5,
-            child: _Repeat('assets/images/sprites/bg_${theme}_far.png', 1.5),
+            child: _Repeat('assets/images/sprites/bg_${w.theme}_far.png', 1.5),
           ),
-          if (ground)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: w.ground ? 24 * px - 6 : 0,
+            height: 120 * px / 1.5,
+            child: _Repeat('assets/images/sprites/bg_${w.theme}_mid.png', 1.5),
+          ),
+          if (w.ground)
             const Positioned(
               left: 0,
               right: 0,
@@ -379,30 +418,202 @@ class PixelBackdrop extends StatelessWidget {
               height: 24 * px,
               child: _Repeat('assets/images/ui/tile_grass.png', px),
             ),
-          child,
+          Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(painter: _FloatiesPainter(_ctrl)),
+            ),
+          ),
+          w.child,
         ],
       ),
     );
   }
 }
 
+/// The smiling pixel sun (or moon) of the menus.
+class _SkyPainter extends CustomPainter {
+  _SkyPainter(this.anim, {required this.night}) : super(repaint: anim);
+
+  final Animation<double> anim;
+  final bool night;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final t = anim.value * 60;
+    const z = 2.5;
+    final cx = size.width * 0.86;
+    final cy = 70 + sin(t * .8) * 3;
+    const r = 16 * z;
+    if (!night) {
+      canvas.drawCircle(
+        Offset(cx, cy),
+        r * 1.45 + sin(t * 2) * z,
+        Paint()..color = const Color(0x55FFE9A0),
+      );
+    }
+    canvas.drawCircle(
+      Offset(cx, cy),
+      r,
+      Paint()
+        ..color = night ? const Color(0xFFFFF4C8) : const Color(0xFFFFD86A),
+    );
+    final plum = Paint()..color = kPlum;
+    for (final ex in [-6.0, 4.0]) {
+      canvas.drawRect(
+        Rect.fromLTWH(cx + ex * z, cy - 3 * z, 2 * z, 2 * z),
+        plum,
+      );
+      canvas.drawRect(
+        Rect.fromLTWH(cx + (ex + 2) * z, cy - 3 * z, 2 * z, 2 * z),
+        plum,
+      );
+    }
+    canvas.drawRect(Rect.fromLTWH(cx - 2 * z, cy + 3 * z, 4 * z, 2 * z), plum);
+    final blush = Paint()..color = const Color(0xFFFF96B0);
+    canvas.drawRect(Rect.fromLTWH(cx - 11 * z, cy + z, 4 * z, 2 * z), blush);
+    canvas.drawRect(Rect.fromLTWH(cx + 7 * z, cy + z, 4 * z, 2 * z), blush);
+  }
+
+  @override
+  bool shouldRepaint(_SkyPainter old) => false;
+}
+
+/// Little pixel hearts and twinkles floating up the menus.
+class _FloatiesPainter extends CustomPainter {
+  _FloatiesPainter(this.anim) : super(repaint: anim);
+
+  final Animation<double> anim;
+
+  static final _seeds = List.generate(
+    18,
+    (i) => (
+      (i * 0.6180339887) % 1.0,
+      (i * 0.3819660113 + .2) % 1.0,
+      0.6 + (i % 5) * 0.15,
+      i % 3,
+    ),
+  );
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final t = anim.value * 60;
+    const s = 3.0;
+    final paint = Paint();
+    for (final (fx, fy, speed, kind) in _seeds) {
+      final y =
+          size.height -
+          ((fy * size.height + t * 18 * speed) % (size.height + 30));
+      final x = fx * size.width + sin(t * speed + fx * 6) * 12;
+      final fade = (y / size.height).clamp(0.0, 1.0);
+      if (kind == 0) {
+        paint.color = const Color(0xFFFF82B4).withValues(alpha: .75 * fade);
+        canvas.drawRect(Rect.fromLTWH(x, y, s, s), paint);
+        canvas.drawRect(Rect.fromLTWH(x + s * 2, y, s, s), paint);
+        canvas.drawRect(Rect.fromLTWH(x - s * .5, y + s, s * 4, s), paint);
+        canvas.drawRect(Rect.fromLTWH(x + s * .5, y + s * 2, s * 2, s), paint);
+      } else {
+        final a = (sin(t * 3 * speed + fx * 9) + 1) / 2;
+        paint.color =
+            (kind == 1 ? const Color(0xFFFFF4B4) : const Color(0xFFFFFFFF))
+                .withValues(alpha: a * fade);
+        canvas.drawRect(Rect.fromLTWH(x - s, y, s * 3, s), paint);
+        canvas.drawRect(Rect.fromLTWH(x, y - s, s, s * 3), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_FloatiesPainter old) => false;
+}
+
 class _Repeat extends StatelessWidget {
-  const _Repeat(this.asset, this.px);
+  const _Repeat(this.asset, this.px, {this.offset = 0});
 
   final String asset;
   final double px;
+  final double offset;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(asset),
-          repeat: ImageRepeat.repeatX,
-          scale: 1 / px,
-          alignment: Alignment.bottomLeft,
-          filterQuality: FilterQuality.none,
+    return ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.bottomLeft,
+        maxWidth: double.infinity,
+        child: Transform.translate(
+          offset: Offset(-(offset % (480 * px)), 0),
+          child: SizedBox(
+            width: 4000,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(asset),
+                  repeat: ImageRepeat.repeatX,
+                  scale: 1 / px,
+                  alignment: Alignment.bottomLeft,
+                  filterQuality: FilterQuality.none,
+                ),
+              ),
+            ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+/// Text whose letters bob up and down one after the other.
+class BouncyText extends StatefulWidget {
+  const BouncyText(
+    this.text, {
+    super.key,
+    this.size = 48,
+    this.color = Colors.white,
+  });
+
+  final String text;
+  final double size;
+  final Color color;
+
+  @override
+  State<BouncyText> createState() => _BouncyTextState();
+}
+
+class _BouncyTextState extends State<BouncyText>
+    with SingleTickerProviderStateMixin {
+  late final _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1800),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final letters = widget.text.split('');
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, _) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < letters.length; i++)
+            Transform.translate(
+              offset: Offset(
+                0,
+                -max(0.0, sin((_ctrl.value * 2 * pi) - i * 0.6)) *
+                    widget.size *
+                    0.12,
+              ),
+              child: PixelText(
+                letters[i],
+                size: widget.size,
+                color: widget.color,
+              ),
+            ),
+        ],
       ),
     );
   }

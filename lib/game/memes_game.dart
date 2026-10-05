@@ -16,7 +16,7 @@ import 'level.dart';
 import 'level_gen.dart';
 
 /// World units of extra ground drawn under the level.
-const kGroundBelow = kTile * 3;
+const kGroundBelow = kTile * 2;
 
 /// Dev aid: `--dart-define=MEMES_START_COL=120` drops the player at that
 /// column to test the end of a level.
@@ -110,6 +110,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
       for (final k in EnemyKind.values) k.spritePath,
       'sprites/tiles_${level.theme.name}.png',
       'sprites/moving_${level.theme.name}.png',
+      'sprites/props_${level.theme.name}.png',
+      'sprites/bg_${level.theme.name}_mid.png',
+      'sprites/dust.png',
       'sprites/sparkle.png',
       'sprites/bg_${level.theme.name}_far.png',
       'sprites/bg_${level.theme.name}_clouds.png',
@@ -121,6 +124,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
     camera.backdrop.add(Backdrop());
     world.add(LevelMap());
+    world.add(Props());
 
     Vector2? start;
     for (final s in level.spawns) {
@@ -243,6 +247,15 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void collectLike(Like like) {
     likes++;
     world.add(Sparkles(position: like.position.clone()));
+    world.add(
+      FloatingText(
+        position: like.position - Vector2(0, 10),
+        text: '+10',
+        fontSize: 8,
+        color: const Color(0xFFFF82B4),
+        duration: 0.6,
+      ),
+    );
   }
 
   void springUsed(int col, int row) {
@@ -263,6 +276,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void reachCheckpoint(Checkpoint cp) {
     _checkpoint = cp.position.clone();
+    world.add(Confetti(position: cp.position - Vector2(0, 30), count: 30));
     world.add(
       FloatingText(position: cp.position - Vector2(0, 52), text: 'SALVATO!'),
     );
@@ -271,6 +285,15 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void onEnemyKilled(Enemy e) {
     kills++;
     enemyScore += e.kind.score;
+    world.add(
+      FloatingText(
+        position: e.position - Vector2(0, 34),
+        text: '+${e.kind.score}',
+        fontSize: 9,
+        color: const Color(0xFFFFD86A),
+        duration: 0.7,
+      ),
+    );
     if (e.kind.isBoss) {
       _bossAlive = false;
       _openGates();
@@ -311,13 +334,14 @@ class MemesGame extends FlameGame with KeyboardEvents {
       return;
     }
     player.respawn(_checkpoint.clone());
-    camera.viewfinder.position = _checkpoint + Vector2(20, 30);
+    camera.viewfinder.position = _checkpoint + Vector2(20, 12);
   }
 
   void finish() {
     if (finished) return;
     finished = true;
     input.clear();
+    world.add(Confetti(position: player.position - Vector2(0, 40), count: 80));
     world.add(
       FloatingText(
         position: player.position - Vector2(0, 80),
@@ -382,6 +406,6 @@ class _CameraTarget extends PositionComponent {
 
   @override
   void update(double dt) {
-    position.setValues(player.position.x + 20, player.position.y + 30);
+    position.setValues(player.position.x + 20, player.position.y + 12);
   }
 }
