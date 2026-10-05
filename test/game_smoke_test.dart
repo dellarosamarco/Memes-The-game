@@ -88,7 +88,7 @@ void main() {
   final newer = MemeCharacter.all.skip(4).toList();
   for (var i = 0; i < newer.length; i++) {
     final c = newer[i];
-    final level = [3, 25, 110, 49, 180, 260, 99, 420][i];
+    final level = (i * 37 + 3) % 500;
     testWidgets('level $level with ${c.name} and its special', (tester) async {
       final game = await boot(tester, level, c);
       await autopilot(tester, game, 20);
@@ -108,6 +108,20 @@ void main() {
     }
     p.takeDamage(fromX: p.position.x + 10);
     expect(p.hearts, MemeCharacter.pigtailDog.hearts - 1);
+  });
+
+  testWidgets('GTA respawn: pits cost no hearts', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.gtaBean);
+    game.fellInPit();
+    expect(game.player.hearts, MemeCharacter.gtaBean.hearts);
+    expect(game.isOver, isFalse);
+  });
+
+  testWidgets('rock head breaks bricks', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.rockPatrick);
+    game.level.setTile(2, 2, 'B');
+    game.player.onCeiling(2, 2);
+    expect(game.level.tileAt(2, 2), ' ');
   });
 
   testWidgets('lady terrier likes are worth double', (tester) async {

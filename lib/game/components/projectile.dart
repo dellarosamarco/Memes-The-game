@@ -3,9 +3,11 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/meme_character.dart';
 import '../level.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
+import 'effects.dart';
 
 /// A "RATIO -1" comment thrown by Haters.
 class RatioProjectile extends PositionComponent
@@ -39,6 +41,19 @@ class RatioProjectile extends PositionComponent
         position.y > p.top &&
         position.y < p.bottom) {
       if (p.dashing) {
+        removeFromParent();
+        return;
+      }
+      if (p.character.passive == Passive.helmet) {
+        // Bounces off the pigeon's helmet.
+        game.world.add(
+          FloatingText(
+            position: position - Vector2(0, 10),
+            text: 'TOC!',
+            fontSize: 9,
+            duration: .5,
+          ),
+        );
         removeFromParent();
         return;
       }

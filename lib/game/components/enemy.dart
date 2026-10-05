@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/meme_character.dart';
 import '../../services/sound.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
@@ -129,7 +130,8 @@ class Enemy extends PositionComponent
   /// Stomped, slashed, dashed through...
   void hit({bool heavy = false, bool stomp = false}) {
     if (dead || _hurtCooldown > 0) return;
-    hp -= kind.isBoss ? 1 : (heavy ? hp : 1);
+    final bossDamage = game.character.passive == Passive.bossBrawler ? 2 : 1;
+    hp -= kind.isBoss ? bossDamage : (heavy ? hp : 1);
     _flash = 0.15;
     if (kind.isBoss) {
       Sound.play('boss_hit');

@@ -1,4 +1,7 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/meme_character.dart';
 import '../widgets/pixel_ui.dart';
@@ -14,103 +17,172 @@ class CharacterSelectScreen extends StatefulWidget {
 
 class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   int _index = 0;
+  final _thumbs = ScrollController();
+
+  static const _thumbStride = 60.0;
+
+  @override
+  void dispose() {
+    _thumbs.dispose();
+    super.dispose();
+  }
+
+  /// Next/previous meme, keeping its thumbnail in view.
+  void _select(int delta) {
+    final n = MemeCharacter.all.length;
+    setState(() => _index = (_index + delta + n) % n);
+    if (!_thumbs.hasClients) return;
+    final pos = _thumbs.position;
+    final target = (_index * _thumbStride - pos.viewportDimension / 2 + 30)
+        .clamp(0.0, pos.maxScrollExtent);
+    _thumbs.animateTo(
+      target,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     const chars = MemeCharacter.all;
     final c = chars[_index];
     return Scaffold(
-      body: PixelBackdrop(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    PixelButton(
-                      icon: 'left',
-                      color: PixelColor.grey,
-                      height: 44,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    const Expanded(
-                      child: PixelText('Scegli il tuo meme', size: 24),
-                    ),
-                    const SizedBox(width: 56),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+      body: Focus(
+        autofocus: true,
+        onKeyEvent: (_, e) {
+          if (e is! KeyDownEvent) return KeyEventResult.ignored;
+          if (e.logicalKey == LogicalKeyboardKey.arrowLeft) _select(-1);
+          if (e.logicalKey == LogicalKeyboardKey.arrowRight) _select(1);
+          return KeyEventResult.handled;
+        },
+        child: PixelBackdrop(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            CharacterSpriteView(
-                              key: ValueKey(c.id),
-                              character: c,
-                              scale: 3.2,
-                              running: true,
-                            ),
-                            const SizedBox(height: 50),
-                          ],
-                        ),
+                      PixelButton(
+                        icon: 'left',
+                        color: PixelColor.grey,
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                      Expanded(
-                        flex: 6,
-                        child: PixelPanel(
-                          padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
-                          child: _Info(character: c),
-                        ),
+                      const Expanded(
+                        child: PixelText('Scegli il tuo meme', size: 24),
                       ),
+                      const SizedBox(width: 56),
                     ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 66,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: chars.length,
-                          separatorBuilder: (_, _) => const SizedBox(width: 6),
-                          itemBuilder: (_, i) => Center(
-                            child: _Thumb(
-                              character: chars[i],
-                              selected: i == _index,
-                              onTap: () => setState(() => _index = i),
+                  const SizedBox(height: 6),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _Arrow(
+                                    icon: 'left',
+                                    onTap: () => _select(-1),
+                                  ),
+                                  CharacterSpriteView(
+                                    key: ValueKey(c.id),
+                                    character: c,
+                                    scale: 3.2,
+                                    running: true,
+                                  ),
+                                  _Arrow(
+                                    icon: 'right',
+                                    onTap: () => _select(1),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 50),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 6,
+                          child: PixelPanel(
+                            padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
+                            child: _Info(character: c),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 66,
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(
+                              dragDevices: PointerDeviceKind.values.toSet(),
+                            ),
+                            child: ListView.separated(
+                              controller: _thumbs,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: chars.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 6),
+                              itemBuilder: (_, i) => Center(
+                                child: _Thumb(
+                                  character: chars[i],
+                                  selected: i == _index,
+                                  onTap: () => setState(() => _index = i),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    PixelButton(
-                      label: 'Scegli ${c.name.split(' ').first}',
-                      icon: 'play',
-                      color: PixelColor.pink,
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => WorldMapScreen(character: c),
+                      const SizedBox(width: 8),
+                      PixelButton(
+                        label: 'Scegli',
+                        icon: 'play',
+                        color: PixelColor.pink,
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => WorldMapScreen(character: c),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+class _Arrow extends StatelessWidget {
+  const _Arrow({required this.icon, required this.onTap});
+
+  final String icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => PixelButton(
+    icon: icon,
+    color: PixelColor.grey,
+    height: 40,
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    onPressed: onTap,
+  );
 }
 
 class _Info extends StatelessWidget {

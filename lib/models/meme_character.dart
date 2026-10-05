@@ -14,6 +14,16 @@ enum Passive {
   tripleJump,
   onion,
   highJump,
+  drip,
+  featherweight,
+  helmet,
+  sneakers,
+  momentum,
+  hustle,
+  respawnCheat,
+  bossBrawler,
+  rockHead,
+  refill,
 }
 
 /// Signature move, on a cooldown.
@@ -30,6 +40,16 @@ enum SpecialType {
   plushThrow,
   swampSlam,
   teethFlash,
+  airpods,
+  chickArmy,
+  flight,
+  phoneCall,
+  police,
+  eggBomb,
+  hesoyam,
+  superJump,
+  rockRoll,
+  waterJet,
 }
 
 /// A playable meme. Every field is meant to stay faithful to the original
@@ -97,6 +117,16 @@ class MemeCharacter {
     'pink_monkey' => (x: -7, y: -49),
     'shrek_kid' => (x: 0, y: -50),
     'ears_dog' => (x: 0, y: -46),
+    'drip_pig' => (x: 2, y: -50),
+    'bowl_chick' => (x: 4.5, y: -45),
+    'helmet_pigeon' => (x: -1, y: -51),
+    'pietro_pigeon' => (x: -1.5, y: -51),
+    'bike_dog' => (x: -7, y: -48),
+    'sneaker_hen' => (x: 12, y: -44),
+    'gta_bean' => (x: -0.5, y: -43),
+    'masha_man' => (x: -0.5, y: -50),
+    'rock_patrick' => (x: -4, y: -53),
+    'bottle_patrick' => (x: 2, y: -55),
     _ => (x: -4.5, y: -52),
   };
 
@@ -125,6 +155,16 @@ class MemeCharacter {
     pinkMonkey,
     shrekKid,
     earsDog,
+    dripPig,
+    bowlChick,
+    helmetPigeon,
+    pietroPigeon,
+    bikeDog,
+    sneakerHen,
+    gtaBean,
+    mashaMan,
+    rockPatrick,
+    bottlePatrick,
   ];
 
   static const wigDog = MemeCharacter(
@@ -434,5 +474,263 @@ class MemeCharacter {
     specialCooldown: 14,
     specialShout: '*SORRISO SMAGLIANTE*',
     hurtLines: ['Ehm.', 'I miei denti!', '*sorriso tirato*'],
+  );
+
+  static const dripPig = MemeCharacter(
+    id: 'drip_pig',
+    name: 'Maiale Drip',
+    memeAlias: 'Il maiale con la sfumatura, le AirPods e la catena',
+    tagline: 'Sfumatura fresca, AirPods e catena d\'oro.',
+    lore:
+        'Un maiale con un taglio sfumato da barbiere, le AirPods nelle '
+        'orecchie e una catena d\'oro grossa così. Ha più stile di te e lo '
+        'sa benissimo.',
+    color: Color(0xFFE0A93B),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 505,
+    passive: Passive.drip,
+    passiveName: 'Catena d\'Oro',
+    passiveDescription: 'I nemici sconfitti valgono il triplo dei punti.',
+    specialType: SpecialType.airpods,
+    specialName: 'Cancellazione del Rumore',
+    specialDescription:
+        'Mette le AirPods: per 4 secondi non sente niente e niente lo '
+        'ferisce.',
+    specialCooldown: 12,
+    specialShout: 'NON TI SENTO, HO LE AIRPODS',
+    hurtLines: ['Oink?!', 'La catena!', 'Mi hai rovinato la sfumatura.'],
+  );
+
+  static const bowlChick = MemeCharacter(
+    id: 'bowl_chick',
+    name: 'Pulcino Caschetto',
+    memeAlias: 'Il pulcino col caschetto nero',
+    tagline: 'Un pulcino. Con il caschetto. Perfetto.',
+    lore:
+        'Un pulcino giallo con un caschetto nero a scodella tagliato col '
+        'righello e uno sguardo di profilo pieno di dignità. Il suo '
+        'barbiere è un genio.',
+    color: Color(0xFFFFD23F),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 500,
+    passive: Passive.featherweight,
+    passiveName: 'Pulcino Leggero',
+    passiveDescription: 'Pesa niente: salti lunghi e lenti.',
+    specialType: SpecialType.chickArmy,
+    specialName: 'Cip Cip!',
+    specialDescription:
+        'Chiama tre pulcini col caschetto che corrono avanti e '
+        'travolgono i nemici.',
+    specialCooldown: 6,
+    specialShout: 'CIP CIP CIP!',
+    hurtLines: ['Pio!', 'Il caschetto!', 'Cip?!'],
+  );
+
+  static const helmetPigeon = MemeCharacter(
+    id: 'helmet_pigeon',
+    name: 'Piccione Casco',
+    memeAlias: 'Il piccione con lo strano casco in testa',
+    tagline: 'Sicurezza prima di tutto.',
+    lore:
+        'Un piccione di città con in testa un cappuccio di gomma che '
+        'nessuno sa come sia finito lì. Lui non fa una piega: cammina '
+        'fiero come un cavaliere con l\'elmo.',
+    color: Color(0xFF6A8CA0),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 500,
+    passive: Passive.helmet,
+    passiveName: 'Casco Protettivo',
+    passiveDescription:
+        'I commenti RATIO degli Hater gli rimbalzano sul casco.',
+    specialType: SpecialType.flight,
+    specialName: 'Volo Urbano',
+    specialDescription: 'Vola per 2,5 secondi: tieni premuto SALTO per salire.',
+    specialCooldown: 8,
+    specialShout: 'TUBA TUBA!',
+    hurtLines: ['Tru?!', 'Il casco!', 'Grrr-uu.'],
+  );
+
+  static const pietroPigeon = MemeCharacter(
+    id: 'pietro_pigeon',
+    name: 'Pietro',
+    memeAlias: 'Pietro is calling... il piccione con le Converse',
+    tagline: 'Ti sta chiamando. Rispondi.',
+    lore:
+        'Pietro è un piccione in piedi con un paio di Converse ai piedi '
+        'che ti chiama in videochiamata. Non sai cosa voglia. Ma prima o '
+        'poi dovrai rispondere.',
+    color: Color(0xFF7A7A86),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 500,
+    passive: Passive.sneakers,
+    passiveName: 'Converse ai Piedi',
+    passiveDescription: 'Accelera e frena all\'istante.',
+    specialType: SpecialType.phoneCall,
+    specialName: 'Pietro is calling...',
+    specialDescription:
+        'Tutti i nemici sullo schermo si fermano a rispondere al '
+        'telefono (e diventano piattaforme).',
+    specialCooldown: 10,
+    specialShout: 'PIETRO IS CALLING...',
+    hurtLines: ['Chiamata persa.', 'Tuuu tuuu...', 'Le Converse!'],
+  );
+
+  static const bikeDog = MemeCharacter(
+    id: 'bike_dog',
+    name: 'Cane in Bici',
+    memeAlias: 'Il cane in bici con lo zaino, inseguito dalla Polis',
+    tagline: 'Zaino in spalla, e la polizia dietro.',
+    lore:
+        'Un cane che pedala in mezzo al traffico con lo zaino in spalla, '
+        'come se andasse a scuola. Dietro di lui una macchina della '
+        'POLIS. Nessuno sa chi stia inseguendo chi.',
+    color: Color(0xFF2E5AA8),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 500,
+    passive: Passive.momentum,
+    passiveName: 'Pedalata',
+    passiveDescription:
+        'Più pedala nella stessa direzione, più va veloce (fino a +50%).',
+    specialType: SpecialType.police,
+    specialName: 'POLIS!',
+    specialDescription:
+        'Arriva la macchina della polizia a sirene spiegate e investe '
+        'tutti i nemici sulla sua strada.',
+    specialCooldown: 9,
+    specialShout: 'NII-NOO NII-NOO!',
+    hurtLines: ['La catena della bici!', 'Ahia!', 'Lo zaino!'],
+  );
+
+  static const sneakerHen = MemeCharacter(
+    id: 'sneaker_hen',
+    name: 'Gallina Hypebeast',
+    memeAlias: 'La gallina sulle Dunk panda coi dollari',
+    tagline: 'Dunk panda e cento dollari sotto l\'ala.',
+    lore:
+        'Una gallina accovacciata su un paio di Dunk panda nuove di zecca, '
+        'con una banconota da cento dollari infilata tra le piume. Non cova '
+        'uova: cova hype.',
+    color: Color(0xFFB5562A),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 505,
+    passive: Passive.hustle,
+    passiveName: 'Hustler',
+    passiveDescription:
+        'Ogni like raccolto vale una volta e mezza nel portafoglio del '
+        'negozio.',
+    specialType: SpecialType.eggBomb,
+    specialName: 'Uovo Bomba',
+    specialDescription:
+        'Depone un uovo che cade ed esplode stendendo i nemici vicini.',
+    specialCooldown: 2.5,
+    specialShout: 'COCCODÈ!',
+    hurtLines: ['Coccodè?!', 'Le mie Dunk!', 'I miei soldi!'],
+  );
+
+  static const gtaBean = MemeCharacter(
+    id: 'gta_bean',
+    name: 'Mr. San Andreas',
+    memeAlias: 'Mr. Bean dentro GTA San Andreas',
+    tagline: 'Sopracciglio alzato e grafica PS2.',
+    lore:
+        'L\'omino più goffo della TV finito per sbaglio nelle strade di '
+        'San Andreas, con la giacca marrone, la cravatta rossa e la '
+        'faccia di chi non ha capito come ci è arrivato.',
+    color: Color(0xFF6B4A32),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 500,
+    passive: Passive.respawnCheat,
+    passiveName: 'Respawn all\'Ospedale',
+    passiveDescription:
+        'Cadere in un burrone non toglie cuori: WASTED e si riparte.',
+    specialType: SpecialType.hesoyam,
+    specialName: 'HESOYAM',
+    specialDescription:
+        'Il trucco più famoso: tutti i cuori ricaricati e 250 punti.',
+    specialCooldown: 30,
+    specialShout: 'CHEAT ACTIVATED',
+    hurtLines: ['Ah.', 'Mmh?!', 'Ah, non di nuovo.'],
+  );
+
+  static const mashaMan = MemeCharacter(
+    id: 'masha_man',
+    name: 'Masha Baffuta',
+    memeAlias: 'Masha col faccione da uomo',
+    tagline: 'Fazzoletto rosa, baffi, nessuna paura.',
+    lore:
+        'Ha il fazzoletto rosa e il vestitino di Masha, ma la faccia è '
+        'quella di un uomo adulto con i baffi e lo sguardo stanco. '
+        'Anche Orso ha paura di lei.',
+    color: Color(0xFFE0218A),
+    hearts: 4,
+    runSpeed: 140,
+    jumpSpeed: 500,
+    passive: Passive.bossBrawler,
+    passiveName: 'Mani Pesanti',
+    passiveDescription: '4 cuori e doppio danno a L\'Algoritmo.',
+    specialType: SpecialType.superJump,
+    specialName: 'Salto di Masha',
+    specialDescription:
+        'Un salto altissimo che lascia un\'onda d\'urto a terra.',
+    specialCooldown: 5,
+    specialShout: 'CIAO CIAO!',
+    hurtLines: ['Ehi!', 'Orso, aiuto!', 'Mmh.'],
+  );
+
+  static const rockPatrick = MemeCharacter(
+    id: 'rock_patrick',
+    name: 'Patrick Roccia',
+    memeAlias: 'Patrick con l\'elmo di roccia e le alghe',
+    tagline: 'Elmo di roccia, alghe e un sorriso sdentato.',
+    lore:
+        'La stella marina più felice del fondale, con un sasso in testa '
+        'come elmo, due ciuffi di alghe e un sorriso pieno di denti '
+        'storti. Non pensa. Rotola.',
+    color: Color(0xFFF08C82),
+    hearts: 3,
+    runSpeed: 140,
+    jumpSpeed: 500,
+    passive: Passive.rockHead,
+    passiveName: 'Testa di Roccia',
+    passiveDescription: 'Rompe i mattoni colpendoli con la testa.',
+    specialType: SpecialType.rockRoll,
+    specialName: 'Roccia Rotolante',
+    specialDescription:
+        'Si appallottola e rotola in avanti travolgendo i nemici.',
+    specialCooldown: 5,
+    specialShout: 'SONO UNA ROCCIA!',
+    hurtLines: ['Ahia la roccia!', 'Eh?', 'Dov\'è la mia roccia?'],
+  );
+
+  static const bottlePatrick = MemeCharacter(
+    id: 'bottle_patrick',
+    name: 'Patrick Boccione',
+    memeAlias: 'Patrick con la testa nel boccione d\'acqua',
+    tagline: 'Sempre idratato. Purtroppo.',
+    lore:
+        'Patrick con la punta della testa infilata in un boccione '
+        'd\'acqua capovolto, felice come sempre. Nessuno gli ha detto '
+        'che non funziona così.',
+    color: Color(0xFF5FB4E8),
+    hearts: 3,
+    runSpeed: 140,
+    jumpSpeed: 505,
+    passive: Passive.refill,
+    passiveName: 'Sempre Idratato',
+    passiveDescription: 'La speciale si ricarica il doppio più in fretta.',
+    specialType: SpecialType.waterJet,
+    specialName: 'Spruzzo d\'Acqua',
+    specialDescription:
+        'Uno spruzzo dal boccione che stende i nemici davanti a lui.',
+    specialCooldown: 4,
+    specialShout: 'GLU GLU!',
+    hurtLines: ['Glub!', 'Il boccione!', 'Ho sete.'],
   );
 }

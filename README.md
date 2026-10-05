@@ -25,6 +25,16 @@ vengono aggiunte solo le zampette animate.
 | **Scimmietta Rosa**: cappellino rosa e peluche | *Agilità da Scimmia*: salto triplo | *Lancio del Peluche*: il peluche fa da boomerang |
 | **Baby Orco**: caschetto a scodella e cravatta | *Strati di Cipolla*: +1 cuore a ogni checkpoint | *Esci dalla mia Palude!*: schianto a terra con onda d'urto |
 | **Orecchione**: orecchie e denti umani | *Orecchie a Molla*: salta più in alto di tutti | *Dentiera Smagliante*: un sorriso che stende tutti i nemici sullo schermo |
+| **Maiale Drip**: sfumatura, AirPods e catena d'oro | *Catena d'Oro*: nemici sconfitti valgono il triplo | *Cancellazione del Rumore*: 4 secondi intoccabile |
+| **Pulcino Caschetto**: il caschetto a scodella | *Pulcino Leggero*: gravità ridotta | *Cip Cip!*: tre pulcini che travolgono i nemici |
+| **Piccione Casco**: il "casco" in testa | *Casco Protettivo*: i RATIO gli rimbalzano addosso | *Volo Urbano*: vola per 2,5 secondi |
+| **Pietro**: is calling... con le Converse | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: i nemici sullo schermo rispondono al telefono |
+| **Cane in Bici**: zaino e POLIS | *Pedalata*: accelera fino a +50% | *POLIS!*: la macchina della polizia investe i nemici |
+| **Gallina Hypebeast**: sulle Dunk panda coi dollari | *Hustler*: like ×1,5 nel portafoglio | *Uovo Bomba*: un uovo che esplode |
+| **Mr. San Andreas**: Mr. Bean in GTA | *Respawn all'Ospedale*: i burroni non tolgono cuori | *HESOYAM*: cuori pieni e 250 punti |
+| **Masha Baffuta**: Masha col faccione da uomo | *Mani Pesanti*: 4 cuori, doppio danno al boss | *Salto di Masha*: salto altissimo con onda d'urto |
+| **Patrick Roccia**: elmo di roccia e alghe | *Testa di Roccia*: rompe i mattoni di testa | *Roccia Rotolante*: rotola travolgendo i nemici |
+| **Patrick Boccione**: la testa nel boccione | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: getto che stende i nemici davanti |
 
 ## 500 livelli, 10 mondi
 

@@ -353,11 +353,12 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void onEnemyKilled(Enemy e) {
     kills++;
-    enemyScore += e.kind.score * multiplier;
+    final drip = character.passive == Passive.drip ? 3 : 1;
+    enemyScore += e.kind.score * multiplier * drip;
     world.add(
       FloatingText(
         position: e.position - Vector2(0, 34),
-        text: '+${e.kind.score * multiplier}',
+        text: '+${e.kind.score * multiplier * drip}',
         fontSize: 9,
         color: const Color(0xFFFFD86A),
         duration: 0.7,
@@ -411,6 +412,22 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void fellInPit() {
     if (finished || isOver) return;
+    if (character.passive == Passive.respawnCheat) {
+      // GTA rules: you just wake up at the hospital (the checkpoint).
+      Sound.play('hurt');
+      player.respawn(_checkpoint.clone());
+      camera.viewfinder.position = _checkpoint + Vector2(20, 12);
+      world.add(
+        FloatingText(
+          position: _checkpoint - Vector2(0, 70),
+          text: 'WASTED',
+          fontSize: 20,
+          color: const Color(0xFFFF4D5E),
+          duration: 1.6,
+        ),
+      );
+      return;
+    }
     player.hearts--;
     damageTaken = true;
     Sound.play('hurt');
@@ -461,7 +478,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (!LocalStore.ready || _statsRecorded) return;
     _statsRecorded = true;
     final s = LocalStore.instance;
-    s.addToWallet(likes);
+    s.addToWallet(
+      character.passive == Passive.hustle ? (likes * 1.5).round() : likes,
+    );
     s.addStat('likes', likes);
     s.addStat('stomps', kills);
     Achievements.checkStats();

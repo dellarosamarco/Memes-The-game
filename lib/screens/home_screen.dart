@@ -22,6 +22,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  final List<MemeCharacter> _crowd = (List.of(
+    MemeCharacter.all,
+  )..shuffle()).take(9).toList();
+
   late final _bob = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1600),
@@ -109,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen>
         child: SafeArea(
           child: Stack(
             children: [
-              // All the memes hanging out on the grass.
+              // A different bunch of memes hangs out on the grass every time.
               Positioned(
                 left: 64,
                 right: 140,
@@ -119,12 +123,12 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      for (var i = 0; i < MemeCharacter.all.length; i++)
+                      for (var i = 0; i < _crowd.length; i++)
                         _Hopper(
                           anim: _bob,
                           phase: i * 0.25,
                           child: CharacterSpriteView(
-                            character: MemeCharacter.all[i],
+                            character: _crowd[i],
                             scale: 1.6,
                           ),
                         ),

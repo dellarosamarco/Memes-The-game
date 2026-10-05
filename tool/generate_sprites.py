@@ -86,6 +86,39 @@ FIGURES = {
                        legs=dict(color=(34, 40, 92), shoes=(22, 20, 26)))),
     'ears_dog': ((20, 0, 640, 560), 46, 0.62,
                  dict(colors=20, sat=1.2, contrast=1.2, levels=(0, 250))),
+    'drip_pig': ((0, 0, 566, 700), 50, 0.62,
+                 dict(colors=20, sat=1.4, contrast=1.2, levels=(0, 245),
+                      legs=dict(color=(214, 160, 150)))),
+    'bowl_chick': ((0, 0, 700, 574), 44, 1.0,
+                   dict(colors=18, sat=1.2, contrast=1.15, levels=(0, 255),
+                        legs=dict(color=(240, 150, 40)))),
+    'helmet_pigeon': ((0, 0, 306, 303), 48, 0.62,
+                      dict(colors=18, sat=1.2, contrast=1.15, levels=(0, 250),
+                           legs=dict(color=(206, 112, 112)))),
+    'pietro_pigeon': ((0, 0, 250, 290), 48, 1.0,
+                      dict(colors=16, sat=1.0, contrast=1.25, levels=(20, 240),
+                           legs=dict(color=(44, 44, 50),
+                                     shoes=(240, 240, 234)))),
+    'bike_dog': ((0, 0, 340, 262), 38, 1.0,
+                 dict(colors=18, sat=1.25, contrast=1.2, levels=(0, 245),
+                      bike=True)),
+    'sneaker_hen': ((0, 0, 330, 280), 40, 1.0,
+                    dict(colors=20, sat=1.2, contrast=1.15, levels=(0, 250),
+                         legs=dict(color=(240, 170, 60), dunks=True,
+                                   shoes=(26, 26, 30)))),
+    'gta_bean': ((0, 0, 624, 700), 50, 0.7,
+                 dict(colors=20, sat=1.15, contrast=1.15, levels=(0, 250),
+                      legs=dict(color=(92, 62, 44), shoes=(26, 22, 22)))),
+    'masha_man': ((0, 0, 640, 638), 50, 0.8,
+                  dict(colors=20, sat=1.15, contrast=1.15, levels=(0, 250),
+                       legs=dict(color=(226, 182, 150),
+                                 shoes=(196, 40, 150)))),
+    'rock_patrick': ((200, 0, 683, 683), 50, 0.75,
+                     dict(colors=18, sat=1.15, contrast=1.15, levels=(0, 255),
+                          legs=dict(color=(240, 140, 130)))),
+    'bottle_patrick': ((0, 60, 487, 700), 52, 0.75,
+                       dict(colors=18, sat=1.0, contrast=1.15, levels=(0, 255),
+                            legs=dict(color=(240, 140, 130)))),
 }
 
 
@@ -174,10 +207,49 @@ def grin(d: ImageDraw.ImageDraw, x0: int, x1: int, y: int):
         d.point([(x, top + 3)], fill=(206, 96, 112, 255))
 
 
+def bicycle(d: ImageDraw.ImageDraw, top: int, frame: int):
+    """The bike dog's little bicycle (wheels spin with the frame)."""
+    metal, tyre = (196, 204, 212, 255), (40, 38, 46, 255)
+    y = FH - 8
+    for cx in (FW // 2 - 13, FW // 2 + 13):
+        d.ellipse([cx - 6, y - 6, cx + 6, y + 6], outline=tyre, width=2)
+        a = frame * 0.8 + (0 if cx < FW // 2 else 0.4)
+        dx, dy = round(4 * np.cos(a)), round(4 * np.sin(a))
+        d.line([(cx - dx, y - dy), (cx + dx, y + dy)], fill=metal)
+        d.line([(cx + dy, y - dx), (cx - dy, y + dx)], fill=metal)
+    d.line([(FW // 2 - 13, y), (FW // 2, y - 2), (FW // 2 + 13, y)],
+           fill=metal, width=2)
+    d.line([(FW // 2, y - 2), (FW // 2 - 3, top)], fill=metal, width=2)
+    d.line([(FW // 2 + 13, y), (FW // 2 + 11, top - 2)], fill=metal, width=2)
+
+
+def googly(d: ImageDraw.ImageDraw, cx: int, cy: int):
+    """A big cartoon eye (Patrick's eyes are too small once downscaled)."""
+    d.ellipse([cx - 3, cy - 3, cx + 3, cy + 3], fill=(250, 250, 244, 255),
+              outline=(40, 30, 40, 255))
+    d.rectangle([cx, cy - 1, cx + 1, cy], fill=(20, 16, 24, 255))
+
+
+def chain(d: ImageDraw.ImageDraw, cx: int, y: int, half: int):
+    """The pig's thick gold chain."""
+    for dx in range(-half, half + 1):
+        dy = round(5 * (1 - (dx / half) ** 2))
+        gold = (255, 214, 64, 255) if dx % 2 else (196, 140, 24, 255)
+        d.rectangle([cx + dx, y + dy, cx + dx, y + dy + 1], fill=gold)
+    for dx in range(-half + 1, half, 4):
+        dy = round(5 * (1 - (dx / half) ** 2))
+        d.point([(cx + dx, y + dy)], fill=(255, 250, 200, 255))
+
+
 def accessories(name, d, x, y, w, h):
     """Redrawn signature details, relative to the figure's box."""
     if name == 'ears_dog':
         grin(d, x + round(w * 0.37), x + round(w * 0.62), y + round(h * 0.74))
+    if name == 'bottle_patrick':
+        for ex in (0.29, 0.42):
+            googly(d, x + round(w * ex), y + round(h * 0.48))
+    if name == 'drip_pig':
+        chain(d, x + w // 2, y + round(h * 0.78), round(w * 0.42))
     if name == 'pearl_terrier':
         pearls(d, x + w // 2, y + round(h * 0.66), round(w * 0.36))
 
@@ -197,13 +269,24 @@ def character_strip(name: str) -> Image.Image:
         fy = FH - 8 - fig.height + 3 + bob - (2 if frame == 'jump' else 0)
         lift = LEG_LIFT.get(frame, (0, 0))
         shift = LEG_SHIFT.get(frame, (0, 0))
+        if FIGURES[name][3].get('bike'):
+            fy -= 7
+            bicycle(d, fy + fig.height - 4, i)
+            im.alpha_composite(fig, (fx, fy))
+            strip.alpha_composite(outline(im), (i * FW, 0))
+            continue
         for k, lx in enumerate([FW // 2 - 9, FW // 2 + 4]):
             x = lx + shift[k]
             bottom = FH - 2 - lift[k]
             d.rectangle([x, fy + fig.height - 6, x + 4, bottom], fill=col)
             if socks:
                 d.rectangle([x, bottom - 3, x + 4, bottom - 2], fill=socks)
-            if legs.get('crocs'):  # Lightning McQueen crocs
+            if legs.get('dunks'):  # Nike Dunk "panda"
+                d.rectangle([x - 1, bottom - 3, x + 6, bottom],
+                            fill=(244, 244, 240, 255))
+                d.rectangle([x + 1, bottom - 2, x + 4, bottom - 2], fill=shoes)
+                d.rectangle([x + 4, bottom - 3, x + 6, bottom - 1], fill=shoes)
+            elif legs.get('crocs'):  # Lightning McQueen crocs
                 d.rectangle([x - 1, bottom - 2, x + 5, bottom], fill=shoes)
                 d.point([(x + 4, bottom - 2)], fill=(255, 255, 255, 255))
                 d.point([(x, bottom - 1)], fill=(255, 214, 64, 255))

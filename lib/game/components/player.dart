@@ -13,6 +13,7 @@ import '../../services/sound.dart';
 import '../physics.dart';
 import 'body.dart';
 import 'items.dart';
+import 'minions.dart';
 import 'effects.dart';
 import 'projectile.dart';
 
@@ -44,7 +45,13 @@ class Player extends PositionComponent
   double _turbo = 0;
   double _balloon = 0;
   bool _slamming = false;
+  double _airpods = 0;
+  double _flight = 0;
+  double _roll = 0;
+  double _pedal = 0;
+  int _pedalDir = 0;
   bool get turbo => _turbo > 0;
+  bool get rolling => _roll > 0;
   int get _maxAirJumps => switch (character.passive) {
     Passive.doubleJump => 1,
     Passive.tripleJump => 2,
@@ -56,14 +63,21 @@ class Player extends PositionComponent
       1 - (specialTimer / character.specialCooldown).clamp(0.0, 1.0);
   bool get dashing => _dash > 0;
   bool get invulnerable =>
-      _invulnerable > 0 || dashing || starPower || _slamming;
+      _invulnerable > 0 ||
+      dashing ||
+      starPower ||
+      _slamming ||
+      _airpods > 0 ||
+      rolling;
 
   // Power-ups.
   PowerUpKind? power;
   double powerTime = 0;
   bool get starPower => power == PowerUpKind.sunglasses;
   double get _speedMult =>
-      (power == PowerUpKind.coffee ? 1.35 : 1) * (turbo ? 1.7 : 1);
+      (power == PowerUpKind.coffee ? 1.35 : 1) *
+      (turbo ? 1.7 : 1) *
+      (1 + 0.5 * min(1.0, _pedal / 1.5));
   double get _jumpMult => power == PowerUpKind.coffee ? 1.1 : 1;
   final List<(Vector2, int, bool)> _trail = [];
 
@@ -92,6 +106,16 @@ class Player extends PositionComponent
     'pink_monkey' => -38,
     'shrek_kid' => -36,
     'ears_dog' => -36,
+    'drip_pig' => -34,
+    'bowl_chick' => -30,
+    'helmet_pigeon' => -36,
+    'pietro_pigeon' => -40,
+    'bike_dog' => -44,
+    'sneaker_hen' => -34,
+    'gta_bean' => -36,
+    'masha_man' => -38,
+    'rock_patrick' => -40,
+    'bottle_patrick' => -36,
     _ => -40,
   };
 
@@ -123,6 +147,7 @@ class Player extends PositionComponent
   Future<void> onLoad() async {
     _strip = Strip(game.images.fromCache(character.spriteSheet), 60, 60);
     _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
+    if (character.passive == Passive.featherweight) gravity = Phys.gravity * .8;
   }
 
   @override
@@ -155,14 +180,42 @@ class Player extends PositionComponent
   bool _splashed = false;
 
   @override
-  void onCeiling(int col, int row) => game.bumpBlock(col, row);
+  void onCeiling(int col, int row) {
+    game.bumpBlock(col, row);
+    // Rock helmet: bricks shatter.
+    if (character.passive == Passive.rockHead &&
+        game.level.tileAt(col, row) == 'B') {
+      game.level.setTile(col, row, ' ');
+      Sound.play('block');
+      game.shake(0.1);
+      final at = Vector2((col + .5) * kTile, (row + .5) * kTile);
+      game.world.add(PoofEffect(position: at));
+      game.world.add(Confetti(position: at, count: 10));
+    }
+  }
 
   @override
   void update(double dt) {
     super.update(dt);
     _t += dt;
     if (_invulnerable > 0) _invulnerable -= dt;
-    if (specialTimer > 0) specialTimer -= dt;
+    if (specialTimer > 0) {
+      specialTimer -= dt * (character.passive == Passive.refill ? 2 : 1);
+    }
+    if (_airpods > 0) {
+      _airpods -= dt;
+      if (_t % 0.35 < dt) {
+        game.world.add(
+          FloatingText(
+            position: position + Vector2(facingRight ? -16 : 16, -50),
+            text: '♪',
+            fontSize: 12,
+            color: const Color(0xFFFFD86A),
+            duration: .8,
+          ),
+        );
+      }
+    }
     if (power != null) {
       powerTime -= dt;
       if (powerTime <= 0) power = null;
@@ -192,7 +245,12 @@ class Player extends PositionComponent
     final ride = standingOn;
     if (ride is MovingPlatform) position.x += ride.lastDx;
 
-    if (_dash > 0) {
+    if (_roll > 0) {
+      _roll -= dt;
+      velocity.x = (facingRight ? 1 : -1) * 300;
+      applyGravity(dt);
+      if (hitWall) _roll = 0;
+    } else if (_dash > 0) {
       _dash -= dt;
       velocity
         ..x = (facingRight ? 1 : -1) * 460
@@ -203,9 +261,16 @@ class Player extends PositionComponent
     } else {
       final dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
       if (dir != 0) facingRight = dir > 0;
+      if (character.passive == Passive.momentum) {
+        // Pedalling: speed builds up while going the same way.
+        _pedal = dir != 0 && dir == _pedalDir && !hitWall ? _pedal + dt : 0;
+        _pedalDir = dir;
+      }
       final target = dir * character.runSpeed * _speedMult;
       _napCheck(dir, dt);
-      final accel = onGround ? _accelGround : _accelAir;
+      final accel =
+          (onGround ? _accelGround : _accelAir) *
+          (character.passive == Passive.sneakers ? 3 : 1);
       final dv = target - velocity.x;
       velocity.x += dv.clamp(-accel * dt, accel * dt);
 
@@ -246,6 +311,15 @@ class Player extends PositionComponent
         _cuttable = false;
       }
       if (_slamming) velocity.y = 720;
+      // Pigeon flight: hold jump to climb, otherwise drift down.
+      if (_flight > 0) {
+        _flight -= dt;
+        velocity.y = input.jump ? -200 : 70;
+        _cuttable = false;
+        if (_t % 0.2 < dt) {
+          game.world.add(PoofEffect(position: position - Vector2(0, 10)));
+        }
+      }
     }
 
     if (input.specialQueued) {
@@ -330,7 +404,7 @@ class Player extends PositionComponent
     for (final e in game.enemies.toList()) {
       if (e.dead || !overlaps(e)) continue;
       if (e.frozen) continue;
-      if (dashing || starPower || turbo || _slamming) {
+      if (dashing || starPower || turbo || _slamming || rolling) {
         if (starPower && !e.kind.isBoss) {
           Sound.play('stomp');
           game.world.add(
@@ -442,6 +516,8 @@ class Player extends PositionComponent
     _dash = 0;
     _balloon = 0;
     _slamming = false;
+    _flight = 0;
+    _roll = 0;
   }
 
   /// Onion layers: the ogre gets a heart back at every checkpoint.
@@ -650,6 +726,97 @@ class Player extends PositionComponent
         for (final e in game.enemies.toList()) {
           if (!e.dead && view.contains(e.mid.toOffset())) e.hit(heavy: true);
         }
+
+      case SpecialType.airpods:
+        _airpods = 4;
+
+      case SpecialType.chickArmy:
+        final dir = facingRight ? 1 : -1;
+        for (var i = 0; i < 3; i++) {
+          game.world.add(
+            ChickMinion(
+              position: position + Vector2(dir * (10.0 + i * 4), -2),
+              dir: dir,
+              delay: i * 0.18,
+            ),
+          );
+        }
+
+      case SpecialType.flight:
+        _flight = 2.5;
+
+      case SpecialType.phoneCall:
+        game.camera.viewport.add(
+          ScreenFlash(color: const Color(0x6640E070), duration: 0.5),
+        );
+        final view = game.camera.visibleWorldRect;
+        for (final e in game.enemies) {
+          if (e.dead || !view.contains(e.mid.toOffset())) continue;
+          e.freeze(4);
+          game.world.add(
+            FloatingText(
+              position: e.mid - Vector2(0, 24),
+              text: 'Pronto?',
+              fontSize: 9,
+              color: const Color(0xFF7CFFA0),
+              duration: 1.6,
+            ),
+          );
+        }
+
+      case SpecialType.police:
+        final dir = facingRight ? 1 : -1;
+        final view = game.camera.visibleWorldRect;
+        game.world.add(
+          PoliceCar(
+            position: Vector2(
+              dir > 0 ? view.left - 40 : view.right + 40,
+              position.y,
+            ),
+            dir: dir,
+          ),
+        );
+
+      case SpecialType.eggBomb:
+        game.world.add(
+          EggBomb(
+            position: position - Vector2(0, 8),
+            vx: (facingRight ? 1 : -1) * 90 + velocity.x * .3,
+          ),
+        );
+
+      case SpecialType.hesoyam:
+        hearts = character.hearts;
+        game.enemyScore += 250;
+        game.camera.viewport.add(
+          ScreenFlash(color: const Color(0x66FFFFFF), duration: 0.4),
+        );
+        game.world.add(Confetti(position: center, count: 30));
+
+      case SpecialType.superJump:
+        _jump(900);
+        _cuttable = false;
+        game.world.add(
+          ShockwaveEffect(
+            position: position.clone(),
+            maxRadius: 90,
+            color: const Color(0xFFE0218A),
+          ),
+        );
+        for (final e in game.enemies.toList()) {
+          if (e.mid.distanceTo(position) < 90) e.hit(heavy: true);
+        }
+
+      case SpecialType.rockRoll:
+        _roll = 1.2;
+
+      case SpecialType.waterJet:
+        game.world.add(
+          WaterJet(
+            position: center + Vector2(facingRight ? 14 : -14, -6),
+            dir: facingRight ? 1 : -1,
+          ),
+        );
     }
   }
 
@@ -694,6 +861,12 @@ class Player extends PositionComponent
     canvas.scale((1 + (1 - _squash) * 0.7) * puff, _squash * puff);
     // Braid spin: turns left/right really fast.
     final faceRight = _spin > 0 ? (_t * 20).floor().isEven : facingRight;
+    if (rolling) {
+      // Rolling rock: spin around the body's center.
+      canvas.translate(0, -bodyHeight / 2);
+      canvas.rotate((facingRight ? 1 : -1) * _t * 16);
+      canvas.translate(0, bodyHeight / 2);
+    }
     Paint? paint;
     if (dashing) {
       paint = Paint()

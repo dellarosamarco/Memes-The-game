@@ -15,7 +15,10 @@ service cloud.firestore {
         && request.resource.data.levelId.matches('L[0-9]{3}')
         && request.resource.data.characterId in ['wig_dog', 'stare_cat', 'robber_dog', 'smile_dog',
                'pigtail_dog', 'pearl_terrier', 'suit_dachshund', 'cheeks_dachshund',
-               'snow_baby', 'pink_monkey', 'shrek_kid', 'ears_dog']
+               'snow_baby', 'pink_monkey', 'shrek_kid', 'ears_dog',
+               'drip_pig', 'bowl_chick', 'helmet_pigeon', 'pietro_pigeon',
+               'bike_dog', 'sneaker_hen', 'gta_bean', 'masha_man',
+               'rock_patrick', 'bottle_patrick']
         && request.resource.data.score is int
         && request.resource.data.score >= 0
         && request.resource.data.score < 10000000
