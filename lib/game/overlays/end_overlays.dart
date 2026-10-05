@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../../screens/game_screen.dart';
@@ -129,57 +131,132 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay> {
   }
 }
 
-class GameOverOverlay extends StatelessWidget {
+class GameOverOverlay extends StatefulWidget {
   const GameOverOverlay({super.key, required this.game});
 
   final MemesGame game;
 
   @override
+  State<GameOverOverlay> createState() => _GameOverOverlayState();
+}
+
+class _GameOverOverlayState extends State<GameOverOverlay>
+    with SingleTickerProviderStateMixin {
+  /// "Press F to pay respects": every press rains a few Fs.
+  final List<(double, double, double)> _fs = [];
+  int _respects = 0;
+  late final _ticker = AnimationController(
+    vsync: this,
+    duration: const Duration(days: 1),
+  )..forward();
+  final _rnd = Random();
+
+  double get _now =>
+      _ticker.lastElapsedDuration?.inMilliseconds.toDouble() ?? 0;
+
+  void _payRespects() {
+    setState(() {
+      _respects++;
+      for (var i = 0; i < 4; i++) {
+        _fs.add((_rnd.nextDouble(), _now, 14 + _rnd.nextDouble() * 22));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return _Panel(
+    final game = widget.game;
+    return Stack(
       children: [
-        Opacity(
-          opacity: .6,
-          child: Image.asset(
-            game.character.portraitAsset,
-            height: 96,
-            filterQuality: FilterQuality.none,
-          ),
-        ),
-        const SizedBox(height: 6),
-        const PixelText('Oh no!', size: 36, color: Color(0xFFFF6F8A)),
-        PixelText(
-          '${game.character.name} è stato ratioato',
-          size: 14,
-          color: kPlum,
-          outline: false,
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 8,
-          alignment: WrapAlignment.center,
+        _Panel(
           children: [
-            PixelButton(
-              label: 'Riprova',
-              icon: 'replay',
-              color: PixelColor.pink,
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (_) => GameScreen(
-                    character: game.character,
-                    levelIndex: game.levelIndex,
-                  ),
-                ),
+            Opacity(
+              opacity: .6,
+              child: Image.asset(
+                game.character.portraitAsset,
+                height: 90,
+                filterQuality: FilterQuality.none,
               ),
             ),
-            PixelButton(
-              icon: 'home',
-              color: PixelColor.grey,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              onPressed: () => Navigator.of(context).pop(),
+            const SizedBox(height: 6),
+            const PixelText('Oh no!', size: 36, color: Color(0xFFFF6F8A)),
+            PixelText(
+              '${game.character.name} è stato ratioato',
+              size: 14,
+              color: kPlum,
+              outline: false,
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                PixelButton(
+                  label: 'Riprova',
+                  icon: 'replay',
+                  color: PixelColor.pink,
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => GameScreen(
+                        character: game.character,
+                        levelIndex: game.levelIndex,
+                      ),
+                    ),
+                  ),
+                ),
+                PixelButton(
+                  label: 'F',
+                  color: PixelColor.blue,
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  onPressed: _payRespects,
+                ),
+                PixelButton(
+                  icon: 'home',
+                  color: PixelColor.grey,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            PixelText(
+              _respects == 0
+                  ? 'Premi F per rendere omaggio'
+                  : 'Omaggi resi: $_respects',
+              size: 11,
+              color: const Color(0xFF9A8FB0),
+              outline: false,
             ),
           ],
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: AnimatedBuilder(
+              animation: _ticker,
+              builder: (context, _) {
+                final h = MediaQuery.sizeOf(context).height;
+                final w = MediaQuery.sizeOf(context).width;
+                return Stack(
+                  children: [
+                    for (final (fx, t0, size) in _fs)
+                      if ((_now - t0) / 1000 * 220 < h + 40)
+                        Positioned(
+                          left: fx * (w - 30),
+                          top: -40 + (_now - t0) / 1000 * 220,
+                          child: PixelText('F', size: size),
+                        ),
+                  ],
+                );
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -243,7 +320,7 @@ class _Stats extends StatelessWidget {
           row(
             'like',
             'Like ${game.likes}/${game.totalLikes}',
-            '${game.likes * 10}',
+            '${game.likeScore}',
           ),
           row('skull', 'Nemici ${game.kills}', '${game.enemyScore}'),
           row('clock', 'Tempo $time', '${game.timeBonus}'),

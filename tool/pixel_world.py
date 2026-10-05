@@ -819,6 +819,8 @@ def write_all(out: str):
     files['enemy_algorithm'] = boss_strip()
     import pixel_details
     files['dust'] = pixel_details.dust()
+    files['powerups'] = pixel_details.powerups()
+    files['sunglasses'] = pixel_details.sunglasses_overlay()
     for theme in THEMES:
         files[f'tiles_{theme}'] = tileset(theme)
         files[f'props_{theme}'] = pixel_details.props_sheet(theme)

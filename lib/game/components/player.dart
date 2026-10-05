@@ -39,7 +39,48 @@ class Player extends PositionComponent
   double get specialProgress =>
       1 - (specialTimer / character.specialCooldown).clamp(0.0, 1.0);
   bool get dashing => _dash > 0;
-  bool get invulnerable => _invulnerable > 0 || dashing;
+  bool get invulnerable => _invulnerable > 0 || dashing || starPower;
+
+  // Power-ups.
+  PowerUpKind? power;
+  double powerTime = 0;
+  bool get starPower => power == PowerUpKind.sunglasses;
+  double get _speedMult => power == PowerUpKind.coffee ? 1.35 : 1;
+  double get _jumpMult => power == PowerUpKind.coffee ? 1.1 : 1;
+  final List<(Vector2, int, bool)> _trail = [];
+
+  // Stomp combos and idle naps.
+  int _combo = 0;
+  double _idleTime = 0;
+  double _zTimer = 0;
+  static const _comboLines = [
+    'Double kill!',
+    'Triple kill!',
+    'MEGA KILL!',
+    'ULTRA KILL!',
+    'M-M-M-MONSTER KILL!',
+  ];
+
+  /// Eye height (from the feet) for the sunglasses, per meme.
+  double get _eyeY => switch (character.id) {
+    'wig_dog' => -36,
+    'stare_cat' => -34,
+    'robber_dog' => -40,
+    _ => -40,
+  };
+
+  void applyPowerUp(PowerUpKind kind) {
+    if (kind == PowerUpKind.pizza) {
+      if (hearts < character.hearts) {
+        hearts++;
+      } else {
+        game.enemyScore += 100;
+      }
+      return;
+    }
+    power = kind;
+    powerTime = kind.seconds;
+  }
 
   static const _accelGround = 1500.0;
   static const _accelAir = 1000.0;
@@ -93,10 +134,21 @@ class Player extends PositionComponent
     _t += dt;
     if (_invulnerable > 0) _invulnerable -= dt;
     if (specialTimer > 0) specialTimer -= dt;
+    if (power != null) {
+      powerTime -= dt;
+      if (powerTime <= 0) power = null;
+    }
+    if (power == PowerUpKind.coffee && _t % 0.06 < dt) {
+      _trail.add((position.clone(), _frame, facingRight));
+    }
+    if (_trail.length > 5 || (power == null && _trail.isNotEmpty)) {
+      _trail.removeAt(0);
+    }
     if (game.finished) {
-      // Victory walk towards the flag.
+      // Victory walk (with happy hops) towards the flag.
       velocity.x = 60;
       facingRight = true;
+      if (onGround) velocity.y = -260;
       applyGravity(dt);
       moveAndCollide(dt);
       return;
@@ -119,7 +171,8 @@ class Player extends PositionComponent
     } else {
       final dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
       if (dir != 0) facingRight = dir > 0;
-      final target = dir * character.runSpeed;
+      final target = dir * character.runSpeed * _speedMult;
+      _napCheck(dir, dt);
       final accel = onGround ? _accelGround : _accelAir;
       final dv = target - velocity.x;
       velocity.x += dv.clamp(-accel * dt, accel * dt);
@@ -133,7 +186,7 @@ class Player extends PositionComponent
       }
       if (input.jumpBuffer > 0) {
         if (_coyote > 0) {
-          _jump(character.jumpSpeed);
+          _jump(character.jumpSpeed * _jumpMult);
           Sound.play('jump', volume: .5);
           input.jumpBuffer = 0;
         } else if (_airJumps > 0) {
@@ -181,6 +234,7 @@ class Player extends PositionComponent
 
   void _juice(double dt) {
     if (onGround && !_wasOnGround) {
+      _combo = 0;
       _squash = 0.78;
       game.world.add(Dust(position: position + Vector2(-8, 0), dx: -18));
       game.world.add(Dust(position: position + Vector2(8, 0), dx: 18));
@@ -201,6 +255,27 @@ class Player extends PositionComponent
     }
   }
 
+  /// After a few seconds without moving, the meme takes a little nap.
+  void _napCheck(int dir, double dt) {
+    final idle = dir == 0 && onGround && game.input.jumpBuffer <= 0;
+    _idleTime = idle ? _idleTime + dt : 0;
+    if (_idleTime > 5) {
+      _zTimer -= dt;
+      if (_zTimer <= 0) {
+        _zTimer = 1.1;
+        game.world.add(
+          FloatingText(
+            position: position + Vector2(facingRight ? 14 : -14, -56),
+            text: _idleTime % 2 < 1 ? 'z' : 'Z',
+            fontSize: 10,
+            color: const Color(0xFFB4C8FF),
+            duration: 1.3,
+          ),
+        );
+      }
+    }
+  }
+
   void _jump(double speed) {
     _squash = 1.18;
     velocity.y = -speed;
@@ -213,7 +288,19 @@ class Player extends PositionComponent
     for (final e in game.enemies.toList()) {
       if (e.dead || !overlaps(e)) continue;
       if (e.frozen) continue;
-      if (dashing) {
+      if (dashing || starPower) {
+        if (starPower && !e.kind.isBoss) {
+          Sound.play('stomp');
+          game.world.add(
+            FloatingText(
+              position: e.mid - Vector2(0, 16),
+              text: 'BONK!',
+              fontSize: 10,
+              color: const Color(0xFFFF82B4),
+              duration: .6,
+            ),
+          );
+        }
         e.hit(heavy: true);
         continue;
       }
@@ -229,6 +316,20 @@ class Player extends PositionComponent
         Sound.haptic();
         _cuttable = false;
         game.world.add(Sparkles(position: e.mid));
+        _combo++;
+        if (_combo >= 2) {
+          final line = _comboLines[min(_combo - 2, _comboLines.length - 1)];
+          game.enemyScore += (_combo - 1) * 20;
+          game.world.add(
+            FloatingText(
+              position: position - Vector2(0, 80),
+              text: line,
+              fontSize: 12 + min(_combo, 6).toDouble(),
+              color: const Color(0xFFFFD86A),
+              duration: 1.2,
+            ),
+          );
+        }
         _airJumps = character.passive == Passive.doubleJump ? 1 : 0;
       } else {
         takeDamage(fromX: e.position.x);
@@ -347,6 +448,23 @@ class Player extends PositionComponent
 
   @override
   void render(Canvas canvas) {
+    // Coffee after-images.
+    for (var i = 0; i < _trail.length; i++) {
+      final (pos, frame, right) = _trail[i];
+      final o = pos - position;
+      _strip.draw(
+        canvas,
+        frame,
+        Offset(o.x - 30, o.y - 58),
+        flip: !right,
+        paint: Paint()
+          ..filterQuality = FilterQuality.none
+          ..colorFilter = ColorFilter.mode(
+            const Color(0xFF8CC8FF).withValues(alpha: 0.12 + i * 0.06),
+            BlendMode.srcIn,
+          ),
+      );
+    }
     if (onGround) {
       canvas.drawOval(
         const Rect.fromLTRB(-14, -3, 14, 3),
@@ -358,21 +476,39 @@ class Player extends PositionComponent
     // Squash & stretch around the feet.
     canvas.save();
     canvas.scale(1 + (1 - _squash) * 0.7, _squash);
+    Paint? paint;
+    if (dashing) {
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.mode(
+          Color(0x66FFFFFF),
+          BlendMode.srcATop,
+        );
+    } else if (starPower) {
+      // Rainbow shimmer.
+      final hue = (_t * 360 * 1.5) % 360;
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = ColorFilter.mode(
+          HSVColor.fromAHSV(0.2, hue, 0.6, 1).toColor(),
+          BlendMode.srcATop,
+        );
+    }
     // Frame is 60x60, feet at y=58, centered at x=30.
     _strip.draw(
       canvas,
       _frame,
       const Offset(-30, -58),
       flip: !facingRight,
-      paint: dashing
-          ? (Paint()
-              ..filterQuality = FilterQuality.none
-              ..colorFilter = const ColorFilter.mode(
-                Color(0x66FFFFFF),
-                BlendMode.srcATop,
-              ))
-          : null,
+      paint: paint,
     );
+    if (starPower) {
+      canvas.drawImage(
+        game.images.fromCache('sprites/sunglasses.png'),
+        Offset(-12 + (facingRight ? 3 : -3), _eyeY),
+        pixelPaint,
+      );
+    }
     canvas.restore();
   }
 }

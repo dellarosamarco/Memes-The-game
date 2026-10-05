@@ -36,6 +36,7 @@ class Spawn {
 /// Legend:
 ///   `#` ground     `B` brick      `=` one-way platform   `^` spikes
 ///   `?` like block `G` boss gate (opens when the boss dies) `S` spring
+///   `!` power-up block
 ///   `o` like       `K` checkpoint `F` finish flag        `P` player start
 ///   `M` moving platform (moves left/right around its spawn)
 ///   `n` normie     `c` cringe     `h` hater   `b` boomer  `A` L'Algoritmo
@@ -68,7 +69,7 @@ class LevelData {
     }
   }
 
-  static const _tiles = '#B=^?GS';
+  static const _tiles = '#B=^?GS!';
 
   /// 0-based position in the campaign.
   final int index;
@@ -111,7 +112,7 @@ class LevelData {
   /// Fully solid tiles. The level's left/right edges act as walls.
   bool isSolid(int c, int r) {
     if (c < 0 || c >= cols) return true;
-    return const {'#', 'B', '?', 'U', 'G', 'S'}.contains(tileAt(c, r));
+    return const {'#', 'B', '?', 'U', 'G', 'S', '!'}.contains(tileAt(c, r));
   }
 
   bool isOneWay(int c, int r) => tileAt(c, r) == '=';

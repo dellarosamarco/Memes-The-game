@@ -65,6 +65,32 @@ class _TopBar extends StatelessWidget {
               ],
             ),
           ),
+          if (p.power != null) ...[
+            const SizedBox(width: 8),
+            PixelPanel(
+              px: 1.5,
+              padding: const EdgeInsets.fromLTRB(10, 6, 12, 9),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SheetIcon(
+                    asset: 'assets/images/sprites/powerups.png',
+                    index: p.power!.index,
+                    frames: 4,
+                    size: 16,
+                    scale: 1.6,
+                  ),
+                  const SizedBox(width: 6),
+                  PixelText(
+                    '${p.powerTime.ceil()}s',
+                    size: 14,
+                    color: kPlum,
+                    outline: false,
+                  ),
+                ],
+              ),
+            ),
+          ],
           const Spacer(),
           PixelPanel(
             px: 1.5,

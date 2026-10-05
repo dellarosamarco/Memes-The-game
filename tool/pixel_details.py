@@ -14,7 +14,7 @@ from pixel_world import (BLUSH, PLUM, T, THEMES, WHITE, darken, lighten,
 # lib/game/components/items.dart).
 EXTRA_TILES = ['top_l', 'top_r', 'top_lr', 'side_l', 'side_r', 'side_lr',
                'top_v2', 'top_v3', 'dirt_v2', 'liquid0', 'liquid1',
-               'liquid_deep']
+               'liquid_deep', 'power_block']
 
 LIQUIDS = {
     'feed': ((110, 200, 255), 'water'), 'comments': ((190, 130, 240), 'goo'),
@@ -122,6 +122,7 @@ def extra_tiles(theme: str, ground_top: Image.Image,
     tiles['liquid0'] = _liquid(theme, 0, False)
     tiles['liquid1'] = _liquid(theme, 1, False)
     tiles['liquid_deep'] = _liquid(theme, 0, True)
+    tiles['power_block'] = power_block()
     return [tiles[n] for n in EXTRA_TILES]
 
 
@@ -678,3 +679,67 @@ def dust() -> Image.Image:
         cx = f * 8 + 4
         d.ellipse([cx - r, 4 - r, cx + r, 4 + r], fill=(255, 255, 255, 220))
     return sheet
+
+
+def power_block() -> Image.Image:
+    """A rainbow-ish '!' block that gives a power-up."""
+    img = Image.new('RGBA', (T, T))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([0, 0, T - 1, T - 1], 4, fill=(190, 140, 255, 255),
+                        outline=PLUM)
+    for i, c in enumerate([(255, 140, 190), (255, 214, 110), (140, 230, 180),
+                           (140, 200, 255)]):
+        d.line([(3, 3 + i), (T - 4, 3 + i)], fill=c)
+    d.rectangle([10, 8, 13, 15], fill=WHITE)
+    d.rectangle([10, 17, 13, 19], fill=WHITE)
+    d.line([(9, 8), (9, 15)], fill=PLUM)
+    return img
+
+
+def powerups() -> Image.Image:
+    """16x16 items: sunglasses, stonks, pizza, coffee."""
+    sheet = Image.new('RGBA', (16 * 4, 16))
+    # Deal-with-it pixel sunglasses.
+    im = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 5, 15, 6], fill=(30, 30, 40, 255))
+    d.rectangle([1, 6, 6, 10], fill=(30, 30, 40, 255))
+    d.rectangle([9, 6, 14, 10], fill=(30, 30, 40, 255))
+    d.point([(2, 7), (3, 8), (10, 7), (11, 8)], fill=WHITE)
+    sheet.alpha_composite(outline(im), (0, 0))
+    # Stonks: green arrow over a mini chart.
+    im = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 2, 14, 13], fill=(240, 250, 255, 255))
+    d.line([(2, 12), (6, 8), (9, 10), (13, 4)], fill=(60, 200, 110, 255), width=2)
+    d.polygon([(10, 3), (14, 3), (14, 7)], fill=(60, 200, 110, 255))
+    sheet.alpha_composite(outline(im), (16, 0))
+    # Pizza slice.
+    im = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(im)
+    d.polygon([(2, 3), (14, 3), (8, 14)], fill=(255, 214, 110, 255))
+    d.rectangle([2, 2, 14, 4], fill=(220, 150, 80, 255))
+    for x, y in ((6, 6), (10, 6), (8, 9)):
+        d.ellipse([x - 1, y - 1, x + 1, y + 1], fill=(230, 80, 90, 255))
+    sheet.alpha_composite(outline(im), (32, 0))
+    # Coffee cup with steam.
+    im = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([3, 6, 11, 14], 2, fill=WHITE)
+    d.rectangle([4, 7, 10, 8], fill=(150, 90, 60, 255))
+    d.arc([10, 8, 14, 12], 270, 90, fill=WHITE, width=2)
+    d.point([(5, 3), (6, 2), (8, 4), (9, 3)], fill=(220, 220, 230, 255))
+    d.point([(6, 11), (8, 11)], fill=PLUM)
+    sheet.alpha_composite(outline(im), (48, 0))
+    return sheet
+
+
+def sunglasses_overlay() -> Image.Image:
+    """Bigger glasses drawn on the character's face (24x8)."""
+    im = Image.new('RGBA', (24, 8))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 23, 1], fill=(20, 20, 28, 255))
+    d.rectangle([1, 1, 10, 6], fill=(20, 20, 28, 255))
+    d.rectangle([13, 1, 22, 6], fill=(20, 20, 28, 255))
+    d.point([(3, 2), (4, 3), (15, 2), (16, 3)], fill=WHITE)
+    return im

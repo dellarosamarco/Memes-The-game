@@ -43,6 +43,20 @@ e 500 i livelli.
 Stelle: 1 per finire il livello, 2 con metà dei like, 3 con il 90%.
 Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
 
+## Elementi divertenti
+
+- **Power-up** dai blocchi arcobaleno `!`:
+  - occhiali **Deal With It** (invincibile per 8 s, i nemici volano via con un "BONK!");
+  - **Stonks** (punti doppi per 12 s);
+  - **Pizza** (+1 cuore);
+  - **Caffè** (più veloce e salti più alti, con scia).
+- **Combo**: schiaccia più nemici senza toccare terra per "Double kill!", "Triple kill!"...
+  fino a "M-M-M-MONSTER KILL!" (con punti bonus).
+- I nemici **parlano**: "Buongiornissimo! Kaffè?", "L + ratio", "uwu", "Ma è un meme?"...
+- Se resti fermo troppo a lungo il tuo meme **si addormenta** (zZz).
+- Al traguardo il personaggio **saltella di gioia**.
+- Al game over puoi **premere F per rendere omaggio**.
+
 ## Comandi
 
 - **Mobile** (orizzontale): frecce a sinistra, salto e mossa speciale a destra.

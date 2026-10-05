@@ -71,6 +71,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   // Run state.
   double elapsed = 0;
   int likes = 0;
+  int likeScore = 0;
   int kills = 0;
   int enemyScore = 0;
   bool finished = false;
@@ -93,9 +94,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   late final int totalLikes;
   int get timeBonus => max(0, level.parTime - elapsed.floor()) * 5;
   int get score =>
-      likes * 10 +
-      enemyScore +
-      (finished ? timeBonus + player.hearts * 100 : 0);
+      likeScore + enemyScore + (finished ? timeBonus + player.hearts * 100 : 0);
 
   /// 1 star for finishing, 2 with half the likes, 3 with 90% of them.
   int get stars {
@@ -118,6 +117,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       'sprites/props_${level.theme.name}.png',
       'sprites/bg_${level.theme.name}_mid.png',
       'sprites/dust.png',
+      'sprites/powerups.png',
+      'sprites/sunglasses.png',
       'sprites/sparkle.png',
       'sprites/bg_${level.theme.name}_far.png',
       'sprites/bg_${level.theme.name}_clouds.png',
@@ -256,12 +257,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void collectLike(Like like) {
     likes++;
+    likeScore += 10 * multiplier;
     Sound.play('like', volume: .45);
     world.add(Sparkles(position: like.position.clone()));
     world.add(
       FloatingText(
         position: like.position - Vector2(0, 10),
-        text: '+10',
+        text: '+${10 * multiplier}',
         fontSize: 8,
         color: const Color(0xFFFF82B4),
         duration: 0.6,
@@ -275,7 +277,21 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   /// The player's head hit a solid tile from below.
   void bumpBlock(int col, int row) {
-    if (level.tileAt(col, row) != '?') return;
+    final t = level.tileAt(col, row);
+    if (t == '!') {
+      Sound.play('block');
+      Sound.play('special', volume: .4);
+      level.setTile(col, row, 'U');
+      final kinds = PowerUpKind.values;
+      world.add(
+        PowerUpItem(
+          position: Vector2((col + .5) * kTile, row * kTile - 2),
+          kind: kinds[(col * 31 + row * 17 + level.index) % kinds.length],
+        ),
+      );
+      return;
+    }
+    if (t != '?') return;
     Sound.play('block');
     level.setTile(col, row, 'U');
     world.add(
@@ -285,6 +301,25 @@ class MemesGame extends FlameGame with KeyboardEvents {
       ),
     );
   }
+
+  void collectPowerUp(PowerUpItem item) {
+    Sound.play('checkpoint');
+    Sound.haptic();
+    world.add(Confetti(position: item.position.clone(), count: 24));
+    world.add(
+      FloatingText(
+        position: player.position - Vector2(0, 74),
+        text: item.kind.shout,
+        fontSize: 14,
+        color: const Color(0xFFFFD86A),
+        duration: 1.4,
+      ),
+    );
+    player.applyPowerUp(item.kind);
+  }
+
+  /// Points multiplier while the Stonks power-up is active.
+  int get multiplier => player.power == PowerUpKind.stonks ? 2 : 1;
 
   void reachCheckpoint(Checkpoint cp) {
     _checkpoint = cp.position.clone();
@@ -297,11 +332,11 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void onEnemyKilled(Enemy e) {
     kills++;
-    enemyScore += e.kind.score;
+    enemyScore += e.kind.score * multiplier;
     world.add(
       FloatingText(
         position: e.position - Vector2(0, 34),
-        text: '+${e.kind.score}',
+        text: '+${e.kind.score * multiplier}',
         fontSize: 9,
         color: const Color(0xFFFFD86A),
         duration: 0.7,

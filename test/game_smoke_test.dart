@@ -1,6 +1,8 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:memes_the_game/game/components/enemy.dart';
+import 'package:memes_the_game/game/components/items.dart';
 import 'package:memes_the_game/game/level_gen.dart';
 import 'package:memes_the_game/game/memes_game.dart';
 import 'package:memes_the_game/models/meme_character.dart';
@@ -89,5 +91,34 @@ void main() {
     expect([20, 60, 333, 499].any((i) => tile(i, 'S')), isTrue);
     expect([20, 60, 333, 499].any((i) => has(i, 'M')), isTrue);
     expect(levelAt(kLevelsPerWorld - 1).hasBoss, isTrue);
+  });
+
+  testWidgets('power-ups: sunglasses, pizza and stonks', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.wigDog);
+    final p = game.player;
+
+    // Deal with it: enemies die on contact and you take no damage.
+    p.applyPowerUp(PowerUpKind.sunglasses);
+    final e = Enemy(kind: EnemyKind.normie, position: p.position.clone());
+    game.world.add(e);
+    for (var i = 0; i < 10; i++) {
+      game.update(1 / 60);
+      // Let the enemy's async onLoad complete.
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    }
+    expect(e.dead, isTrue);
+    expect(p.hearts, MemeCharacter.wigDog.hearts);
+
+    // Pizza heals one heart.
+    p.hearts = 1;
+    p.applyPowerUp(PowerUpKind.pizza);
+    expect(p.hearts, 2);
+
+    // Stonks doubles the points of a like.
+    p.applyPowerUp(PowerUpKind.stonks);
+    final before = game.likeScore;
+    game.collectLike(Like(position: p.position.clone()));
+    expect(game.likeScore - before, 20);
+    expect(game.multiplier, 2);
   });
 }

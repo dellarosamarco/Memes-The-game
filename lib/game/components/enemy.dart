@@ -61,6 +61,31 @@ class Enemy extends PositionComponent
   double frozenTime = 0;
   double scaredTime = 0;
   double _actionTimer = 1.5;
+  double _talk = 3;
+
+  static const _lines = {
+    EnemyKind.normie: [
+      'Ma è un meme?',
+      'LOL',
+      'Non ho capito',
+      'Mi piace il pane',
+      'Che ridere.',
+    ],
+    EnemyKind.cringe: ['uwu', 'Rawr XD', '*imbarazzo*', '...ok', 'Sono quirky'],
+    EnemyKind.hater: ['RATIO', 'Cringe.', 'L + ratio', 'Unfollow!', 'Mid.'],
+    EnemyKind.boomer: [
+      'Buongiornissimo!',
+      'Kaffè?',
+      'Ai miei tempi...',
+      'Inoltro su WhatsApp',
+      'Cos\'è un meme?',
+    ],
+    EnemyKind.algorithm: [
+      'Engagement!',
+      'Shadowban!',
+      'Contenuto sponsorizzato',
+    ],
+  };
   bool dead = false;
 
   bool get frozen => frozenTime > 0;
@@ -74,6 +99,7 @@ class Enemy extends PositionComponent
     final fw = kind.isBoss ? 56.0 : 28.0;
     _strip = Strip(img, fw, fw);
     _actionTimer = 1 + _rnd.nextDouble() * 2;
+    _talk = 1.5 + _rnd.nextDouble() * 6;
   }
 
   @override
@@ -151,6 +177,15 @@ class Enemy extends PositionComponent
     if (!near && !kind.isBoss) {
       // Sleep off-screen: no need to simulate the whole level.
       return;
+    }
+
+    _talk -= dt;
+    if (_talk <= 0 && dx.abs() < 200 && !scared) {
+      _talk = 6 + _rnd.nextDouble() * 8;
+      final lines = _lines[kind]!;
+      game.world.add(
+        SpeechBubble(speaker: this, text: lines[_rnd.nextInt(lines.length)]),
+      );
     }
 
     var speed = kind.speed;
@@ -304,6 +339,68 @@ class FlatEnemy extends PositionComponent {
         ..filterQuality = FilterQuality.none
         ..color = Color.fromRGBO(255, 255, 255, 1 - (_t / _d) * .5),
     );
+    canvas.restore();
+  }
+}
+
+/// A little pixel speech bubble above an enemy.
+class SpeechBubble extends PositionComponent {
+  SpeechBubble({required this.speaker, required this.text})
+    : super(priority: 38);
+
+  final Enemy speaker;
+  final String text;
+  double _t = 0;
+  static const _d = 2.0;
+  late final TextPainter _tp = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: const TextStyle(
+        fontFamily: 'Pixelify',
+        fontSize: 7,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF3A2440),
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    if (!speaker.dead) {
+      position.setFrom(speaker.position - Vector2(0, speaker.bodyHeight + 12));
+    }
+    if (_t >= _d) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final pop = _t < .12 ? _t / .12 : (_t > _d - .15 ? (_d - _t) / .15 : 1.0);
+    canvas.save();
+    canvas.scale(pop.clamp(0.01, 1));
+    final w = _tp.width + 8;
+    final h = _tp.height + 4;
+    final r = RRect.fromRectAndRadius(
+      Rect.fromLTWH(-w / 2, -h, w, h),
+      const Radius.circular(3),
+    );
+    final tail = Path()
+      ..moveTo(-3, -0.5)
+      ..lineTo(3, -0.5)
+      ..lineTo(-1, 4)
+      ..close();
+    final fill = Paint()..color = Colors.white;
+    final line = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = const Color(0xFF3A2440);
+    canvas.drawRRect(r, fill);
+    canvas.drawRRect(r, line);
+    canvas.drawPath(tail, fill);
+    canvas.drawPath(tail, line);
+    canvas.drawRect(const Rect.fromLTWH(-2.5, -1.5, 5, 1.5), fill);
+    _tp.paint(canvas, Offset(-_tp.width / 2, -h + 2));
     canvas.restore();
   }
 }

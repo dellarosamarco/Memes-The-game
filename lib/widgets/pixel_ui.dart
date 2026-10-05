@@ -713,3 +713,46 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
     ),
   ),
 );
+
+/// One frame of a horizontal sprite sheet, as a widget.
+class SheetIcon extends StatelessWidget {
+  const SheetIcon({
+    super.key,
+    required this.asset,
+    required this.index,
+    required this.frames,
+    required this.size,
+    this.scale = 2,
+  });
+
+  final String asset;
+  final int index;
+  final int frames;
+  final double size;
+  final double scale;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = size * scale;
+    return SizedBox(
+      width: s,
+      height: s,
+      child: ClipRect(
+        child: OverflowBox(
+          maxWidth: s * frames,
+          alignment: Alignment.topLeft,
+          child: Transform.translate(
+            offset: Offset(-index * s, 0),
+            child: Image.asset(
+              asset,
+              width: s * frames,
+              height: s,
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.none,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -144,6 +144,7 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
   static const _liquid0 = 19;
   static const _liquid1 = 20;
   static const _liquidDeep = 21;
+  static const _powerBlock = 22;
 
   @override
   Future<void> onLoad() async {
@@ -210,6 +211,7 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
             '?' => _block,
             'U' => _blockUsed,
             'G' => _gate,
+            '!' => _powerBlock,
             'S' =>
               game.elapsed - (game.springTimes[r * 10000 + c] ?? -9) < 0.25
                   ? _springUp
@@ -389,5 +391,94 @@ class Sparkles extends PositionComponent with HasGameReference<MemesGame> {
       final o = d * (4 + p * 12);
       _strip.draw(canvas, frame, o.translate(-4, -4));
     }
+  }
+}
+
+enum PowerUpKind {
+  sunglasses('DEAL WITH IT', 8),
+  stonks('STONKS', 12),
+  pizza('GNAM!', 0),
+  coffee('CAFFEINA!', 8);
+
+  const PowerUpKind(this.shout, this.seconds);
+  final String shout;
+  final double seconds;
+}
+
+/// A power-up that pops out of a '!' block and floats there, waiting.
+class PowerUpItem extends PositionComponent with HasGameReference<MemesGame> {
+  PowerUpItem({required super.position, required this.kind})
+    : super(priority: 12);
+
+  final PowerUpKind kind;
+  late final Strip _strip;
+  double _t = 0;
+  late final double _restY = position.y - kTile;
+  double _vx = 0;
+  double _vy = 0;
+  bool _taken = false;
+
+  @override
+  Future<void> onLoad() async {
+    _strip = Strip(game.images.fromCache('sprites/powerups.png'), 16, 16);
+  }
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    final level = game.level;
+    if (_t < 0.4) {
+      // Rise out of the block, then head towards the player.
+      position.y = max(_restY, position.y - 70 * dt);
+      _vx = (game.player.position.x < position.x ? -1 : 1) * 32;
+    } else {
+      // Then fall and slide along the ground, bouncing off walls.
+      _vy = min(_vy + 600 * dt, 260);
+      final nx = position.x + _vx * dt;
+      final row = ((position.y - 4) / kTile).floor();
+      if (level.isSolid((nx / kTile + (_vx > 0 ? .3 : -.3)).floor(), row)) {
+        _vx = -_vx;
+      } else {
+        position.x = nx;
+      }
+      final ny = position.y + _vy * dt;
+      final c = (position.x / kTile).floor();
+      final r = ((ny + 8) / kTile).floor();
+      if (_vy > 0 && level.isStandable(c, r)) {
+        position.y = r * kTile - 8;
+        _vy = 0;
+        // Hop down from blocks, but never wander off a ledge into a pit.
+        final ahead = ((position.x + (_vx > 0 ? 10 : -10)) / kTile).floor();
+        var floor = false;
+        for (var rr = r; rr < level.rows && !floor; rr++) {
+          floor = level.isStandable(ahead, rr);
+        }
+        if (!floor) _vx = -_vx;
+      } else {
+        position.y = ny;
+      }
+      if (position.y > level.height + 60) removeFromParent();
+    }
+    final p = game.player;
+    if (!_taken &&
+        (p.position.x - position.x).abs() < p.bodyWidth / 2 + 8 &&
+        position.y > p.top - 8 &&
+        position.y < p.bottom + 8) {
+      _taken = true;
+      game.collectPowerUp(this);
+      removeFromParent();
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // Glow + gentle bob.
+    final bob = sin(_t * 4) * 2;
+    canvas.drawCircle(
+      Offset(0, bob),
+      11 + sin(_t * 6),
+      Paint()..color = const Color(0x55FFFFFF),
+    );
+    _strip.draw(canvas, kind.index, Offset(-8, -8 + bob));
   }
 }

@@ -240,8 +240,9 @@ class LevelGenerator {
     _flat(6, likes: false);
     final row = _h - 4;
     if (row < 1) return;
+    final power = index >= 1 && rnd.chance(.3) ? start + rnd.range(1, 4) : -1;
     for (var c = start + 1; c < start + 5; c++) {
-      _put(c, row, rnd.chance(.45) ? '?' : 'B');
+      _put(c, row, c == power ? '!' : (rnd.chance(.45) ? '?' : 'B'));
     }
     if (rnd.chance(.5)) {
       for (var c = start + 1; c < start + 5; c++) {
