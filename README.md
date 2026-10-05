@@ -17,6 +17,14 @@ vengono aggiunte solo le zampette animate.
 | **Stare Cat**: il gatto che ti fissa | *Riflessi Felini*: doppio salto | *Il Fissatore*: congela i nemici, che diventano piattaforme |
 | **Robber Chihuahua**: passamontagna e coltello | *Fuga Rapida*: il più veloce | *La Rapina*: scatto invulnerabile che trafigge i nemici |
 | **Smile Dog**: il cane che sorride (troppo) | *Pelle Dura*: 4 cuori, schiaccia i Boomer al primo colpo | *Sorriso Maledetto*: i nemici scappano terrorizzati e muoiono al contatto |
+| **Puffer Pinscher**: treccine, piumino e scarpe di vernice | *Piumino Imbottito*: il primo colpo del livello lo assorbe il piumino | *Frullatore di Treccine*: giravolta che frusta i nemici vicini |
+| **Lady Terrier**: caschetto, perle e maglioncino | *Like di Lusso*: ogni like vale doppio | *Borsettata*: colpo di borsetta a chi sta davanti |
+| **Ka-Chow Bassotto**: completo nero e crocs di Saetta McQueen | *Crocs Corazzate*: immune alle spine | *Ka-Chow!*: turbo di 3 secondi che travolge i nemici |
+| **Bassotto Criceto**: le guance piene | *Guance Capienti*: risucchia i like vicini | *Gonfia Guance*: vola in alto come un palloncino |
+| **Bebè Pupazzo**: bambolotto col pupazzo di neve | *Pancino Gommoso*: rimbalzi altissimi sui nemici | *Ninna Nanna*: +1 cuore e nemici vicini addormentati |
+| **Scimmietta Rosa**: cappellino rosa e peluche | *Agilità da Scimmia*: salto triplo | *Lancio del Peluche*: il peluche fa da boomerang |
+| **Baby Orco**: caschetto a scodella e cravatta | *Strati di Cipolla*: +1 cuore a ogni checkpoint | *Esci dalla mia Palude!*: schianto a terra con onda d'urto |
+| **Orecchione**: orecchie e denti umani | *Orecchie a Molla*: salta più in alto di tutti | *Dentiera Smagliante*: un sorriso che stende tutti i nemici sullo schermo |
 
 ## 500 livelli, 10 mondi
 

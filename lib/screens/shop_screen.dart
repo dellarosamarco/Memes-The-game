@@ -81,19 +81,21 @@ class _ShopScreenState extends State<ShopScreen> {
                 Expanded(
                   child: Row(
                     children: [
-                      // The four memes trying on the hat.
+                      // All the memes trying on the hat.
                       SizedBox(
                         width: 300,
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            for (final c in MemeCharacter.all)
-                              CharacterSpriteView(
-                                character: c,
-                                scale: 2.2,
-                                hat: _preview,
-                              ),
-                          ],
+                        child: SingleChildScrollView(
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: [
+                              for (final c in MemeCharacter.all)
+                                CharacterSpriteView(
+                                  character: c,
+                                  scale: 1.2,
+                                  hat: _preview,
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(

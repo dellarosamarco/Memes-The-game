@@ -109,24 +109,27 @@ class _HomeScreenState extends State<HomeScreen>
         child: SafeArea(
           child: Stack(
             children: [
-              // The four memes hanging out on the grass.
+              // All the memes hanging out on the grass.
               Positioned(
-                left: 0,
-                right: 0,
+                left: 64,
+                right: 140,
                 bottom: 60,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < MemeCharacter.all.length; i++)
-                      _Hopper(
-                        anim: _bob,
-                        phase: i * 0.25,
-                        child: CharacterSpriteView(
-                          character: MemeCharacter.all[i],
-                          scale: 1.6,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < MemeCharacter.all.length; i++)
+                        _Hopper(
+                          anim: _bob,
+                          phase: i * 0.25,
+                          child: CharacterSpriteView(
+                            character: MemeCharacter.all[i],
+                            scale: 1.6,
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Align(

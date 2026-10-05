@@ -13,7 +13,9 @@ service cloud.firestore {
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 16
         && request.resource.data.levelId.matches('L[0-9]{3}')
-        && request.resource.data.characterId in ['wig_dog', 'stare_cat', 'robber_dog', 'smile_dog']
+        && request.resource.data.characterId in ['wig_dog', 'stare_cat', 'robber_dog', 'smile_dog',
+               'pigtail_dog', 'pearl_terrier', 'suit_dachshund', 'cheeks_dachshund',
+               'snow_baby', 'pink_monkey', 'shrek_kid', 'ears_dog']
         && request.resource.data.score is int
         && request.resource.data.score >= 0
         && request.resource.data.score < 10000000

@@ -273,13 +273,15 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void collectLike(Like like) {
     likes++;
-    likeScore += 10 * multiplier;
+    final value =
+        10 * multiplier * (character.passive == Passive.jewels ? 2 : 1);
+    likeScore += value;
     Sound.play('like', volume: .45);
     world.add(Sparkles(position: like.position.clone()));
     world.add(
       FloatingText(
         position: like.position - Vector2(0, 10),
-        text: '+${10 * multiplier}',
+        text: '+$value',
         fontSize: 8,
         color: const Color(0xFFFF82B4),
         duration: 0.6,
@@ -341,6 +343,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void reachCheckpoint(Checkpoint cp) {
     _checkpoint = cp.position.clone();
+    player.onCheckpoint();
     Sound.play('checkpoint');
     world.add(Confetti(position: cp.position - Vector2(0, 30), count: 30));
     world.add(

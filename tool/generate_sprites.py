@@ -59,6 +59,33 @@ FIGURES = {
     'smile_dog': ((0, 0, 394, 620), 50, 0.58,
                   dict(colors=20, sat=1.3, contrast=1.3, levels=(10, 255),
                        warm=True, gamma=1.6)),
+    'pigtail_dog': ((160, 7, 500, 556), 50, 1.0,
+                    dict(colors=18, sat=1.2, contrast=1.15, levels=(0, 250),
+                         legs=dict(color=(58, 40, 30), socks=(244, 244, 240),
+                                   shoes=(22, 20, 26)))),
+    'pearl_terrier': ((0, 0, 538, 660), 50, 0.62,
+                      dict(colors=18, sat=1.15, contrast=1.15,
+                           levels=(0, 255),
+                           legs=dict(color=(236, 230, 226)))),
+    'suit_dachshund': ((95, 20, 645, 452), 42, 1.0,
+                       dict(colors=18, sat=1.15, contrast=1.15,
+                            levels=(0, 245),
+                            legs=dict(color=(26, 26, 32),
+                                      shoes=(214, 40, 34), crocs=True))),
+    'cheeks_dachshund': ((60, 30, 610, 610), 48, 0.6,
+                         dict(colors=18, sat=1.15, contrast=1.15,
+                              levels=(0, 245))),
+    'snow_baby': ((0, 0, 341, 410), 48, 1.0,
+                  dict(colors=20, sat=1.25, contrast=1.3, levels=(0, 255),
+                       legs=dict(color=(196, 170, 214)))),
+    'pink_monkey': ((125, 40, 592, 542), 46, 0.75,
+                    dict(colors=20, sat=1.2, contrast=1.2, levels=(0, 230),
+                         gamma=0.75, legs=dict(color=(70, 46, 36)))),
+    'shrek_kid': ((0, 0, 690, 678), 48, 1.0,
+                  dict(colors=18, sat=1.25, contrast=1.15, levels=(0, 255),
+                       legs=dict(color=(34, 40, 92), shoes=(22, 20, 26)))),
+    'ears_dog': ((20, 0, 640, 560), 46, 0.62,
+                 dict(colors=20, sat=1.2, contrast=1.2, levels=(0, 250))),
 }
 
 
@@ -86,6 +113,12 @@ def pixel_figure(name: str, height: int | None = None) -> Image.Image:
     rgb = ImageEnhance.Color(rgb).enhance(t['sat'])
     rgb = ImageEnhance.Contrast(rgb).enhance(t['contrast'])
     rgb = rgb.filter(ImageFilter.UnsharpMask(2, 80, 2))
+    if 'whites' in t:
+        # Tiny bright details (teeth, pearls) vanish when downscaled, so
+        # they are fattened up first.
+        thr, k = t['whites']
+        w = rgb.convert('L').point(lambda v: 255 if v > thr else 0)
+        rgb.paste((250, 248, 244), mask=w.filter(ImageFilter.MaxFilter(k)))
     small = rgb.resize((width, h), Image.BOX)
     mask = np.array(a.resize((width, h), Image.BOX)) > 110
     yy, xx = np.mgrid[0:h, 0:width]
@@ -120,10 +153,41 @@ def knife(d: ImageDraw.ImageDraw, x: int, y: int):
     d.line([(x + 2, y - 2), (x + 3, y - 9)], fill=(255, 255, 255, 255))
 
 
+def pearls(d: ImageDraw.ImageDraw, cx: int, y: int, half: int):
+    """The terrier's pearl necklace (a U of shiny beads)."""
+    for dx in range(-half, half + 1, 3):
+        dy = round(5 * (1 - (dx / half) ** 2))
+        x = cx + dx - 1
+        d.rectangle([x, y + dy, x + 1, y + dy + 1], fill=(176, 170, 186, 255))
+        d.point([(x, y + dy)], fill=(255, 255, 255, 255))
+
+
+def grin(d: ImageDraw.ImageDraw, x0: int, x1: int, y: int):
+    """The human-teeth grin (teeth are too small to survive the downscale)."""
+    mid = (x0 + x1) / 2
+    for x in range(x0, x1 + 1):
+        lift = 1 if abs(x - mid) > (x1 - x0) * 0.36 else 0
+        top = y - lift
+        d.point([(x, top - 1)], fill=(60, 26, 30, 255))
+        tooth = (250, 250, 244, 255) if (x - x0) % 3 else (206, 204, 200, 255)
+        d.rectangle([x, top, x, top + 2], fill=tooth)
+        d.point([(x, top + 3)], fill=(206, 96, 112, 255))
+
+
+def accessories(name, d, x, y, w, h):
+    """Redrawn signature details, relative to the figure's box."""
+    if name == 'ears_dog':
+        grin(d, x + round(w * 0.37), x + round(w * 0.62), y + round(h * 0.74))
+    if name == 'pearl_terrier':
+        pearls(d, x + w // 2, y + round(h * 0.66), round(w * 0.36))
+
+
 def character_strip(name: str) -> Image.Image:
     fig = pixel_figure(name)
-    col = leg_color(fig)
-    dark = shade(col, 0.75)
+    legs = FIGURES[name][3].get('legs', {})
+    col = legs['color'] + (255,) if 'color' in legs else leg_color(fig)
+    socks = legs['socks'] + (255,) if 'socks' in legs else None
+    shoes = legs['shoes'] + (255,) if 'shoes' in legs else shade(col, 0.75)
     strip = Image.new('RGBA', (FW * len(FRAMES), FH))
     for i, frame in enumerate(FRAMES):
         im = Image.new('RGBA', (FW, FH))
@@ -137,8 +201,18 @@ def character_strip(name: str) -> Image.Image:
             x = lx + shift[k]
             bottom = FH - 2 - lift[k]
             d.rectangle([x, fy + fig.height - 6, x + 4, bottom], fill=col)
-            d.rectangle([x, bottom - 1, x + 4, bottom], fill=dark)
+            if socks:
+                d.rectangle([x, bottom - 3, x + 4, bottom - 2], fill=socks)
+            if legs.get('crocs'):  # Lightning McQueen crocs
+                d.rectangle([x - 1, bottom - 2, x + 5, bottom], fill=shoes)
+                d.point([(x + 4, bottom - 2)], fill=(255, 255, 255, 255))
+                d.point([(x, bottom - 1)], fill=(255, 214, 64, 255))
+            elif 'shoes' in legs:  # real shoes: a bit wider, toe forward
+                d.rectangle([x, bottom - 1, x + 5, bottom], fill=shoes)
+            else:
+                d.rectangle([x, bottom - 1, x + 4, bottom], fill=shoes)
         im.alpha_composite(fig, (fx, fy))
+        accessories(name, ImageDraw.Draw(im), fx, fy, fig.width, fig.height)
         if name == 'robber_dog':
             knife(ImageDraw.Draw(im), fx + fig.width - 9, fy + fig.height - 12)
         strip.alpha_composite(outline(im), (i * FW, 0))
@@ -147,7 +221,12 @@ def character_strip(name: str) -> Image.Image:
 
 def portrait(name: str) -> Image.Image:
     """Bigger pixel portrait for menus (same technique, more pixels)."""
-    return outline(pixel_figure(name, height=FIGURES[name][1] * 2))
+    big = pixel_figure(name, height=FIGURES[name][1] * 2)
+    small = pixel_figure(name)
+    layer = Image.new('RGBA', small.size)
+    accessories(name, ImageDraw.Draw(layer), 0, 0, small.width, small.height)
+    big.alpha_composite(layer.resize(big.size, Image.NEAREST))
+    return outline(big)
 
 
 def main():

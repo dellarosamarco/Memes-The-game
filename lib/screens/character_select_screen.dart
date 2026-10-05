@@ -74,16 +74,24 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    for (var i = 0; i < chars.length; i++)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: _Thumb(
-                          character: chars[i],
-                          selected: i == _index,
-                          onTap: () => setState(() => _index = i),
+                    Expanded(
+                      child: SizedBox(
+                        height: 66,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: chars.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 6),
+                          itemBuilder: (_, i) => Center(
+                            child: _Thumb(
+                              character: chars[i],
+                              selected: i == _index,
+                              onTap: () => setState(() => _index = i),
+                            ),
+                          ),
                         ),
                       ),
-                    const Spacer(),
+                    ),
+                    const SizedBox(width: 8),
                     PixelButton(
                       label: 'Scegli ${c.name.split(' ').first}',
                       icon: 'play',

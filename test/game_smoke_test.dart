@@ -84,6 +84,38 @@ void main() {
     });
   }
 
+  // Every newer meme plays a couple of levels, spamming its special.
+  final newer = MemeCharacter.all.skip(4).toList();
+  for (var i = 0; i < newer.length; i++) {
+    final c = newer[i];
+    final level = [3, 25, 110, 49, 180, 260, 99, 420][i];
+    testWidgets('level $level with ${c.name} and its special', (tester) async {
+      final game = await boot(tester, level, c);
+      await autopilot(tester, game, 20);
+      expect(game.elapsed, greaterThan(0));
+      expect(game.likes, lessThanOrEqualTo(game.totalLikes));
+    });
+  }
+
+  testWidgets('puffer jacket takes the first hit', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.pigtailDog);
+    final p = game.player;
+    p.takeDamage(fromX: p.position.x + 10);
+    expect(p.hearts, MemeCharacter.pigtailDog.hearts);
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    for (var i = 0; i < 120; i++) {
+      game.update(1 / 60);
+    }
+    p.takeDamage(fromX: p.position.x + 10);
+    expect(p.hearts, MemeCharacter.pigtailDog.hearts - 1);
+  });
+
+  testWidgets('lady terrier likes are worth double', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.pearlTerrier);
+    game.collectLike(Like(position: game.player.position.clone()));
+    expect(game.likeScore, 20);
+  });
+
   testWidgets('features appear in the levels used above', (tester) async {
     bool has(int i, String code) =>
         levelAt(i).spawns.any((s) => s.code == code);

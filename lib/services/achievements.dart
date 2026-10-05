@@ -1,3 +1,5 @@
+import '../models/meme_character.dart';
+
 import 'package:flutter/foundation.dart';
 
 import 'local_store.dart';
@@ -29,7 +31,7 @@ class Achievements {
     Trophy('nap', 'Pisolino', 'Lascia dormire il tuo meme.'),
     Trophy('respects', 'F', 'Rendi omaggio 10 volte.'),
     Trophy('shopper', 'Fashion meme', 'Compra un cappellino.'),
-    Trophy('all_memes', 'Collezionista', 'Gioca con tutti e 4 i meme.'),
+    Trophy('all_memes', 'Collezionista', 'Gioca con tutti i meme.'),
     Trophy('world5', 'A metà strada', 'Sblocca il mondo 5.'),
     Trophy('world10', 'Il Server', 'Sblocca il mondo 10.'),
   ];
@@ -58,7 +60,9 @@ class Achievements {
     if (s.stat('stomps') >= 100) unlock('stomp100');
     if (s.stat('likes') >= 1000) unlock('likes1000');
     if (s.stat('respects') >= 10) unlock('respects');
-    if (s.playedWith.length >= 4) unlock('all_memes');
+    if (s.playedWith.length >= MemeCharacter.all.length) {
+      unlock('all_memes');
+    }
     if (s.unlockedLevels > 200) unlock('world5');
     if (s.unlockedLevels > 450) unlock('world10');
   }

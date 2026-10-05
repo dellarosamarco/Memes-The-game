@@ -14,6 +14,7 @@ import '../physics.dart';
 import 'body.dart';
 import 'items.dart';
 import 'effects.dart';
+import 'projectile.dart';
 
 class Player extends PositionComponent
     with HasGameReference<MemesGame>, TileBody {
@@ -37,17 +38,32 @@ class Player extends PositionComponent
   double _dash = 0;
   bool frozenInput = false;
 
+  // Special/passive state of the newer memes.
+  late bool _puffer = character.passive == Passive.puffy;
+  double _spin = 0;
+  double _turbo = 0;
+  double _balloon = 0;
+  bool _slamming = false;
+  bool get turbo => _turbo > 0;
+  int get _maxAirJumps => switch (character.passive) {
+    Passive.doubleJump => 1,
+    Passive.tripleJump => 2,
+    _ => 0,
+  };
+
   bool get specialReady => specialTimer <= 0;
   double get specialProgress =>
       1 - (specialTimer / character.specialCooldown).clamp(0.0, 1.0);
   bool get dashing => _dash > 0;
-  bool get invulnerable => _invulnerable > 0 || dashing || starPower;
+  bool get invulnerable =>
+      _invulnerable > 0 || dashing || starPower || _slamming;
 
   // Power-ups.
   PowerUpKind? power;
   double powerTime = 0;
   bool get starPower => power == PowerUpKind.sunglasses;
-  double get _speedMult => power == PowerUpKind.coffee ? 1.35 : 1;
+  double get _speedMult =>
+      (power == PowerUpKind.coffee ? 1.35 : 1) * (turbo ? 1.7 : 1);
   double get _jumpMult => power == PowerUpKind.coffee ? 1.1 : 1;
   final List<(Vector2, int, bool)> _trail = [];
 
@@ -68,6 +84,14 @@ class Player extends PositionComponent
     'wig_dog' => -36,
     'stare_cat' => -34,
     'robber_dog' => -40,
+    'pigtail_dog' => -40,
+    'pearl_terrier' => -40,
+    'suit_dachshund' => -34,
+    'cheeks_dachshund' => -40,
+    'snow_baby' => -38,
+    'pink_monkey' => -38,
+    'shrek_kid' => -36,
+    'ears_dog' => -36,
     _ => -40,
   };
 
@@ -143,10 +167,13 @@ class Player extends PositionComponent
       powerTime -= dt;
       if (powerTime <= 0) power = null;
     }
-    if (power == PowerUpKind.coffee && _t % 0.06 < dt) {
+    if (_turbo > 0) _turbo -= dt;
+    if (_spin > 0) _spin -= dt;
+    final trailing = power == PowerUpKind.coffee || turbo;
+    if (trailing && _t % 0.06 < dt) {
       _trail.add((position.clone(), _frame, facingRight));
     }
-    if (_trail.length > 5 || (power == null && _trail.isNotEmpty)) {
+    if (_trail.length > 5 || (!trailing && _trail.isNotEmpty)) {
       _trail.removeAt(0);
     }
     if (game.finished) {
@@ -185,7 +212,7 @@ class Player extends PositionComponent
       // Jumping: coyote time + buffered presses + variable height.
       if (onGround) {
         _coyote = 0.1;
-        _airJumps = character.passive == Passive.doubleJump ? 1 : 0;
+        _airJumps = _maxAirJumps;
       } else {
         _coyote -= dt;
       }
@@ -212,6 +239,13 @@ class Player extends PositionComponent
       if (character.passive == Passive.glide && input.jump && velocity.y > 70) {
         velocity.y = 70;
       }
+      // Puffed-up cheeks: floats up like a balloon.
+      if (_balloon > 0) {
+        _balloon -= dt;
+        velocity.y = _balloon > 0 ? -120 : min(velocity.y, 0);
+        _cuttable = false;
+      }
+      if (_slamming) velocity.y = 720;
     }
 
     if (input.specialQueued) {
@@ -220,6 +254,8 @@ class Player extends PositionComponent
     }
 
     moveAndCollide(dt);
+    if (_slamming && onGround) _slamImpact();
+    if (_spin > 0) _spinHits();
     _juice(dt);
     _checkEnemies(prevBottom);
     _checkSpikes();
@@ -294,7 +330,7 @@ class Player extends PositionComponent
     for (final e in game.enemies.toList()) {
       if (e.dead || !overlaps(e)) continue;
       if (e.frozen) continue;
-      if (dashing || starPower) {
+      if (dashing || starPower || turbo || _slamming) {
         if (starPower && !e.kind.isBoss) {
           Sound.play('stomp');
           game.world.add(
@@ -317,7 +353,8 @@ class Player extends PositionComponent
       final stomp = velocity.y > 0 && prevBottom <= e.top + 10;
       if (stomp) {
         e.hit(heavy: character.passive == Passive.tough, stomp: true);
-        velocity.y = game.input.jump ? -460 : -300;
+        final bounce = character.passive == Passive.bouncy ? 1.45 : 1.0;
+        velocity.y = (game.input.jump ? -460 : -300) * bounce;
         Sound.play('stomp');
         Sound.haptic();
         _cuttable = false;
@@ -338,7 +375,7 @@ class Player extends PositionComponent
             ),
           );
         }
-        _airJumps = character.passive == Passive.doubleJump ? 1 : 0;
+        _airJumps = _maxAirJumps;
       } else {
         takeDamage(fromX: e.position.x);
       }
@@ -346,6 +383,8 @@ class Player extends PositionComponent
   }
 
   void _checkSpikes() {
+    // Lightning McQueen crocs: spikes do nothing.
+    if (character.passive == Passive.spikeProof) return;
     final c0 = (left / kTile).floor();
     final c1 = ((right - .01) / kTile).floor();
     final r = ((bottom - 1) / kTile).floor();
@@ -360,6 +399,22 @@ class Player extends PositionComponent
 
   void takeDamage({required double fromX}) {
     if (invulnerable || game.finished || game.isOver) return;
+    if (_puffer) {
+      // The puffer jacket takes the first hit of the level.
+      _puffer = false;
+      _invulnerable = 1.2;
+      velocity.y = -240;
+      Sound.play('block');
+      game.world.add(Confetti(position: position - Vector2(0, 24), count: 16));
+      game.world.add(
+        FloatingText(
+          position: position - Vector2(0, 62),
+          text: 'Piumino KO!',
+          color: const Color(0xFF8CC8FF),
+        ),
+      );
+      return;
+    }
     hearts--;
     game.damageTaken = true;
     Sound.play('hurt');
@@ -385,6 +440,57 @@ class Player extends PositionComponent
     velocity.setZero();
     _invulnerable = 1.5;
     _dash = 0;
+    _balloon = 0;
+    _slamming = false;
+  }
+
+  /// Onion layers: the ogre gets a heart back at every checkpoint.
+  void onCheckpoint() {
+    if (character.passive != Passive.onion || hearts >= character.hearts) {
+      return;
+    }
+    hearts++;
+    game.world.add(
+      FloatingText(
+        position: position - Vector2(0, 66),
+        text: '+1 cuore (cipolla)',
+        fontSize: 10,
+        color: const Color(0xFF8BC34A),
+      ),
+    );
+  }
+
+  void _spinHits() {
+    final center = position - Vector2(0, bodyHeight / 2);
+    for (final e in game.enemies.toList()) {
+      if (!e.dead && !e.kind.isBoss && e.mid.distanceTo(center) < 50) {
+        e.hit(heavy: true);
+      }
+    }
+  }
+
+  void _slamImpact() {
+    _slamming = false;
+    _invulnerable = max(_invulnerable, 0.3);
+    _squash = 0.6;
+    game.shake(0.4);
+    Sound.play('boss_hit', volume: .7);
+    game.world.add(
+      ShockwaveEffect(
+        position: position.clone(),
+        maxRadius: 170,
+        color: const Color(0xFF8BC34A),
+      ),
+    );
+    for (var i = -2; i <= 2; i++) {
+      game.world.add(
+        Dust(position: position + Vector2(i * 12.0, 0), dx: i * 30),
+      );
+    }
+    for (final e in game.enemies.toList()) {
+      final d = e.position - position;
+      if (d.x.abs() < 170 && d.y.abs() < 70) e.hit(heavy: true);
+    }
   }
 
   // ------------------------------------------------------------- specials
@@ -444,6 +550,106 @@ class Player extends PositionComponent
           if (e.mid.distanceTo(center) < 300) e.scare(6);
         }
         game.shake(0.3);
+
+      case SpecialType.braidSpin:
+        _spin = 0.45;
+        if (!onGround) {
+          velocity.y = min(velocity.y, -300);
+          _cuttable = false;
+        }
+        game.world.add(
+          ShockwaveEffect(
+            position: center,
+            maxRadius: 50,
+            color: const Color(0xFF2F5BD3),
+            duration: 0.3,
+          ),
+        );
+
+      case SpecialType.purse:
+        final dir = facingRight ? 1.0 : -1.0;
+        final hitAt = center + Vector2(dir * 30, 0);
+        game.world.add(PoofEffect(position: hitAt + Vector2(0, 12)));
+        game.world.add(
+          FloatingText(
+            position: hitAt - Vector2(0, 14),
+            text: 'SBAM!',
+            fontSize: 11,
+            color: const Color(0xFFFF82B4),
+            duration: .5,
+          ),
+        );
+        for (final e in game.enemies.toList()) {
+          final d = e.mid - center;
+          if (d.x * dir > -6 && d.x * dir < 62 && d.y.abs() < 34) {
+            e.hit(heavy: true);
+          }
+        }
+
+      case SpecialType.kachow:
+        _turbo = 3;
+        game.world.add(Sparkles(position: center));
+
+      case SpecialType.balloon:
+        _balloon = 1.4;
+        _cuttable = false;
+        game.world.add(PoofEffect(position: position.clone()));
+
+      case SpecialType.lullaby:
+        if (hearts < character.hearts) {
+          hearts++;
+        } else {
+          game.enemyScore += 50;
+        }
+        _invulnerable = max(_invulnerable, 1.5);
+        game.world.add(
+          ShockwaveEffect(
+            position: center,
+            maxRadius: 220,
+            color: const Color(0xFFB39DDB),
+            duration: 0.8,
+          ),
+        );
+        for (final e in game.enemies) {
+          if (!e.dead && e.mid.distanceTo(center) < 220) {
+            e.freeze(5);
+            game.world.add(
+              FloatingText(
+                position: e.mid - Vector2(0, 20),
+                text: 'zZz',
+                fontSize: 10,
+                color: const Color(0xFFB4C8FF),
+                duration: 1.5,
+              ),
+            );
+          }
+        }
+
+      case SpecialType.plushThrow:
+        game.world.add(
+          PlushProjectile(
+            position: center.clone(),
+            direction: facingRight ? 1 : -1,
+          ),
+        );
+
+      case SpecialType.swampSlam:
+        if (onGround) {
+          _slamImpact();
+        } else {
+          _slamming = true;
+          velocity.x = 0;
+        }
+
+      case SpecialType.teethFlash:
+        game.camera.viewport.add(
+          ScreenFlash(color: const Color(0xEEFFFFFF), duration: 0.6),
+        );
+        game.shake(0.35);
+        final view = game.camera.visibleWorldRect;
+        for (final e in game.enemies.toList()) {
+          if (!e.dead && view.contains(e.mid.toOffset())) e.hit(heavy: true);
+        }
     }
   }
 
@@ -484,7 +690,10 @@ class Player extends PositionComponent
     if (blink) return;
     // Squash & stretch around the feet.
     canvas.save();
-    canvas.scale(1 + (1 - _squash) * 0.7, _squash);
+    final puff = _balloon > 0 ? 1.25 + sin(_t * 18) * 0.04 : 1.0;
+    canvas.scale((1 + (1 - _squash) * 0.7) * puff, _squash * puff);
+    // Braid spin: turns left/right really fast.
+    final faceRight = _spin > 0 ? (_t * 20).floor().isEven : facingRight;
     Paint? paint;
     if (dashing) {
       paint = Paint()
@@ -508,13 +717,13 @@ class Player extends PositionComponent
       canvas,
       _frame,
       const Offset(-30, -58),
-      flip: !facingRight,
+      flip: !faceRight,
       paint: paint,
     );
     if (starPower) {
       canvas.drawImage(
         game.images.fromCache('sprites/sunglasses.png'),
-        Offset(-12 + (facingRight ? 3 : -3), _eyeY),
+        Offset(-12 + (faceRight ? 3 : -3), _eyeY),
         pixelPaint,
       );
     }
@@ -522,12 +731,12 @@ class Player extends PositionComponent
     if (hat != null) {
       final a = character.hatAnchor;
       final bob = _frame.isOdd ? 1.0 : 0.0;
-      final x = facingRight ? a.x : -a.x;
+      final x = faceRight ? a.x : -a.x;
       _hats.draw(
         canvas,
         hat.index,
         Offset(x - Hat.width / 2, a.y - Hat.height + 3 + bob),
-        flip: !facingRight,
+        flip: !faceRight,
       );
     }
     canvas.restore();

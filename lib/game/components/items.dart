@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/meme_character.dart';
 import '../level.dart';
 import '../level_solver.dart';
 import '../physics.dart';
@@ -43,6 +44,12 @@ class Like extends PositionComponent with HasGameReference<MemesGame> {
       return;
     }
     final p = game.player;
+    if (p.character.passive == Passive.magnet) {
+      // Stuffed cheeks: nearby likes get sucked in.
+      final to = p.position - Vector2(0, 22) - position;
+      final d = to.length;
+      if (d < 96 && d > 1) position += to / d * min(d, 260 * dt);
+    }
     if ((p.position.x - position.x).abs() < p.bodyWidth / 2 + 6 &&
         position.y > p.top - 6 &&
         position.y < p.bottom + 6) {
