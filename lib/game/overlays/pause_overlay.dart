@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/meme_text.dart';
+import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
 
 class PauseOverlay extends StatelessWidget {
@@ -11,43 +11,69 @@ class PauseOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = game.character;
+    const body = TextStyle(
+      fontFamily: kPixelFont,
+      fontSize: 13,
+      color: Color(0xFF6B5A78),
+    );
     return Container(
-      color: Colors.black.withValues(alpha: 0.75),
+      color: const Color(0x993A2440),
       alignment: Alignment.center,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const MemeText('Pausa', fontSize: 40),
-            const SizedBox(height: 8),
-            Text(
-              '${c.passiveName}: ${c.passiveDescription}\n'
-              '${c.specialName}: ${c.specialDescription}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white70),
-            ),
-            const SizedBox(height: 20),
-            MemeButton(
-              label: 'Riprendi',
-              icon: Icons.play_arrow,
-              onPressed: game.togglePause,
-            ),
-            const SizedBox(height: 12),
-            MemeButton(
-              label: 'Esci',
-              icon: Icons.exit_to_app,
-              color: const Color(0xFF555066),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Tastiera: ←/→ o A/D per muoverti · SPAZIO/↑ per saltare · '
-              'X per la mossa speciale · ESC pausa',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 12),
-            ),
-          ],
+        padding: const EdgeInsets.all(16),
+        child: PixelPanel(
+          width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const PixelText('Pausa', size: 34, color: Color(0xFFFF82B4)),
+              PixelText(
+                'Livello ${game.level.name} · ${game.level.subtitle}',
+                size: 14,
+                color: kPlum,
+                outline: false,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '${c.passiveName}: ${c.passiveDescription}\n'
+                '${c.specialName}: ${c.specialDescription}',
+                textAlign: TextAlign.center,
+                style: body,
+              ),
+              const SizedBox(height: 10),
+              const SettingsPanel(),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  PixelButton(
+                    label: 'Riprendi',
+                    icon: 'play',
+                    color: PixelColor.mint,
+                    onPressed: game.togglePause,
+                  ),
+                  PixelButton(
+                    label: 'Esci',
+                    icon: 'home',
+                    color: PixelColor.grey,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                '←/→ muoviti · SPAZIO salta · X speciale · ESC pausa',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: kPixelFont,
+                  fontSize: 11,
+                  color: Color(0xFF9A8FB0),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

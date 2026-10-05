@@ -1,9 +1,9 @@
 # Memes: the game
 
-Platform 2D a scorrimento laterale fatto con **Flutter + Flame + Firebase**.
-Scegli un meme, attraversa i livelli saltando sulla testa di **Normie, Cringe, Hater e
-Boomer**, raccogli i like ❤️ (anche dai blocchi), arriva alla bandiera e sconfiggi
-**L'Algoritmo** nell'ultimo livello. Punteggi nella classifica globale per livello.
+Platform 2D a scorrimento laterale in **pixel art cute**, fatto con **Flutter + Flame + Firebase**.
+Scegli un meme, attraversa 500 livelli in 10 mondi saltando sulla testa di **Normie,
+Cringe, Hater e Boomer**, raccogli i like (anche dai blocchi), arriva alla bandiera e
+sconfiggi **L'Algoritmo** alla fine di ogni mondo. Punteggi nella classifica globale per livello.
 
 ## I personaggi
 
@@ -17,16 +17,72 @@ vengono aggiunte solo le zampette animate.
 | **Stare Cat**: il gatto che ti fissa | *Riflessi Felini*: doppio salto | *Il Fissatore*: congela i nemici, che diventano piattaforme |
 | **Robber Chihuahua**: passamontagna e coltello | *Fuga Rapida*: il più veloce | *La Rapina*: scatto invulnerabile che trafigge i nemici |
 | **Smile Dog**: il cane che sorride (troppo) | *Pelle Dura*: 4 cuori, schiaccia i Boomer al primo colpo | *Sorriso Maledetto*: i nemici scappano terrorizzati e muoiono al contatto |
+| **Puffer Pinscher**: treccine, piumino e scarpe di vernice | *Piumino Imbottito*: il primo colpo del livello lo assorbe il piumino | *Frullatore di Treccine*: giravolta che frusta i nemici vicini |
+| **Lady Terrier**: caschetto, perle e maglioncino | *Like di Lusso*: ogni like vale doppio | *Borsettata*: colpo di borsetta a chi sta davanti |
+| **Ka-Chow Bassotto**: completo nero e crocs di Saetta McQueen | *Crocs Corazzate*: immune alle spine | *Ka-Chow!*: turbo di 3 secondi che travolge i nemici |
+| **Bassotto Criceto**: le guance piene | *Guance Capienti*: risucchia i like vicini | *Gonfia Guance*: vola in alto come un palloncino |
+| **Bebè Pupazzo**: bambolotto col pupazzo di neve | *Pancino Gommoso*: rimbalzi altissimi sui nemici | *Ninna Nanna*: +1 cuore e nemici vicini addormentati |
+| **Scimmietta Rosa**: cappellino rosa e peluche | *Agilità da Scimmia*: salto triplo | *Lancio del Peluche*: il peluche fa da boomerang |
+| **Baby Orco**: caschetto a scodella e cravatta | *Strati di Cipolla*: +1 cuore a ogni checkpoint | *Esci dalla mia Palude!*: schianto a terra con onda d'urto |
+| **Orecchione**: orecchie e denti umani | *Orecchie a Molla*: salta più in alto di tutti | *Dentiera Smagliante*: un sorriso che stende tutti i nemici sullo schermo |
+| **Maiale Drip**: sfumatura, AirPods e catena d'oro | *Catena d'Oro*: nemici sconfitti valgono il triplo | *Cancellazione del Rumore*: 4 secondi intoccabile |
+| **Pulcino Caschetto**: il caschetto a scodella | *Pulcino Leggero*: gravità ridotta | *Cip Cip!*: tre pulcini che travolgono i nemici |
+| **Piccione Casco**: il "casco" in testa | *Casco Protettivo*: i RATIO gli rimbalzano addosso | *Volo Urbano*: vola per 2,5 secondi |
+| **Pietro**: is calling... con le Converse | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: i nemici sullo schermo rispondono al telefono |
+| **Cane in Bici**: zaino e POLIS | *Pedalata*: accelera fino a +50% | *POLIS!*: la macchina della polizia investe i nemici |
+| **Gallina Hypebeast**: sulle Dunk panda coi dollari | *Hustler*: like ×1,5 nel portafoglio | *Uovo Bomba*: un uovo che esplode |
+| **Mr. San Andreas**: Mr. Bean in GTA | *Respawn all'Ospedale*: i burroni non tolgono cuori | *HESOYAM*: cuori pieni e 250 punti |
+| **Masha Baffuta**: Masha col faccione da uomo | *Mani Pesanti*: 4 cuori, doppio danno al boss | *Salto di Masha*: salto altissimo con onda d'urto |
+| **Patrick Roccia**: elmo di roccia e alghe | *Testa di Roccia*: rompe i mattoni di testa | *Roccia Rotolante*: rotola travolgendo i nemici |
+| **Patrick Boccione**: la testa nel boccione | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: getto che stende i nemici davanti |
 
-## Livelli
+## 500 livelli, 10 mondi
 
-1. **Il Feed**: tutorial, Normie e Cringe.
-2. **Sezione Commenti**: arrivano Hater (lanciano commenti "RATIO -1"), Boomer e spine.
-3. **Il Server**: tutto insieme e, alla fine, il boss **L'Algoritmo**: il cancello verso
-   la bandiera si apre solo dopo averlo sconfitto.
+| Mondo | Tema | Mondo | Tema |
+|---|---|---|---|
+| 1 | Il Feed | 6 | Città dei Trend |
+| 2 | Sezione Commenti | 7 | Foresta dei Meme |
+| 3 | Spiaggia dei Reel | 8 | Vulcano dei Flame |
+| 4 | Deserto dei Like | 9 | Nuvole Virali |
+| 5 | Ghiacciaio Cringe | 10 | Il Server |
+
+Ogni mondo ha 50 livelli; il 50° è lo scontro con **L'Algoritmo** (più resistente a ogni
+mondo), e il cancello verso la bandiera si apre solo dopo averlo battuto.
+
+I livelli sono **generati proceduralmente** da un seed fisso (`lib/game/level_gen.dart`),
+quindi sono uguali per tutti i giocatori. La difficoltà cresce gradualmente: i primi
+livelli fanno da tutorial, poi arrivano buche, piattaforme sospese, spine, **molle**,
+**piattaforme mobili**, tunnel e gruppi di nemici. Ogni livello viene verificato da
+`lib/game/level_solver.dart`: simula il personaggio più lento, senza doppio salto né
+mosse speciali e con la stessa fisica del gioco, e dimostra che il livello si può finire
+(se un layout fallisce, viene rigenerato). Il test `test/levels_test.dart` controlla tutti
+e 500 i livelli.
 
 Stelle: 1 per finire il livello, 2 con metà dei like, 3 con il 90%.
 Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
+
+## Elementi divertenti
+
+- **Power-up** dai blocchi arcobaleno `!`:
+  - occhiali **Deal With It** (invincibile per 8 s, i nemici volano via con un "BONK!");
+  - **Stonks** (punti doppi per 12 s);
+  - **Pizza** (+1 cuore);
+  - **Caffè** (più veloce e salti più alti, con scia).
+- **Combo**: schiaccia più nemici senza toccare terra per "Double kill!", "Triple kill!"...
+  fino a "M-M-M-MONSTER KILL!" (con punti bonus).
+- I nemici **parlano**: "Buongiornissimo! Kaffè?", "L + ratio", "uwu", "Ma è un meme?"...
+- Se resti fermo troppo a lungo il tuo meme **si addormenta** (zZz).
+- Al traguardo il personaggio **saltella di gioia**.
+- Al game over puoi **premere F per rendere omaggio**.
+
+## Negozio e trofei
+
+- I like raccolti finiscono in un **portafoglio**: nel **Negozio** li spendi in 10 cappellini
+  pixel (festa, fiocco, berretto, fiori, elica, chef, cowboy, strega, aureola, corona) che i
+  tuoi meme indossano in gioco e nei menu.
+- **17 trofei** da sbloccare (primo livello, 3 stelle, senza danni, speedrun, boss, combo,
+  100 nemici, 1000 like, Deal with it, Stonks, pisolino, F, collezionista...), con una
+  notifica pixel che compare su qualsiasi schermata.
 
 ## Comandi
 
@@ -46,8 +102,12 @@ Senza Firebase il gioco funziona **offline** (record e livelli sbloccati salvati
 Opzioni utili durante lo sviluppo:
 
 ```bash
-flutter run --dart-define=MEMES_UNLOCK_ALL=true --dart-define=MEMES_START_COL=118
+flutter run --dart-define=MEMES_UNLOCK_ALL=true --dart-define=MEMES_START_COL=40 \
+  --dart-define=MEMES_RICH=true   # +2000 like da spendere nel negozio
 ```
+
+Test: `flutter test` (risolve tutti i 500 livelli e avvia il gioco vero su alcuni livelli
+con un pilota automatico).
 
 ## Configurare Firebase (classifica online)
 
@@ -67,14 +127,34 @@ I punteggi stanno nella collezione `scores` (`uid`, `name`, `levelId`, `characte
 `score`, `likes`, `kills`, `seconds`, `createdAt`). Chiunque può leggerli; ogni giocatore
 (anonimo) può solo aggiungere i propri.
 
-## Grafica e livelli: come si rigenerano
+## Grafica
 
-- `tool/generate_sprites.py` genera tutti i PNG in `assets/images/sprites/` (personaggi dalle foto
-  in `tool/sprite_sources/`, nemici, tile, oggetti, sfondi). Richiede `pip install pillow numpy`.
-- Le foto scontornate in `tool/sprite_sources/` sono state create con
-  [rembg](https://github.com/danielgatis/rembg) (modello `birefnet-general`).
-- `tool/build_levels.py` genera `lib/game/levels.dart` a partire da una piccola DSL
-  (`ground`, `row`, `likes`, `stairs`...). La legenda dell'ASCII è in `lib/game/level.dart`.
+Tutta la grafica è pixel art in palette pastello con contorno color prugna, generata da script:
+
+- `tool/generate_sprites.py`: personaggi dalle foto in `tool/sprite_sources/` (scontornate con
+  [rembg](https://github.com/danielgatis/rembg), modello `birefnet-general`), più tutto il resto.
+- `tool/pixel_world.py`: nemici, 10 temi (tile, piattaforme mobili, sfondi parallax con colline
+  e nuvole con le faccine), oggetti e il kit dell'interfaccia (icone, pannelli e pulsanti
+  9-slice in `assets/images/ui/`).
+- `tool/pixel_details.py`: bordi arrotondati del terreno (auto-tiling) e varianti, liquidi
+  animati nelle buche (acqua, lava, sciroppo...), 8 decorazioni animate per ogni mondo
+  (fiori, funghi, cespugli con la faccina, pinguini, granchi, cupcake...), un livello di
+  parallasse intermedio e la polvere.
+
+In gioco ci sono anche: sole/luna sorridente, particelle d'ambiente per ogni mondo (petali,
+neve, foglie, braci, bit...), ombre, squash & stretch del personaggio, polvere, coriandoli
+a checkpoint e traguardo, schizzi quando si cade in una buca e punteggi fluttuanti.
+- Font: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) (licenza OFL, in `assets/fonts/`).
+
+Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy`).
+
+## Audio
+
+Effetti sonori e musiche chiptune sono **sintetizzati da zero** da `tool/generate_audio.py`
+(onde quadre/triangolari + rumore, nessun file di terzi) in `assets/audio/`: salto, like,
+schiacciata, danno, molla, mossa speciale, checkpoint, traguardo, game over, boss, e tre
+musiche in loop (menu, livello, boss). Si riproducono con `flame_audio`; musica, effetti
+e vibrazione si attivano/disattivano dalle impostazioni (ingranaggio nella home o pausa).
 
 **Aggiungere un meme:** scontorna la foto con rembg, salvala in `tool/sprite_sources/<id>.png`,
 aggiungi una voce in `FIGURES` dentro `generate_sprites.py` e in `lib/models/meme_character.dart`,
@@ -87,12 +167,15 @@ lib/
   main.dart                   bootstrap (orizzontale, LocalStore, Firebase)
   models/meme_character.dart  i personaggi e la loro identità
   services/                   Firebase (auth anonima + classifica) e salvataggi locali
-  screens/                    home, scelta personaggio, scelta livello, partita, classifica
-  widgets/                    testo stile meme, anteprima animata degli sprite
+  screens/                    home, personaggi, mappa dei mondi + griglia livelli, partita, classifica
+  widgets/                    kit UI pixel (testo, icone, pannelli, pulsanti), anteprima sprite
   game/
     memes_game.dart           FlameGame: input, eventi del livello, camera
-    level.dart / levels.dart  formato ASCII dei livelli e i livelli
-    components/               player, nemici, fisica a tile, oggetti, sfondo, effetti
+    level.dart                formato ASCII dei livelli e temi dei mondi
+    level_gen.dart            generatore procedurale dei 500 livelli
+    level_solver.dart         risolutore che verifica che ogni livello sia finibile
+    physics.dart              fisica a tile condivisa da gioco e risolutore
+    components/               player, nemici, oggetti, piattaforme mobili, sfondo, effetti
     overlays/                 HUD con comandi touch, pausa, fine livello, game over
-tool/                         generatori di sprite e livelli
+tool/                         generatori della grafica
 ```

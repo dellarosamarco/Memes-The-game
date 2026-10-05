@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
   shared_preferences: ^2.5.5
+  flame_audio: ^2.12.2
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,8 @@ flutter:
 
   assets:
     - assets/images/sprites/
+    - assets/images/ui/
+    - assets/audio/
     - assets/images/portraits/
 
   # To add assets to your application, add an assets section, like this:
@@ -96,3 +99,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Pixelify
+      fonts:
+        - asset: assets/fonts/PixelifySans-400.ttf
+        - asset: assets/fonts/PixelifySans-700.ttf
+          weight: 700

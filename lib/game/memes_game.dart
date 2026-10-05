@@ -1,19 +1,26 @@
-import 'dart:math' hide Rectangle;
+import 'dart:math';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/hats.dart';
 import '../models/meme_character.dart';
+import '../services/achievements.dart';
+import '../services/local_store.dart';
+import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
 import 'components/enemy.dart';
 import 'components/items.dart';
 import 'components/player.dart';
 import 'level.dart';
-import 'levels.dart';
+import 'level_gen.dart';
+
+/// World units of extra ground drawn under the level.
+const kGroundBelow = kTile * 2;
 
 /// Dev aid: `--dart-define=MEMES_START_COL=120` drops the player at that
 /// column to test the end of a level.
@@ -43,12 +50,14 @@ class GameInput {
 /// "Memes: the game" — a 2D platformer starring real memes.
 class MemesGame extends FlameGame with KeyboardEvents {
   MemesGame({required this.character, required this.levelIndex})
-    : level = kLevels[levelIndex].copy();
+    : level = levelAt(levelIndex).copy();
 
   static const overlayHud = 'hud';
   static const overlayPause = 'pause';
   static const overlayComplete = 'complete';
   static const overlayGameOver = 'gameOver';
+  static const overlayIntro = 'intro';
+  static const overlayBoss = 'boss';
 
   final MemeCharacter character;
   final int levelIndex;
@@ -56,14 +65,32 @@ class MemesGame extends FlameGame with KeyboardEvents {
   final input = GameInput();
 
   late final Player player;
+
+  /// Hat equipped in the shop (cosmetic).
+  final Hat? hat = LocalStore.ready
+      ? Hat.byId(LocalStore.instance.equippedHat)
+      : null;
   final List<Enemy> enemies = [];
+  final List<MovingPlatform> platforms = [];
+
+  /// When each spring tile was last used (for its animation).
+  final Map<int, double> springTimes = {};
 
   // Run state.
   double elapsed = 0;
   int likes = 0;
+  int likeScore = 0;
   int kills = 0;
   int enemyScore = 0;
   bool finished = false;
+
+  /// True once the player has lost a heart in this run.
+  bool damageTaken = false;
+
+  bool _bossIntroDone = false;
+
+  /// Countdown to the "level complete" screen after touching the flag.
+  double? _completeIn;
   bool isOver = false;
   bool _bossAlive = false;
   late Vector2 _checkpoint;
@@ -78,9 +105,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   late final int totalLikes;
   int get timeBonus => max(0, level.parTime - elapsed.floor()) * 5;
   int get score =>
-      likes * 10 +
-      enemyScore +
-      (finished ? timeBonus + player.hearts * 100 : 0);
+      likeScore + enemyScore + (finished ? timeBonus + player.hearts * 100 : 0);
 
   /// 1 star for finishing, 2 with half the likes, 3 with 90% of them.
   int get stars {
@@ -99,6 +124,14 @@ class MemesGame extends FlameGame with KeyboardEvents {
       character.spriteSheet,
       for (final k in EnemyKind.values) k.spritePath,
       'sprites/tiles_${level.theme.name}.png',
+      'sprites/moving_${level.theme.name}.png',
+      'sprites/props_${level.theme.name}.png',
+      'sprites/bg_${level.theme.name}_mid.png',
+      'sprites/dust.png',
+      'sprites/powerups.png',
+      'sprites/sunglasses.png',
+      Hat.sheet,
+      'sprites/sparkle.png',
       'sprites/bg_${level.theme.name}_far.png',
       'sprites/bg_${level.theme.name}_clouds.png',
       'sprites/like.png',
@@ -109,6 +142,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
     camera.backdrop.add(Backdrop());
     world.add(LevelMap());
+    world.add(Props());
 
     Vector2? start;
     for (final s in level.spawns) {
@@ -127,6 +161,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
           world.add(Checkpoint(position: s.feet));
         case 'F':
           world.add(FinishFlag(position: s.feet));
+        case 'M':
+          world.add(MovingPlatform(spawn: s));
       }
     }
     _checkpoint = start ?? Vector2(kTile * 2, kTile * 10);
@@ -136,10 +172,33 @@ class MemesGame extends FlameGame with KeyboardEvents {
     player = Player(character: character, position: _checkpoint.clone());
     world.add(player);
 
-    camera.follow(player, maxSpeed: 900);
-    camera.setBounds(
-      Rectangle.fromLTRB(0, 0, level.width, level.height),
-      considerViewport: true,
+    // Follow a point a bit below the feet, so the player sits above the
+    // touch controls.
+    final target = _CameraTarget(player);
+    world.add(target);
+    camera.follow(target, maxSpeed: 900);
+    Sound.music('level');
+    overlays.add(overlayIntro);
+    if (LocalStore.ready) {
+      LocalStore.instance.markPlayedWith(character.id);
+      Achievements.checkStats();
+    }
+  }
+
+  /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
+  /// the zoom). The extra ground below the level lifts the action above the
+  /// touch controls at the bottom of the screen.
+  void _clampCamera() {
+    final vf = camera.viewfinder;
+    final half = size / vf.zoom / 2;
+    final maxY = level.height + kGroundBelow;
+    vf.position = Vector2(
+      half.x * 2 >= level.width
+          ? level.width / 2
+          : vf.position.x.clamp(half.x, level.width - half.x),
+      half.y * 2 >= maxY
+          ? maxY / 2
+          : vf.position.y.clamp(half.y, maxY - half.y),
     );
   }
 
@@ -155,7 +214,20 @@ class MemesGame extends FlameGame with KeyboardEvents {
     dt = min(dt, 1 / 30);
     if (!finished && !isOver) elapsed += dt;
     if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
+    final completeIn = _completeIn;
+    if (completeIn != null) {
+      _completeIn = completeIn - dt;
+      if (_completeIn! <= 0) {
+        _completeIn = null;
+        overlays.remove(overlayHud);
+        overlays.add(overlayComplete);
+      }
+    }
     super.update(dt);
+    if (isLoaded) {
+      _clampCamera();
+      _checkBossIntro();
+    }
     _updateShake(dt);
     _hudAcc += dt;
     if (_hudAcc > 0.1) {
@@ -201,11 +273,44 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void collectLike(Like like) {
     likes++;
+    final value =
+        10 * multiplier * (character.passive == Passive.jewels ? 2 : 1);
+    likeScore += value;
+    Sound.play('like', volume: .45);
+    world.add(Sparkles(position: like.position.clone()));
+    world.add(
+      FloatingText(
+        position: like.position - Vector2(0, 10),
+        text: '+$value',
+        fontSize: 8,
+        color: const Color(0xFFFF82B4),
+        duration: 0.6,
+      ),
+    );
+  }
+
+  void springUsed(int col, int row) {
+    springTimes[row * 10000 + col] = elapsed;
   }
 
   /// The player's head hit a solid tile from below.
   void bumpBlock(int col, int row) {
-    if (level.tileAt(col, row) != '?') return;
+    final t = level.tileAt(col, row);
+    if (t == '!') {
+      Sound.play('block');
+      Sound.play('special', volume: .4);
+      level.setTile(col, row, 'U');
+      final kinds = PowerUpKind.values;
+      world.add(
+        PowerUpItem(
+          position: Vector2((col + .5) * kTile, row * kTile - 2),
+          kind: kinds[(col * 31 + row * 17 + level.index) % kinds.length],
+        ),
+      );
+      return;
+    }
+    if (t != '?') return;
+    Sound.play('block');
     level.setTile(col, row, 'U');
     world.add(
       Like(
@@ -215,8 +320,32 @@ class MemesGame extends FlameGame with KeyboardEvents {
     );
   }
 
+  void collectPowerUp(PowerUpItem item) {
+    Sound.play('checkpoint');
+    Sound.haptic();
+    world.add(Confetti(position: item.position.clone(), count: 24));
+    world.add(
+      FloatingText(
+        position: player.position - Vector2(0, 74),
+        text: item.kind.shout,
+        fontSize: 14,
+        color: const Color(0xFFFFD86A),
+        duration: 1.4,
+      ),
+    );
+    player.applyPowerUp(item.kind);
+    if (item.kind == PowerUpKind.sunglasses) Achievements.unlock('deal');
+    if (item.kind == PowerUpKind.stonks) Achievements.unlock('stonks');
+  }
+
+  /// Points multiplier while the Stonks power-up is active.
+  int get multiplier => player.power == PowerUpKind.stonks ? 2 : 1;
+
   void reachCheckpoint(Checkpoint cp) {
     _checkpoint = cp.position.clone();
+    player.onCheckpoint();
+    Sound.play('checkpoint');
+    world.add(Confetti(position: cp.position - Vector2(0, 30), count: 30));
     world.add(
       FloatingText(position: cp.position - Vector2(0, 52), text: 'SALVATO!'),
     );
@@ -224,7 +353,17 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void onEnemyKilled(Enemy e) {
     kills++;
-    enemyScore += e.kind.score;
+    final drip = character.passive == Passive.drip ? 3 : 1;
+    enemyScore += e.kind.score * multiplier * drip;
+    world.add(
+      FloatingText(
+        position: e.position - Vector2(0, 34),
+        text: '+${e.kind.score * multiplier * drip}',
+        fontSize: 9,
+        color: const Color(0xFFFFD86A),
+        duration: 0.7,
+      ),
+    );
     if (e.kind.isBoss) {
       _bossAlive = false;
       _openGates();
@@ -239,6 +378,21 @@ class MemesGame extends FlameGame with KeyboardEvents {
           duration: 2.2,
         ),
       );
+    }
+  }
+
+  /// When the player gets close to L'Algoritmo: roar, banner, boss music.
+  void _checkBossIntro() {
+    if (_bossIntroDone || !_bossAlive) return;
+    for (final e in enemies) {
+      if (e.kind.isBoss && (e.position.x - player.position.x).abs() < 380) {
+        _bossIntroDone = true;
+        Sound.music('boss');
+        Sound.play('boss_roar');
+        shake(0.6);
+        overlays.add(overlayBoss);
+        return;
+      }
     }
   }
 
@@ -258,20 +412,42 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void fellInPit() {
     if (finished || isOver) return;
+    if (character.passive == Passive.respawnCheat) {
+      // GTA rules: you just wake up at the hospital (the checkpoint).
+      Sound.play('hurt');
+      player.respawn(_checkpoint.clone());
+      camera.viewfinder.position = _checkpoint + Vector2(20, 12);
+      world.add(
+        FloatingText(
+          position: _checkpoint - Vector2(0, 70),
+          text: 'WASTED',
+          fontSize: 20,
+          color: const Color(0xFFFF4D5E),
+          duration: 1.6,
+        ),
+      );
+      return;
+    }
     player.hearts--;
+    damageTaken = true;
+    Sound.play('hurt');
     shake(0.3);
     if (player.hearts <= 0) {
       gameOver();
       return;
     }
     player.respawn(_checkpoint.clone());
-    camera.viewfinder.position = _checkpoint.clone();
+    camera.viewfinder.position = _checkpoint + Vector2(20, 12);
   }
 
   void finish() {
     if (finished) return;
     finished = true;
     input.clear();
+    Sound.stopMusic();
+    Sound.play('finish');
+    Sound.haptic(strong: true);
+    world.add(Confetti(position: player.position - Vector2(0, 40), count: 80));
     world.add(
       FloatingText(
         position: player.position - Vector2(0, 80),
@@ -281,31 +457,48 @@ class MemesGame extends FlameGame with KeyboardEvents {
         duration: 2,
       ),
     );
-    Future.delayed(const Duration(milliseconds: 1400), () {
-      overlays.remove(overlayHud);
-      overlays.add(overlayComplete);
-    });
+    _completeIn = 1.4;
   }
 
   void gameOver() {
     if (isOver) return;
     isOver = true;
     input.clear();
+    recordRunStats();
+    Sound.stopMusic();
+    Sound.play('gameover');
     hudTick.value++;
     overlays.remove(overlayHud);
     overlays.add(overlayGameOver);
     pauseEngine();
   }
 
+  /// Saves likes (to the shop wallet) and stomps from this run.
+  void recordRunStats() {
+    if (!LocalStore.ready || _statsRecorded) return;
+    _statsRecorded = true;
+    final s = LocalStore.instance;
+    s.addToWallet(
+      character.passive == Passive.hustle ? (likes * 1.5).round() : likes,
+    );
+    s.addStat('likes', likes);
+    s.addStat('stomps', kills);
+    Achievements.checkStats();
+  }
+
+  bool _statsRecorded = false;
+
   void togglePause() {
     if (isOver || finished) return;
     if (overlays.isActive(overlayPause)) {
       overlays.remove(overlayPause);
       resumeEngine();
+      Sound.resumeMusic();
     } else {
       input.clear();
       overlays.add(overlayPause);
       pauseEngine();
+      Sound.pauseMusic();
     }
   }
 
@@ -329,5 +522,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void onRemove() {
     hudTick.dispose();
     super.onRemove();
+  }
+}
+
+class _CameraTarget extends PositionComponent {
+  _CameraTarget(this.player);
+
+  final Player player;
+
+  @override
+  void update(double dt) {
+    position.setValues(player.position.x + 20, player.position.y + 12);
   }
 }

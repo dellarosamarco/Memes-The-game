@@ -1,9 +1,12 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/meme_character.dart';
-import '../widgets/meme_text.dart';
+import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
-import 'level_select_screen.dart';
+import 'world_map_screen.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
   const CharacterSelectScreen({super.key});
@@ -14,81 +17,151 @@ class CharacterSelectScreen extends StatefulWidget {
 
 class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   int _index = 0;
+  final _thumbs = ScrollController();
+
+  static const _thumbStride = 60.0;
+
+  @override
+  void dispose() {
+    _thumbs.dispose();
+    super.dispose();
+  }
+
+  /// Next/previous meme, keeping its thumbnail in view.
+  void _select(int delta) {
+    final n = MemeCharacter.all.length;
+    setState(() => _index = (_index + delta + n) % n);
+    if (!_thumbs.hasClients) return;
+    final pos = _thumbs.position;
+    final target = (_index * _thumbStride - pos.viewportDimension / 2 + 30)
+        .clamp(0.0, pos.maxScrollExtent);
+    _thumbs.animateTo(
+      target,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     const chars = MemeCharacter.all;
     final c = chars[_index];
-    final buttonColor = c.color == const Color(0xFF3A3A3A)
-        ? const Color(0xFFFF4FA3)
-        : c.color;
     return Scaffold(
-      backgroundColor: const Color(0xFF14121F),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        toolbarHeight: 48,
-        title: const MemeText('Scegli il tuo meme', fontSize: 22),
-        centerTitle: true,
-      ),
-      body: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: const Alignment(-0.5, 0),
-            radius: 1.2,
-            colors: [c.color.withValues(alpha: 0.45), const Color(0xFF14121F)],
-          ),
-        ),
-        child: SafeArea(
-          top: false,
-          child: LayoutBuilder(
-            builder: (context, box) {
-              final wide = box.maxWidth > box.maxHeight;
-              final preview = _Preview(character: c, compact: !wide);
-              final info = _Info(character: c);
-              return Column(
+      body: Focus(
+        autofocus: true,
+        onKeyEvent: (_, e) {
+          if (e is! KeyDownEvent) return KeyEventResult.ignored;
+          if (e.logicalKey == LogicalKeyboardKey.arrowLeft) _select(-1);
+          if (e.logicalKey == LogicalKeyboardKey.arrowRight) _select(1);
+          return KeyEventResult.handled;
+        },
+        child: PixelBackdrop(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: wide
-                        ? Row(
-                            children: [
-                              Expanded(flex: 5, child: preview),
-                              Expanded(flex: 6, child: info),
-                            ],
-                          )
-                        : ListView(children: [preview, info]),
+                  Row(
+                    children: [
+                      PixelButton(
+                        icon: 'left',
+                        color: PixelColor.grey,
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      const Expanded(
+                        child: PixelText('Scegli il tuo meme', size: 24),
+                      ),
+                      const SizedBox(width: 56),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+                  const SizedBox(height: 6),
+                  Expanded(
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        for (var i = 0; i < chars.length; i++)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: _Thumb(
-                              character: chars[i],
-                              selected: i == _index,
-                              onTap: () => setState(() => _index = i),
-                            ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _Arrow(
+                                    icon: 'left',
+                                    onTap: () => _select(-1),
+                                  ),
+                                  CharacterSpriteView(
+                                    key: ValueKey(c.id),
+                                    character: c,
+                                    scale: 3.2,
+                                    running: true,
+                                  ),
+                                  _Arrow(
+                                    icon: 'right',
+                                    onTap: () => _select(1),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 50),
+                            ],
                           ),
-                        const Spacer(),
-                        MemeButton(
-                          label: 'Scegli ${c.name.split(' ').first}',
-                          icon: Icons.check,
-                          color: buttonColor,
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => LevelSelectScreen(character: c),
-                            ),
+                        ),
+                        Expanded(
+                          flex: 6,
+                          child: PixelPanel(
+                            padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
+                            child: _Info(character: c),
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 66,
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(
+                              dragDevices: PointerDeviceKind.values.toSet(),
+                            ),
+                            child: ListView.separated(
+                              controller: _thumbs,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: chars.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 6),
+                              itemBuilder: (_, i) => Center(
+                                child: _Thumb(
+                                  character: chars[i],
+                                  selected: i == _index,
+                                  onTap: () => setState(() => _index = i),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      PixelButton(
+                        label: 'Scegli',
+                        icon: 'play',
+                        color: PixelColor.pink,
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => WorldMapScreen(character: c),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
         ),
       ),
@@ -96,48 +169,20 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   }
 }
 
-class _Preview extends StatelessWidget {
-  const _Preview({required this.character, required this.compact});
+class _Arrow extends StatelessWidget {
+  const _Arrow({required this.icon, required this.onTap});
 
-  final MemeCharacter character;
-  final bool compact;
+  final String icon;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        CharacterSpriteView(
-          key: ValueKey(character.id),
-          character: character,
-          scale: compact ? 3 : 3.6,
-          running: true,
-        ),
-        const SizedBox(width: 8),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                character.photoAsset,
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'meme originale',
-              style: TextStyle(color: Colors.white54, fontSize: 11),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => PixelButton(
+    icon: icon,
+    color: PixelColor.grey,
+    height: 40,
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    onPressed: onTap,
+  );
 }
 
 class _Info extends StatelessWidget {
@@ -148,44 +193,123 @@ class _Info extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = character;
+    const body = TextStyle(
+      fontFamily: kPixelFont,
+      color: Color(0xFF6B5A78),
+      fontSize: 13,
+      height: 1.25,
+    );
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MemeText(c.name, fontSize: 30, textAlign: TextAlign.left),
-          Text(
-            c.memeAlias,
-            style: const TextStyle(
-              color: Color(0xFFFFD54F),
-              fontWeight: FontWeight.w800,
-              fontSize: 15,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PixelText(
+                      c.name,
+                      size: 24,
+                      color: const Color(0xFFFF82B4),
+                      align: TextAlign.left,
+                    ),
+                    PixelText(
+                      c.memeAlias,
+                      size: 13,
+                      color: kPlum,
+                      outline: false,
+                      align: TextAlign.left,
+                    ),
+                  ],
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.asset(
+                  c.photoAsset,
+                  width: 54,
+                  height: 54,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 6),
-          Text(c.lore, style: const TextStyle(color: Colors.white70)),
-          const SizedBox(height: 10),
+          Text(c.lore, style: body),
+          const SizedBox(height: 8),
           Row(
             children: [
               for (var i = 0; i < c.hearts; i++)
-                const Icon(Icons.favorite, color: Color(0xFFFF4F6A), size: 20),
-              const SizedBox(width: 12),
-              Text(
+                const Padding(
+                  padding: EdgeInsets.only(right: 3),
+                  child: PixelIcon('heart', scale: 1.6),
+                ),
+              const SizedBox(width: 10),
+              PixelText(
                 'Velocità ${c.runSpeed.round()}',
-                style: const TextStyle(color: Colors.white),
+                size: 13,
+                color: kPlum,
+                outline: false,
               ),
             ],
           ),
           const SizedBox(height: 8),
+          _Ability(title: c.passiveName, text: c.passiveDescription),
           _Ability(
-            icon: '🧬',
-            title: c.passiveName,
-            text: c.passiveDescription,
-          ),
-          _Ability(
-            icon: '🔥',
             title: '${c.specialName} (${c.specialCooldown}s)',
             text: c.specialDescription,
+            special: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Ability extends StatelessWidget {
+  const _Ability({
+    required this.title,
+    required this.text,
+    this.special = false,
+  });
+
+  final String title;
+  final String text;
+  final bool special;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2, right: 8),
+            child: PixelIcon(special ? 'bolt' : 'heart', scale: 1.5),
+          ),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$title  ',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: kPlum,
+                    ),
+                  ),
+                  TextSpan(text: text),
+                ],
+              ),
+              style: const TextStyle(
+                fontFamily: kPixelFont,
+                fontSize: 13,
+                color: Color(0xFF6B5A78),
+              ),
+            ),
           ),
         ],
       ),
@@ -209,64 +333,21 @@ class _Thumb extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: selected ? 60 : 50,
-        height: selected ? 60 : 50,
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          color: selected ? character.color : Colors.white12,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? Colors.white : Colors.transparent,
-            width: 2,
-          ),
+        duration: const Duration(milliseconds: 150),
+        width: selected ? 64 : 54,
+        height: selected ? 64 : 54,
+        padding: const EdgeInsets.all(6),
+        decoration: pixelFrame(
+          selected
+              ? 'assets/images/ui/button_yellow.png'
+              : 'assets/images/ui/panel.png',
+          px: 2,
         ),
         child: Image.asset(
           character.portraitAsset,
           filterQuality: FilterQuality.none,
           fit: BoxFit.contain,
         ),
-      ),
-    );
-  }
-}
-
-class _Ability extends StatelessWidget {
-  const _Ability({required this.icon, required this.title, required this.text});
-
-  final String icon;
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(icon, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: '$title  ',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  TextSpan(
-                    text: text,
-                    style: const TextStyle(color: Colors.white60),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -2,10 +2,12 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../game/memes_game.dart';
+import '../game/overlays/banners.dart';
 import '../game/overlays/end_overlays.dart';
 import '../game/overlays/hud.dart';
 import '../game/overlays/pause_overlay.dart';
 import '../models/meme_character.dart';
+import '../services/sound.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -28,6 +30,13 @@ class _GameScreenState extends State<GameScreen> {
   );
 
   @override
+  void dispose() {
+    // Back to the menus.
+    Sound.music('menu');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -38,6 +47,8 @@ class _GameScreenState extends State<GameScreen> {
           MemesGame.overlayPause: (_, g) => PauseOverlay(game: g),
           MemesGame.overlayComplete: (_, g) => LevelCompleteOverlay(game: g),
           MemesGame.overlayGameOver: (_, g) => GameOverOverlay(game: g),
+          MemesGame.overlayIntro: (_, g) => LevelIntroBanner(game: g),
+          MemesGame.overlayBoss: (_, g) => BossBanner(game: g),
         },
         initialActiveOverlays: const [MemesGame.overlayHud],
         loadingBuilder: (_) => const Center(child: CircularProgressIndicator()),

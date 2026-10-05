@@ -1,4 +1,8 @@
+import 'dart:math';
+import 'dart:ui' as ui;
+
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 /// Expanding ring (the "Voglio il Manager!" shout, the cursed smile...).
@@ -94,6 +98,7 @@ class FloatingText extends PositionComponent {
   @override
   Future<void> onLoad() async {
     TextStyle style(Paint? fg) => TextStyle(
+      fontFamily: 'Pixelify',
       fontSize: fontSize,
       fontWeight: FontWeight.w900,
       foreground: fg,
@@ -106,7 +111,7 @@ class FloatingText extends PositionComponent {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = fontSize / 4
-            ..color = Colors.black,
+            ..color = const Color(0xFF3A2440),
         ),
       ),
       textAlign: TextAlign.center,
@@ -163,5 +168,96 @@ class ScreenFlash extends PositionComponent with HasGameReference {
       Offset.zero & game.size.toSize(),
       Paint()..color = color.withValues(alpha: color.a * (1 - p)),
     );
+  }
+}
+
+/// A soft pixel dust puff (landing, running).
+class Dust extends PositionComponent with HasGameReference<FlameGame> {
+  Dust({required super.position, this.dx = 0}) : super(priority: 19);
+
+  final double dx;
+  double _t = 0;
+  static const _d = 0.3;
+  ui.Image? _img;
+
+  @override
+  Future<void> onLoad() async {
+    _img = game.images.fromCache('sprites/dust.png');
+  }
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    position.x += dx * dt;
+    position.y -= 10 * dt;
+    if (_t >= _d) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final img = _img;
+    if (img == null) return;
+    final f = (_t / _d * 3).floor().clamp(0, 2);
+    canvas.drawImageRect(
+      img,
+      Rect.fromLTWH(f * 8.0, 0, 8, 8),
+      const Rect.fromLTWH(-4, -6, 8, 8),
+      Paint()..filterQuality = FilterQuality.none,
+    );
+  }
+}
+
+/// Colorful pixel confetti (checkpoints, finish line).
+class Confetti extends PositionComponent {
+  Confetti({required super.position, this.count = 40, this.splash = false})
+    : super(priority: 45);
+
+  final int count;
+
+  /// White droplets instead of colored paper (falling into a pit).
+  final bool splash;
+  final List<List<double>> _bits = [];
+  double _t = 0;
+  static const _colors = [
+    Color(0xFFFF82B4),
+    Color(0xFFFFD86A),
+    Color(0xFF8CE6B4),
+    Color(0xFF8CC8FF),
+    Color(0xFFC8A0FF),
+  ];
+
+  @override
+  Future<void> onLoad() async {
+    final rnd = Random();
+    for (var i = 0; i < count; i++) {
+      final a = -pi / 2 + (rnd.nextDouble() - .5) * 2.2;
+      final v = 120 + rnd.nextDouble() * 160;
+      _bits.add([0, 0, cos(a) * v, sin(a) * v, rnd.nextInt(5).toDouble()]);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    for (final b in _bits) {
+      b[2] *= 0.985;
+      b[3] += 260 * dt;
+      b[0] += b[2] * dt;
+      b[1] += b[3] * dt;
+    }
+    if (_t > 1.6) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final paint = Paint();
+    for (final b in _bits) {
+      paint.color = splash ? const Color(0xDDFFFFFF) : _colors[b[4].toInt()];
+      final flip = ((_t * 10 + b[4]) % 2) < 1;
+      canvas.drawRect(
+        Rect.fromLTWH(b[0], b[1], flip ? 3 : 2, flip ? 2 : 3),
+        paint,
+      );
+    }
   }
 }

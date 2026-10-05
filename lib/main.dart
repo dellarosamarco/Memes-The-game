@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 import 'services/firebase_service.dart';
 import 'services/local_store.dart';
+import 'services/sound.dart';
+import 'widgets/pixel_ui.dart';
+import 'widgets/trophy_toasts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +16,9 @@ Future<void> main() async {
     DeviceOrientation.landscapeRight,
   ]);
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await PixelAssets.preload();
   await LocalStore.init();
+  await Sound.init();
   await FirebaseService.instance.init();
   runApp(const MemesApp());
 }
@@ -27,6 +32,7 @@ class MemesApp extends StatelessWidget {
       title: 'Memes: the game',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Pixelify',
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF4FA3),
@@ -35,6 +41,8 @@ class MemesApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF14121F),
       ),
       home: const HomeScreen(),
+      builder: (context, child) =>
+          Stack(children: [child ?? const SizedBox(), const TrophyToasts()]),
     );
   }
 }
