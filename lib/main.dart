@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+
+import 'screens/home_screen.dart';
+import 'services/firebase_service.dart';
+import 'services/local_store.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStore.init();
+  await FirebaseService.instance.init();
+  runApp(const MemesApp());
+}
+
+class MemesApp extends StatelessWidget {
+  const MemesApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Memes: the game',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFF4FA3),
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF14121F),
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
