@@ -4,7 +4,7 @@
       "collectionGroup": "scores",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "characterId", "order": "ASCENDING" },
+        { "fieldPath": "levelId", "order": "ASCENDING" },
         { "fieldPath": "score", "order": "DESCENDING" }
       ]
     }

@@ -1,94 +1,76 @@
 import 'dart:math';
-import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 import '../memes_game.dart';
-import 'xp_gem.dart';
+import '../pixel.dart';
+import 'body.dart';
+import 'effects.dart';
+import 'projectile.dart';
 
-/// The "anti-meme" forces: everything a meme hates.
+/// The "anti-meme" forces.
 enum EnemyKind {
-  normie('🤓', 'Normie', 17, 20, 80, 8, 1, Color(0xFF4A90D9)),
-  cringe('😬', 'Cringe', 14, 10, 145, 5, 1, Color(0xFFE5C04B)),
-  hater('😡', 'Hater', 20, 38, 105, 10, 2, Color(0xFFD9534F)),
-  boomer('👴', 'Boomer', 26, 80, 55, 14, 3, Color(0xFF8D8D8D)),
-  algorithm('🤖', 'L\'ALGORITMO', 56, 1400, 72, 25, 40, Color(0xFF2ECC71));
+  normie('normie', 'Normie', 40, 1, 25),
+  cringe('cringe', 'Cringe', 55, 1, 25),
+  hater('hater', 'Hater', 30, 1, 40),
+  boomer('boomer', 'Boomer', 24, 2, 50),
+  algorithm('algorithm', 'L\'Algoritmo', 70, 5, 500);
 
-  const EnemyKind(
-    this.emoji,
-    this.label,
-    this.radius,
-    this.hp,
-    this.speed,
-    this.damage,
-    this.xp,
-    this.color,
-  );
+  const EnemyKind(this.sprite, this.label, this.speed, this.hp, this.score);
 
-  final String emoji;
+  final String sprite;
   final String label;
-  final double radius;
-  final double hp;
   final double speed;
-  final double damage;
-  final int xp;
-  final Color color;
+  final int hp;
+  final int score;
 
   bool get isBoss => this == EnemyKind.algorithm;
+  String get spritePath => 'sprites/enemy_$sprite.png';
+
+  static EnemyKind? fromCode(String code) => switch (code) {
+    'n' => normie,
+    'c' => cringe,
+    'h' => hater,
+    'b' => boomer,
+    'A' => algorithm,
+    _ => null,
+  };
 }
 
-class Enemy extends PositionComponent with HasGameReference<MemesGame> {
-  Enemy({
-    required this.kind,
-    required Vector2 position,
-    required double hpScale,
-  }) : maxHp = kind.hp * hpScale,
-       super(position: position, anchor: Anchor.center, priority: 5) {
-    hp = maxHp;
-    radius = kind.radius;
-    size = Vector2.all(radius * 2);
+class Enemy extends PositionComponent
+    with HasGameReference<MemesGame>, TileBody {
+  Enemy({required this.kind, required super.position}) : super(priority: 15) {
+    hp = kind.hp;
+    final s = kind.isBoss ? 46.0 : 20.0;
+    bodyWidth = s;
+    bodyHeight = s;
   }
 
   final EnemyKind kind;
-  final double maxHp;
-  late double hp;
-  late double radius;
+  late int hp;
+  late final Strip _strip;
+  final _rnd = Random();
 
-  double frozenTime = 0;
-  double fearTime = 0;
-  double vulnerableTime = 0;
-  double _flash = 0;
-  final Vector2 _knockback = Vector2.zero();
-  final double _wobbleSeed = Random().nextDouble() * 10;
+  int _dir = -1;
   double _t = 0;
+  double _flash = 0;
+  double _hurtCooldown = 0;
+  double frozenTime = 0;
+  double scaredTime = 0;
+  double _actionTimer = 1.5;
   bool dead = false;
 
-  static final Map<EnemyKind, ui.Image> _faceCache = {};
-  static ui.Image? _fearImage;
+  bool get frozen => frozenTime > 0;
+  bool get scared => scaredTime > 0;
+  Vector2 get mid => position - Vector2(0, bodyHeight / 2);
 
-  /// Pre-renders the emoji faces once: drawing text every frame for hundreds
-  /// of enemies is too slow.
-  static void warmUp() {
-    for (final k in EnemyKind.values) {
-      _faceCache[k] ??= _emojiImage(k.emoji, k.radius * 1.7);
-    }
-    _fearImage ??= _emojiImage('😱', 14);
-  }
-
-  static ui.Image _emojiImage(String emoji, double fontSize) {
-    final px = (fontSize * 1.42).ceil();
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
-    final tp = TextPainter(
-      text: TextSpan(
-        text: emoji,
-        style: TextStyle(fontSize: fontSize),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    tp.paint(canvas, Offset((px - tp.width) / 2, (px - tp.height) / 2));
-    return recorder.endRecording().toImageSync(px, px);
+  @override
+  Future<void> onLoad() async {
+    final img = game.images.fromCache(kind.spritePath);
+    final fw = kind.isBoss ? 56.0 : 28.0;
+    _strip = Strip(img, fw, fw);
+    _actionTimer = 1 + _rnd.nextDouble() * 2;
   }
 
   @override
@@ -103,35 +85,36 @@ class Enemy extends PositionComponent with HasGameReference<MemesGame> {
     super.onRemove();
   }
 
-  void hit(double damage, {Vector2? knockFrom, double knockback = 0}) {
+  void freeze(double seconds) {
     if (dead) return;
-    if (vulnerableTime > 0) damage *= 1.5;
-    hp -= damage;
-    _flash = 0.12;
-    if (knockFrom != null && knockback > 0 && !kind.isBoss) {
-      final dir = position - knockFrom;
-      if (dir.length2 > 0) _knockback.add(dir.normalized() * knockback);
-    }
-    if (hp <= 0) _die();
+    frozenTime = seconds;
+    velocity.x = 0;
   }
 
-  void _die() {
-    dead = true;
-    game.onEnemyKilled(this);
-    final gems = kind.isBoss ? 8 : 1;
-    final rnd = Random();
-    for (var i = 0; i < gems; i++) {
-      final offset = gems == 1
-          ? Vector2.zero()
-          : Vector2(rnd.nextDouble() - .5, rnd.nextDouble() - .5) * 80;
-      game.world.add(
-        XpGem(
-          position: position + offset,
-          value: gems == 1 ? kind.xp : (kind.xp / gems).ceil(),
-        ),
-      );
+  void scare(double seconds) {
+    if (dead) return;
+    scaredTime = seconds;
+    frozenTime = 0;
+  }
+
+  /// Stomped, slashed, dashed through...
+  void hit({bool heavy = false}) {
+    if (dead || _hurtCooldown > 0) return;
+    hp -= kind.isBoss ? 1 : (heavy ? hp : 1);
+    _flash = 0.15;
+    if (kind.isBoss) {
+      _hurtCooldown = 1.0;
+      frozenTime = 0;
+      game.shake(0.3);
+      // The algorithm gets angrier.
+      _actionTimer = 0.4;
     }
-    removeFromParent();
+    if (hp <= 0) {
+      dead = true;
+      game.world.add(PoofEffect(position: mid));
+      game.onEnemyKilled(this);
+      removeFromParent();
+    }
   }
 
   @override
@@ -139,99 +122,132 @@ class Enemy extends PositionComponent with HasGameReference<MemesGame> {
     super.update(dt);
     _t += dt;
     if (_flash > 0) _flash -= dt;
-    if (vulnerableTime > 0) vulnerableTime -= dt;
-
-    if (_knockback.length2 > 1) {
-      position.addScaled(_knockback, dt);
-      _knockback.scale(pow(0.02, dt).toDouble());
-    }
+    if (_hurtCooldown > 0) _hurtCooldown -= dt;
+    if (scaredTime > 0) scaredTime -= dt;
+    if (game.finished) return;
 
     if (frozenTime > 0) {
       frozenTime -= dt;
+      velocity.x = 0;
+      applyGravity(dt);
+      moveAndCollide(dt);
       return;
     }
 
     final player = game.player;
-    final toPlayer = player.position - position;
-    final dist = toPlayer.length;
-    if (dist > 0.01) {
-      final dir = toPlayer / dist;
-      // A little sideways wobble so hordes don't collapse into a single dot.
-      final wobble = sin(_t * 3 + _wobbleSeed) * 0.35;
-      final side = Vector2(-dir.y, dir.x) * wobble;
-      var move = (dir + side)..normalize();
-      if (fearTime > 0) {
-        fearTime -= dt;
-        move = -move;
-      }
-      position.addScaled(move, kind.speed * dt);
+    final dx = player.position.x - position.x;
+    final near = dx.abs() < 420;
+    if (!near && !kind.isBoss) {
+      // Sleep off-screen: no need to simulate the whole level.
+      return;
     }
 
-    if (fearTime <= 0 && dist < radius + player.radius) {
-      player.takeDamage(kind.damage);
+    var speed = kind.speed;
+    if (scared) {
+      _dir = dx > 0 ? -1 : 1;
+      speed *= 1.6;
     }
-    position.clamp(Vector2.zero(), game.arenaSize);
+    if (kind.isBoss) speed *= 1 + (kind.hp - hp) * 0.15;
+
+    _actionTimer -= dt;
+    switch (kind) {
+      case EnemyKind.cringe:
+        // Nervous little hops.
+        if (onGround && _actionTimer <= 0) {
+          velocity.y = -330;
+          _actionTimer = 1 + _rnd.nextDouble();
+        }
+      case EnemyKind.hater:
+        if (!scared &&
+            _actionTimer <= 0 &&
+            dx.abs() < 260 &&
+            (player.position.y - position.y).abs() < 60) {
+          _dir = dx > 0 ? 1 : -1;
+          game.world.add(
+            RatioProjectile(
+              position: position - Vector2(0, 14),
+              direction: _dir,
+            ),
+          );
+          _actionTimer = 2.4;
+        }
+      case EnemyKind.algorithm:
+        if (dx.abs() < 400) _dir = dx > 0 ? 1 : -1;
+        if (onGround && _actionTimer <= 0) {
+          velocity.y = -520;
+          _actionTimer = 2.2 - (kind.hp - hp) * 0.25;
+          if (game.enemies.length < 4) game.spawnMinion(position.clone());
+        }
+      default:
+        break;
+    }
+
+    velocity.x = _dir * speed;
+    applyGravity(dt);
+    moveAndCollide(dt);
+    if (hitWall) _dir = -_dir;
+    if (onGround &&
+        !kind.isBoss &&
+        kind != EnemyKind.cringe &&
+        ledgeAhead(_dir)) {
+      _dir = -_dir;
+    }
+    if (position.y > game.level.height + 100) {
+      dead = true;
+      removeFromParent();
+    }
   }
-
-  static final _shadow = Paint()..color = const Color(0x55000000);
-  static final _hpBack = Paint()..color = const Color(0xAA000000);
-  static final _hpFill = Paint()..color = const Color(0xFFE74C3C);
 
   @override
   void render(Canvas canvas) {
-    final c = Offset(radius, radius);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: c + Offset(0, radius * .85),
-        width: radius * 1.8,
-        height: radius * .6,
-      ),
-      _shadow,
-    );
-    final body = Paint()
-      ..color = _flash > 0
-          ? Colors.white
-          : frozenTime > 0
-          ? const Color(0xFF9FD8FF)
-          : kind.color;
-    final bounce = sin(_t * 10 + _wobbleSeed) * radius * 0.06;
-    canvas.drawCircle(c.translate(0, bounce), radius, body);
-    canvas.drawCircle(
-      c.translate(0, bounce),
-      radius,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5
-        ..color = Colors.black87,
-    );
-    final img = _faceCache[kind];
-    if (img != null) {
-      final s = radius * 2.4;
-      canvas.drawImageRect(
-        img,
-        Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
-        Rect.fromCenter(center: c.translate(0, bounce), width: s, height: s),
-        Paint()..filterQuality = FilterQuality.medium,
-      );
+    final fw = _strip.frameWidth;
+    final frame = frozen ? 0 : ((_t * (kind.isBoss ? 4 : 6)).floor() % 2);
+    Paint? paint;
+    if (_flash > 0 || (_hurtCooldown > 0 && (_t * 16).floor().isEven)) {
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.mode(Colors.white, BlendMode.srcATop);
+    } else if (frozen) {
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.mode(
+          Color(0x8870D0FF),
+          BlendMode.srcATop,
+        );
+    } else if (scared) {
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.mode(
+          Color(0x55B388FF),
+          BlendMode.srcATop,
+        );
     }
-    final fear = _fearImage;
-    if (fearTime > 0 && fear != null) {
-      canvas.drawImage(
-        fear,
-        c.translate(
-          radius * .9 - fear.width / 2,
-          -radius * .9 - fear.height / 2,
-        ),
-        Paint(),
-      );
-    }
-    if (kind.isBoss || hp < maxHp) {
-      final w = radius * 2;
-      final top = -10.0;
-      canvas.drawRect(Rect.fromLTWH(0, top, w, 5), _hpBack);
+    final shake = scared ? sin(_t * 60) : 0.0;
+    _strip.draw(
+      canvas,
+      frame,
+      Offset(-fw / 2 + shake, -fw),
+      flip: _dir > 0,
+      paint: paint,
+    );
+    if (frozen) {
       canvas.drawRect(
-        Rect.fromLTWH(0, top, w * (hp / maxHp).clamp(0, 1), 5),
-        _hpFill,
+        Rect.fromLTRB(-fw / 2, -fw, fw / 2, 0),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5
+          ..color = const Color(0xFFBDEBFF),
+      );
+    }
+    if (kind.isBoss) {
+      const w = 50.0;
+      canvas.drawRect(
+        const Rect.fromLTWH(-w / 2, -64, w, 5),
+        Paint()..color = Colors.black87,
+      );
+      canvas.drawRect(
+        Rect.fromLTWH(-w / 2 + 1, -63, (w - 2) * hp / kind.hp, 3),
+        Paint()..color = const Color(0xFF2ECC71),
       );
     }
   }

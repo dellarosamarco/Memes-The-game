@@ -1,6 +1,5 @@
 import 'dart:math' hide Rectangle;
 
-import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
@@ -8,106 +7,156 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/meme_character.dart';
-import 'components/arena.dart';
+import 'components/backdrop.dart';
 import 'components/effects.dart';
 import 'components/enemy.dart';
+import 'components/items.dart';
 import 'components/player.dart';
-import 'components/xp_gem.dart';
-import 'upgrades.dart';
+import 'level.dart';
+import 'levels.dart';
 
-/// "Memes: the game" — a top-down arena survivor. Pick a meme, survive the
-/// endless horde of Normies, Cringe, Haters and Boomers, collect likes,
-/// level up, and beat L'Algoritmo.
+/// Dev aid: `--dart-define=MEMES_START_COL=120` drops the player at that
+/// column to test the end of a level.
+const _debugStartCol = int.fromEnvironment('MEMES_START_COL');
+
+/// Buttons currently held, fed by the keyboard and the touch controls.
+class GameInput {
+  bool left = false;
+  bool right = false;
+  bool jump = false;
+
+  /// A recent jump press, consumed by the player (makes jumps forgiving).
+  double jumpBuffer = 0;
+  bool specialQueued = false;
+
+  void pressJump() {
+    jump = true;
+    jumpBuffer = 0.14;
+  }
+
+  void clear() {
+    left = right = jump = specialQueued = false;
+    jumpBuffer = 0;
+  }
+}
+
+/// "Memes: the game" — a 2D platformer starring real memes.
 class MemesGame extends FlameGame with KeyboardEvents {
-  MemesGame({required this.character});
+  MemesGame({required this.character, required this.levelIndex})
+    : level = kLevels[levelIndex].copy();
 
   static const overlayHud = 'hud';
-  static const overlayLevelUp = 'levelUp';
   static const overlayPause = 'pause';
+  static const overlayComplete = 'complete';
   static const overlayGameOver = 'gameOver';
 
   final MemeCharacter character;
-  final Vector2 arenaSize = Vector2.all(2600);
-  final rnd = Random();
+  final int levelIndex;
+  final LevelData level;
+  final input = GameInput();
 
   late final Player player;
-  late final JoystickComponent joystick;
-
   final List<Enemy> enemies = [];
-  final List<XpGem> gems = [];
 
   // Run state.
   double elapsed = 0;
+  int likes = 0;
   int kills = 0;
-  int killScore = 0;
-  int level = 1;
-  int xp = 0;
-  int pendingLevelUps = 0;
-  bool isGameOver = false;
-  List<Upgrade> upgradeChoices = const [];
-
-  int get xpToNext => 4 + level * 4 + (level * level) ~/ 3;
-  int get score => killScore + elapsed.floor() * 2 + (level - 1) * 50;
+  int enemyScore = 0;
+  bool finished = false;
+  bool isOver = false;
+  bool _bossAlive = false;
+  late Vector2 _checkpoint;
+  double _shake = 0;
+  final _rnd = Random();
 
   /// Bumped ~10 times a second so Flutter overlays can rebuild.
   final hudTick = ValueNotifier<int>(0);
   double _hudAcc = 0;
 
-  double _spawnAcc = 0;
-  double _nextBossAt = 120;
-  double _shake = 0;
-  final Set<LogicalKeyboardKey> _keys = {};
+  /// Counted before any block is opened.
+  late final int totalLikes;
+  int get timeBonus => max(0, level.parTime - elapsed.floor()) * 5;
+  int get score =>
+      likes * 10 +
+      enemyScore +
+      (finished ? timeBonus + player.hearts * 100 : 0);
+
+  /// 1 star for finishing, 2 with half the likes, 3 with 90% of them.
+  int get stars {
+    if (!finished) return 0;
+    final ratio = totalLikes == 0 ? 1 : likes / totalLikes;
+    return ratio >= .9 ? 3 : (ratio >= .5 ? 2 : 1);
+  }
 
   @override
-  Color backgroundColor() => const Color(0xFF14121F);
+  Color backgroundColor() => const Color(0xFF000000);
 
   @override
   Future<void> onLoad() async {
-    await images.loadAll([character.spritePath]);
-    Enemy.warmUp();
+    totalLikes = level.totalLikes;
+    await images.loadAll([
+      character.spriteSheet,
+      for (final k in EnemyKind.values) k.spritePath,
+      'sprites/tiles_${level.theme.name}.png',
+      'sprites/bg_${level.theme.name}_far.png',
+      'sprites/bg_${level.theme.name}_clouds.png',
+      'sprites/like.png',
+      'sprites/flag.png',
+      'sprites/checkpoint.png',
+      'sprites/ratio.png',
+    ]);
 
-    world.add(Arena(size: arenaSize));
-    player = Player(character: character, position: arenaSize / 2);
+    camera.backdrop.add(Backdrop());
+    world.add(LevelMap());
+
+    Vector2? start;
+    for (final s in level.spawns) {
+      final kind = EnemyKind.fromCode(s.code);
+      if (kind != null) {
+        world.add(Enemy(kind: kind, position: s.feet));
+        if (kind.isBoss) _bossAlive = true;
+        continue;
+      }
+      switch (s.code) {
+        case 'P':
+          start = s.feet;
+        case 'o':
+          world.add(Like(position: s.feet - Vector2(0, kTile / 2)));
+        case 'K':
+          world.add(Checkpoint(position: s.feet));
+        case 'F':
+          world.add(FinishFlag(position: s.feet));
+      }
+    }
+    _checkpoint = start ?? Vector2(kTile * 2, kTile * 10);
+    if (_debugStartCol > 0) {
+      _checkpoint = Vector2((_debugStartCol + .5) * kTile, kTile * 2);
+    }
+    player = Player(character: character, position: _checkpoint.clone());
     world.add(player);
-    camera.follow(player);
+
+    camera.follow(player, maxSpeed: 900);
     camera.setBounds(
-      Rectangle.fromLTRB(0, 0, arenaSize.x, arenaSize.y),
+      Rectangle.fromLTRB(0, 0, level.width, level.height),
       considerViewport: true,
     );
-
-    joystick = JoystickComponent(
-      knob: CircleComponent(
-        radius: 26,
-        paint: Paint()..color = const Color(0xCCFFFFFF),
-      ),
-      background: CircleComponent(
-        radius: 64,
-        paint: Paint()..color = const Color(0x33FFFFFF),
-      ),
-      margin: const EdgeInsets.only(left: 36, bottom: 36),
-    );
-    camera.viewport.add(joystick);
   }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    // Show roughly the same amount of world on phones and desktops.
-    camera.viewfinder.zoom = (min(size.x, size.y) / 520).clamp(0.6, 1.6);
+    // Show ~11 tiles vertically, whatever the screen.
+    camera.viewfinder.zoom = size.y / (kTile * 11);
   }
 
   @override
   void update(double dt) {
-    // Big frame hitches (tab switch) shouldn't teleport everything.
-    dt = min(dt, 1 / 20);
-    if (!isGameOver) {
-      elapsed += dt;
-      _readInput();
-      _spawn(dt);
-    }
+    dt = min(dt, 1 / 30);
+    if (!finished && !isOver) elapsed += dt;
+    if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
     super.update(dt);
     _updateShake(dt);
-
     _hudAcc += dt;
     if (_hudAcc > 0.1) {
       _hudAcc = 0;
@@ -115,187 +164,152 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
   }
 
-  void _readInput() {
-    final kb = Vector2.zero();
-    if (_keys.contains(LogicalKeyboardKey.keyA) ||
-        _keys.contains(LogicalKeyboardKey.arrowLeft)) {
-      kb.x -= 1;
-    }
-    if (_keys.contains(LogicalKeyboardKey.keyD) ||
-        _keys.contains(LogicalKeyboardKey.arrowRight)) {
-      kb.x += 1;
-    }
-    if (_keys.contains(LogicalKeyboardKey.keyW) ||
-        _keys.contains(LogicalKeyboardKey.arrowUp)) {
-      kb.y -= 1;
-    }
-    if (_keys.contains(LogicalKeyboardKey.keyS) ||
-        _keys.contains(LogicalKeyboardKey.arrowDown)) {
-      kb.y += 1;
-    }
-    if (kb.length2 > 0) {
-      player.input.setFrom(kb.normalized());
-    } else if (joystick.direction != JoystickDirection.idle) {
-      player.input.setFrom(joystick.relativeDelta);
-    } else {
-      player.input.setZero();
-    }
-  }
+  // ----------------------------------------------------------------- input
 
   @override
   KeyEventResult onKeyEvent(
     KeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    _keys
-      ..clear()
-      ..addAll(keysPressed);
+    bool any(List<LogicalKeyboardKey> keys) => keys.any(keysPressed.contains);
+    const jumpKeys = [
+      LogicalKeyboardKey.space,
+      LogicalKeyboardKey.arrowUp,
+      LogicalKeyboardKey.keyW,
+      LogicalKeyboardKey.keyZ,
+    ];
+    input.left = any([LogicalKeyboardKey.arrowLeft, LogicalKeyboardKey.keyA]);
+    input.right = any([LogicalKeyboardKey.arrowRight, LogicalKeyboardKey.keyD]);
+    input.jump = any(jumpKeys);
     if (event is KeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space) {
-        player.useSpecial();
-      } else if (event.logicalKey == LogicalKeyboardKey.escape) {
+      final k = event.logicalKey;
+      if (jumpKeys.contains(k)) input.pressJump();
+      if (k == LogicalKeyboardKey.keyX ||
+          k == LogicalKeyboardKey.keyK ||
+          k == LogicalKeyboardKey.shiftLeft ||
+          k == LogicalKeyboardKey.shiftRight) {
+        input.specialQueued = true;
+      }
+      if (k == LogicalKeyboardKey.escape || k == LogicalKeyboardKey.keyP) {
         togglePause();
       }
     }
     return KeyEventResult.handled;
   }
 
-  // ------------------------------------------------------------- spawning
+  // ----------------------------------------------------------- level events
 
-  EnemyKind _pickKind() {
-    final r = rnd.nextDouble();
-    if (elapsed < 30) return r < .75 ? EnemyKind.normie : EnemyKind.cringe;
-    if (elapsed < 70) {
-      if (r < .5) return EnemyKind.normie;
-      if (r < .8) return EnemyKind.cringe;
-      return EnemyKind.hater;
-    }
-    if (r < .35) return EnemyKind.normie;
-    if (r < .6) return EnemyKind.cringe;
-    if (r < .85) return EnemyKind.hater;
-    return EnemyKind.boomer;
+  void collectLike(Like like) {
+    likes++;
   }
 
-  Vector2 _spawnPoint() {
-    final view = size / camera.viewfinder.zoom;
-    final dist = view.length / 2 + 60;
-    final a = rnd.nextDouble() * pi * 2;
-    final p = player.position + Vector2(cos(a), sin(a)) * dist;
-    return p..clamp(Vector2.all(20), arenaSize - Vector2.all(20));
+  /// The player's head hit a solid tile from below.
+  void bumpBlock(int col, int row) {
+    if (level.tileAt(col, row) != '?') return;
+    level.setTile(col, row, 'U');
+    world.add(
+      Like(
+        position: Vector2((col + .5) * kTile, row * kTile - 6),
+        popped: true,
+      ),
+    );
   }
 
-  void _spawn(double dt) {
-    final interval = max(0.16, 1.0 - elapsed / 150);
-    _spawnAcc += dt;
-    if (_spawnAcc < interval) return;
-    _spawnAcc = 0;
-    if (enemies.length > 260) return;
-    final hpScale = 1 + elapsed / 75;
-    final batch = 1 + elapsed ~/ 40;
-    for (var i = 0; i < batch; i++) {
-      world.add(
-        Enemy(kind: _pickKind(), position: _spawnPoint(), hpScale: hpScale),
-      );
-    }
-    if (elapsed >= _nextBossAt) {
-      _nextBossAt += 120;
-      world.add(
-        Enemy(
-          kind: EnemyKind.algorithm,
-          position: _spawnPoint(),
-          hpScale: hpScale,
-        ),
-      );
+  void reachCheckpoint(Checkpoint cp) {
+    _checkpoint = cp.position.clone();
+    world.add(
+      FloatingText(position: cp.position - Vector2(0, 52), text: 'SALVATO!'),
+    );
+  }
+
+  void onEnemyKilled(Enemy e) {
+    kills++;
+    enemyScore += e.kind.score;
+    if (e.kind.isBoss) {
+      _bossAlive = false;
+      _openGates();
+      shake(0.6);
       camera.viewport.add(ScreenFlash(color: const Color(0x662ECC71)));
       world.add(
         FloatingText(
-          position: player.position - Vector2(0, 110),
-          text: 'ARRIVA L\'ALGORITMO! 🤖',
-          fontSize: 28,
-          color: const Color(0xFF2ECC71),
+          position: e.position - Vector2(0, 70),
+          text: 'ALGORITMO SCONFITTO!',
+          fontSize: 14,
+          color: const Color(0xFFFFD54F),
           duration: 2.2,
         ),
       );
     }
   }
 
-  // ------------------------------------------------------------- run events
+  void spawnMinion(Vector2 at) {
+    if (!_bossAlive) return;
+    final kind = _rnd.nextBool() ? EnemyKind.normie : EnemyKind.cringe;
+    world.add(Enemy(kind: kind, position: at - Vector2(0, 30)));
+  }
 
-  void onEnemyKilled(Enemy e) {
-    kills++;
-    killScore += e.kind.xp * 10;
-    if (e.kind.isBoss) {
-      shake(0.5);
-      world.add(
-        FloatingText(
-          position: e.position.clone(),
-          text: 'ALGORITMO SCONFITTO!',
-          fontSize: 26,
-          color: const Color(0xFFFFD54F),
-          duration: 1.8,
-        ),
-      );
+  void _openGates() {
+    for (var r = 0; r < level.rows; r++) {
+      for (var c = 0; c < level.cols; c++) {
+        if (level.tileAt(c, r) == 'G') level.setTile(c, r, ' ');
+      }
     }
   }
 
-  void addXp(int amount) {
-    xp += amount;
-    while (xp >= xpToNext) {
-      xp -= xpToNext;
-      level++;
-      pendingLevelUps++;
+  void fellInPit() {
+    if (finished || isOver) return;
+    player.hearts--;
+    shake(0.3);
+    if (player.hearts <= 0) {
+      gameOver();
+      return;
     }
-    if (pendingLevelUps > 0 && !overlays.isActive(overlayLevelUp)) {
-      _openLevelUp();
-    }
+    player.respawn(_checkpoint.clone());
+    camera.viewfinder.position = _checkpoint.clone();
   }
 
-  void _openLevelUp() {
-    upgradeChoices = Upgrade.roll(character, rnd);
-    pauseEngine();
-    overlays.add(overlayLevelUp);
-  }
-
-  void chooseUpgrade(Upgrade u) {
-    u.apply(player.stats, player.heal);
-    pendingLevelUps--;
-    overlays.remove(overlayLevelUp);
+  void finish() {
+    if (finished) return;
+    finished = true;
+    input.clear();
     world.add(
       FloatingText(
-        position: player.position - Vector2(0, 60),
-        text: '${u.emoji} ${u.title}!',
-        fontSize: 20,
+        position: player.position - Vector2(0, 80),
+        text: 'VIRALE!',
+        fontSize: 18,
+        color: const Color(0xFFFFD54F),
+        duration: 2,
       ),
     );
-    if (pendingLevelUps > 0) {
-      _openLevelUp();
-    } else {
-      resumeEngine();
-    }
-  }
-
-  void togglePause() {
-    if (isGameOver || overlays.isActive(overlayLevelUp)) return;
-    if (overlays.isActive(overlayPause)) {
-      overlays.remove(overlayPause);
-      resumeEngine();
-    } else {
-      overlays.add(overlayPause);
-      pauseEngine();
-    }
+    Future.delayed(const Duration(milliseconds: 1400), () {
+      overlays.remove(overlayHud);
+      overlays.add(overlayComplete);
+    });
   }
 
   void gameOver() {
-    if (isGameOver) return;
-    isGameOver = true;
+    if (isOver) return;
+    isOver = true;
+    input.clear();
     hudTick.value++;
-    _keys.clear();
     overlays.remove(overlayHud);
     overlays.add(overlayGameOver);
     pauseEngine();
   }
 
-  // ------------------------------------------------------------- camera shake
+  void togglePause() {
+    if (isOver || finished) return;
+    if (overlays.isActive(overlayPause)) {
+      overlays.remove(overlayPause);
+      resumeEngine();
+    } else {
+      input.clear();
+      overlays.add(overlayPause);
+      pauseEngine();
+    }
+  }
+
+  // ----------------------------------------------------------- camera shake
 
   void shake(double seconds) => _shake = max(_shake, seconds);
 
@@ -303,8 +317,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (_shake > 0) {
       _shake -= dt;
       camera.viewport.position = Vector2(
-        (rnd.nextDouble() - .5) * 14,
-        (rnd.nextDouble() - .5) * 14,
+        (_rnd.nextDouble() - .5) * 8,
+        (_rnd.nextDouble() - .5) * 8,
       );
     } else if (!camera.viewport.position.isZero()) {
       camera.viewport.position = Vector2.zero();

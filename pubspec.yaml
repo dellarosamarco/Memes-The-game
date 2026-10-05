@@ -1,5 +1,5 @@
 name: memes_the_game
-description: "Memes: the game — arena survivor con i meme più iconici."
+description: "Memes: the game — platform 2D con i meme più iconici."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -63,7 +63,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/characters/
+    - assets/images/sprites/
     - assets/images/portraits/
 
   # To add assets to your application, add an assets section, like this:

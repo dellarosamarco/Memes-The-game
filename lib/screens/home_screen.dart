@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
 import '../services/local_store.dart';
 import '../widgets/meme_text.dart';
+import '../widgets/sprite_view.dart';
 import 'character_select_screen.dart';
 import 'leaderboard_screen.dart';
 
@@ -16,19 +15,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  late final _anim = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 3),
-  )..repeat();
-
-  @override
-  void dispose() {
-    _anim.dispose();
-    super.dispose();
-  }
-
+class _HomeScreenState extends State<HomeScreen> {
   Future<void> _editName() async {
     final ctrl = TextEditingController(text: LocalStore.instance.playerName);
     final name = await showDialog<String>(
@@ -69,119 +56,97 @@ class _HomeScreenState extends State<HomeScreen>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF2B1B4A), Color(0xFF14121F)],
+            colors: [Color(0xFF7FD3FF), Color(0xFFD6F2FF)],
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  _OrbitingMemes(animation: _anim),
-                  const SizedBox(height: 16),
-                  const MemeText('Memes:', fontSize: 64),
-                  const MemeText(
-                    'the game',
-                    fontSize: 36,
-                    color: Color(0xFFFFD54F),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Sopravvivi all\'orda di Normie, Cringe, Hater e Boomer.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  const SizedBox(height: 36),
-                  MemeButton(
-                    label: 'Gioca',
-                    icon: Icons.play_arrow,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const CharacterSelectScreen(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  MemeButton(
-                    label: 'Classifica',
-                    icon: Icons.leaderboard,
-                    color: const Color(0xFF7E57C2),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const LeaderboardScreen(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  TextButton.icon(
-                    onPressed: _editName,
-                    icon: const Icon(Icons.edit, color: Colors.white70),
-                    label: Text(
-                      'Giocatore: ${LocalStore.instance.playerName}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Text(
-                    FirebaseService.instance.available
-                        ? '🟢 Online'
-                        : '⚪ Offline (Firebase non configurato)',
-                    style: const TextStyle(color: Colors.white38, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The four memes spinning around the title.
-class _OrbitingMemes extends StatelessWidget {
-  const _OrbitingMemes({required this.animation});
-
-  final Animation<double> animation;
-
-  @override
-  Widget build(BuildContext context) {
-    const chars = MemeCharacter.all;
-    return SizedBox(
-      width: 240,
-      height: 180,
-      child: AnimatedBuilder(
-        animation: animation,
-        builder: (context, _) {
-          final items = [
-            for (var i = 0; i < chars.length; i++)
-              (animation.value * 2 * pi + i * pi / 2, chars[i]),
-          ]..sort((a, b) => sin(a.$1).compareTo(sin(b.$1)));
-          return Stack(
+          child: Stack(
             children: [
-              for (final (a, c) in items)
-                Builder(
-                  builder: (context) {
-                    final r = 34 + (sin(a) + 1) / 2 * 18;
-                    return Positioned(
-                      left: 120 + cos(a) * 85 - r,
-                      top: 80 + sin(a) * 40 - r,
-                      child: CircleAvatar(
-                        radius: r,
-                        backgroundColor: c.color,
-                        child: CircleAvatar(
-                          radius: r - 3,
-                          backgroundImage: AssetImage(
-                            'assets/images/${c.spritePath}',
+              // A grass strip with the four memes standing on it.
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (final c in MemeCharacter.all)
+                          CharacterSpriteView(character: c, scale: 1.6),
+                      ],
+                    ),
+                    Container(height: 10, color: const Color(0xFF58C448)),
+                    Container(height: 22, color: const Color(0xFF966038)),
+                  ],
+                ),
+              ),
+              Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 120),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const MemeText('Memes:', fontSize: 52),
+                      const MemeText(
+                        'the game',
+                        fontSize: 30,
+                        color: Color(0xFFFFD54F),
+                      ),
+                      const SizedBox(height: 18),
+                      Wrap(
+                        spacing: 14,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          MemeButton(
+                            label: 'Gioca',
+                            icon: Icons.play_arrow,
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const CharacterSelectScreen(),
+                              ),
+                            ),
+                          ),
+                          MemeButton(
+                            label: 'Classifica',
+                            icon: Icons.leaderboard,
+                            color: const Color(0xFF7E57C2),
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const LeaderboardScreen(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      TextButton.icon(
+                        onPressed: _editName,
+                        icon: const Icon(Icons.edit, color: Colors.black87),
+                        label: Text(
+                          'Giocatore: ${LocalStore.instance.playerName}',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                    );
-                  },
+                      Text(
+                        FirebaseService.instance.available
+                            ? '🟢 Online'
+                            : '⚪ Offline (Firebase non configurato)',
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+              ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }

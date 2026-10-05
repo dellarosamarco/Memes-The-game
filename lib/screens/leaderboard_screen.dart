@@ -1,56 +1,41 @@
 import 'package:flutter/material.dart';
 
+import '../game/levels.dart';
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
 import '../services/local_store.dart';
 import '../widgets/meme_text.dart';
 
 class LeaderboardScreen extends StatelessWidget {
-  const LeaderboardScreen({super.key, this.initialCharacterId});
+  const LeaderboardScreen({super.key, this.initialLevelId});
 
-  final String? initialCharacterId;
+  final String? initialLevelId;
 
   @override
   Widget build(BuildContext context) {
-    const chars = MemeCharacter.all;
-    final initial = initialCharacterId == null
+    final initial = initialLevelId == null
         ? 0
-        : chars.indexWhere((c) => c.id == initialCharacterId) + 1;
+        : kLevels.indexWhere((l) => l.id == initialLevelId);
     return DefaultTabController(
-      length: chars.length + 1,
-      initialIndex: initial.clamp(0, chars.length),
+      length: kLevels.length,
+      initialIndex: initial < 0 ? 0 : initial,
       child: Scaffold(
         backgroundColor: const Color(0xFF14121F),
         appBar: AppBar(
           backgroundColor: const Color(0xFF221D33),
           foregroundColor: Colors.white,
-          title: const MemeText('Classifica', fontSize: 24),
+          toolbarHeight: 44,
+          title: const MemeText('Classifica', fontSize: 22),
           centerTitle: true,
           bottom: TabBar(
-            isScrollable: true,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white54,
             indicatorColor: const Color(0xFFFF4FA3),
-            tabs: [
-              const Tab(text: 'TUTTI'),
-              for (final c in chars)
-                Tab(
-                  icon: CircleAvatar(
-                    radius: 14,
-                    backgroundImage: AssetImage(
-                      'assets/images/${c.spritePath}',
-                    ),
-                  ),
-                  text: c.name.split(' ').first,
-                ),
-            ],
+            tabs: [for (final l in kLevels) Tab(text: l.name.toUpperCase())],
           ),
         ),
         body: TabBarView(
-          children: [
-            const _ScoreList(characterId: null),
-            for (final c in chars) _ScoreList(characterId: c.id),
-          ],
+          children: [for (final l in kLevels) _ScoreList(levelId: l.id)],
         ),
       ),
     );
@@ -58,9 +43,9 @@ class LeaderboardScreen extends StatelessWidget {
 }
 
 class _ScoreList extends StatefulWidget {
-  const _ScoreList({required this.characterId});
+  const _ScoreList({required this.levelId});
 
-  final String? characterId;
+  final String levelId;
 
   @override
   State<_ScoreList> createState() => _ScoreListState();
@@ -70,12 +55,16 @@ class _ScoreListState extends State<_ScoreList> {
   late Future<List<ScoreEntry>> _future = _load();
 
   Future<List<ScoreEntry>> _load() =>
-      FirebaseService.instance.topScores(characterId: widget.characterId);
+      FirebaseService.instance.topScores(levelId: widget.levelId);
 
   @override
   Widget build(BuildContext context) {
     if (!FirebaseService.instance.available) {
-      return _offline();
+      final best = LocalStore.instance.bestScore(widget.levelId);
+      return _message(
+        'Classifica online non disponibile: Firebase non è configurato.\n\n'
+        'Il tuo record su questo livello: $best',
+      );
     }
     return RefreshIndicator(
       onRefresh: () async {
@@ -114,11 +103,11 @@ class _ScoreListState extends State<_ScoreList> {
                     : const Color(0xFF221D33),
                 child: ListTile(
                   leading: SizedBox(
-                    width: 84,
+                    width: 86,
                     child: Row(
                       children: [
                         SizedBox(
-                          width: 36,
+                          width: 38,
                           child: Text(
                             medal,
                             style: const TextStyle(
@@ -128,11 +117,11 @@ class _ScoreListState extends State<_ScoreList> {
                             ),
                           ),
                         ),
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundImage: AssetImage(
-                            'assets/images/${c.spritePath}',
-                          ),
+                        Image.asset(
+                          c.portraitAsset,
+                          width: 44,
+                          height: 44,
+                          filterQuality: FilterQuality.none,
                         ),
                       ],
                     ),
@@ -145,7 +134,7 @@ class _ScoreListState extends State<_ScoreList> {
                     ),
                   ),
                   subtitle: Text(
-                    '${c.name} · LV ${e.level} · 💀 ${e.kills} · '
+                    '${c.name} · 👍 ${e.likes} · 💀 ${e.kills} · '
                     '⏱ ${e.seconds ~/ 60}:${(e.seconds % 60).toString().padLeft(2, '0')}',
                     style: const TextStyle(color: Colors.white54),
                   ),
@@ -161,7 +150,7 @@ class _ScoreListState extends State<_ScoreList> {
 
   Widget _message(String text) => ListView(
     children: [
-      const SizedBox(height: 120),
+      const SizedBox(height: 60),
       Text(
         text,
         textAlign: TextAlign.center,
@@ -169,36 +158,4 @@ class _ScoreListState extends State<_ScoreList> {
       ),
     ],
   );
-
-  Widget _offline() {
-    final chars = widget.characterId == null
-        ? MemeCharacter.all
-        : [MemeCharacter.byId(widget.characterId!)];
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const Text(
-          'Classifica online non disponibile: Firebase non è configurato.\n'
-          'Ecco i tuoi record personali.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white54),
-        ),
-        const SizedBox(height: 16),
-        for (final c in chars)
-          Card(
-            color: const Color(0xFF221D33),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/${c.spritePath}'),
-              ),
-              title: Text(c.name, style: const TextStyle(color: Colors.white)),
-              trailing: MemeText(
-                '${LocalStore.instance.bestScore(c.id)}',
-                fontSize: 20,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
 }

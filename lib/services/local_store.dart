@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Local persistence: player name and personal bests per character.
+/// Local persistence: player name, unlocked levels, bests and stars.
 class LocalStore {
   LocalStore._(this._prefs);
   static late LocalStore instance;
@@ -20,12 +20,30 @@ class LocalStore {
   Future<void> setPlayerName(String name) =>
       _prefs.setString('playerName', name);
 
-  int bestScore(String characterId) => _prefs.getInt('best_$characterId') ?? 0;
+  /// Number of levels the player can choose (at least the first).
+  int get unlockedLevels => _unlockAll ? 99 : _prefs.getInt('unlocked') ?? 1;
 
-  /// Returns true when [score] is a new personal best.
-  Future<bool> recordScore(String characterId, int score) async {
-    if (score <= bestScore(characterId)) return false;
-    await _prefs.setInt('best_$characterId', score);
+  /// Dev aid: `--dart-define=MEMES_UNLOCK_ALL=true`.
+  static const _unlockAll = bool.fromEnvironment('MEMES_UNLOCK_ALL');
+
+  int bestScore(String levelId) => _prefs.getInt('best_$levelId') ?? 0;
+  int stars(String levelId) => _prefs.getInt('stars_$levelId') ?? 0;
+
+  /// Saves a completed level. Returns true when [score] is a new best.
+  Future<bool> recordLevel({
+    required int levelIndex,
+    required String levelId,
+    required int score,
+    required int stars,
+  }) async {
+    if (levelIndex + 2 > unlockedLevels) {
+      await _prefs.setInt('unlocked', levelIndex + 2);
+    }
+    if (stars > this.stars(levelId)) {
+      await _prefs.setInt('stars_$levelId', stars);
+    }
+    if (score <= bestScore(levelId)) return false;
+    await _prefs.setInt('best_$levelId', score);
     return true;
   }
 }

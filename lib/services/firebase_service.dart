@@ -8,27 +8,30 @@ import '../firebase_options.dart';
 class ScoreEntry {
   const ScoreEntry({
     required this.name,
+    required this.levelId,
     required this.characterId,
     required this.score,
+    required this.likes,
     required this.kills,
     required this.seconds,
-    required this.level,
   });
 
   final String name;
+  final String levelId;
   final String characterId;
   final int score;
+  final int likes;
   final int kills;
   final int seconds;
-  final int level;
 
   factory ScoreEntry.fromMap(Map<String, dynamic> m) => ScoreEntry(
     name: m['name'] as String? ?? '???',
+    levelId: m['levelId'] as String? ?? '',
     characterId: m['characterId'] as String? ?? '',
     score: (m['score'] as num?)?.toInt() ?? 0,
+    likes: (m['likes'] as num?)?.toInt() ?? 0,
     kills: (m['kills'] as num?)?.toInt() ?? 0,
     seconds: (m['seconds'] as num?)?.toInt() ?? 0,
-    level: (m['level'] as num?)?.toInt() ?? 1,
   );
 }
 
@@ -60,22 +63,24 @@ class FirebaseService {
 
   Future<bool> submitScore({
     required String name,
+    required String levelId,
     required String characterId,
     required int score,
+    required int likes,
     required int kills,
     required int seconds,
-    required int level,
   }) async {
     if (!available) return false;
     try {
       await FirebaseFirestore.instance.collection(_scores).add({
         'uid': FirebaseAuth.instance.currentUser!.uid,
         'name': name,
+        'levelId': levelId,
         'characterId': characterId,
         'score': score,
+        'likes': likes,
         'kills': kills,
         'seconds': seconds,
-        'level': level,
         'createdAt': FieldValue.serverTimestamp(),
       });
       return true;
@@ -85,15 +90,15 @@ class FirebaseService {
     }
   }
 
-  /// Top scores, optionally filtered by character.
-  Future<List<ScoreEntry>> topScores({String? characterId, int limit = 50}) {
+  /// Top scores of a level.
+  Future<List<ScoreEntry>> topScores({
+    required String levelId,
+    int limit = 50,
+  }) {
     if (!available) return Future.value(const []);
-    Query<Map<String, dynamic>> q = FirebaseFirestore.instance.collection(
-      _scores,
-    );
-    if (characterId != null) {
-      q = q.where('characterId', isEqualTo: characterId);
-    }
+    final q = FirebaseFirestore.instance
+        .collection(_scores)
+        .where('levelId', isEqualTo: levelId);
     return q
         .orderBy('score', descending: true)
         .limit(limit)

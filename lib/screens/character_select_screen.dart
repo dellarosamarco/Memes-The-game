@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/meme_character.dart';
-import '../services/local_store.dart';
 import '../widgets/meme_text.dart';
-import 'game_screen.dart';
+import '../widgets/sprite_view.dart';
+import 'level_select_screen.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
   const CharacterSelectScreen({super.key});
@@ -13,29 +13,21 @@ class CharacterSelectScreen extends StatefulWidget {
 }
 
 class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
-  final _pages = PageController(viewportFraction: 0.86);
   int _index = 0;
-
-  @override
-  void dispose() {
-    _pages.dispose();
-    super.dispose();
-  }
-
-  void _play(MemeCharacter c) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => GameScreen(character: c)));
-  }
 
   @override
   Widget build(BuildContext context) {
     const chars = MemeCharacter.all;
-    final current = chars[_index];
+    final c = chars[_index];
+    final buttonColor = c.color == const Color(0xFF3A3A3A)
+        ? const Color(0xFFFF4FA3)
+        : c.color;
     return Scaffold(
       backgroundColor: const Color(0xFF14121F),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
+        toolbarHeight: 48,
         title: const MemeText('Scegli il tuo meme', fontSize: 22),
         centerTitle: true,
       ),
@@ -43,69 +35,60 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: const Alignment(0, -0.4),
+            center: const Alignment(-0.5, 0),
             radius: 1.2,
-            colors: [
-              current.color.withValues(alpha: 0.45),
-              const Color(0xFF14121F),
-            ],
+            colors: [c.color.withValues(alpha: 0.45), const Color(0xFF14121F)],
           ),
         ),
         child: SafeArea(
           top: false,
-          child: Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  controller: _pages,
-                  itemCount: chars.length,
-                  onPageChanged: (i) => setState(() => _index = i),
-                  itemBuilder: (_, i) => _CharacterCard(character: chars[i]),
-                ),
-              ),
-              const SizedBox(height: 8),
-              MemeButton(
-                label: 'Gioca con ${current.name.split(' ').first}',
-                icon: Icons.play_arrow,
-                color: current.color == const Color(0xFF3A3A3A)
-                    ? const Color(0xFFFF4FA3)
-                    : current.color,
-                onPressed: () => _play(current),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < chars.length; i++)
-                      GestureDetector(
-                        onTap: () => _pages.animateToPage(
-                          i,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                        ),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: i == _index
-                                ? chars[i].color
-                                : Colors.white24,
+          child: LayoutBuilder(
+            builder: (context, box) {
+              final wide = box.maxWidth > box.maxHeight;
+              final preview = _Preview(character: c, compact: !wide);
+              final info = _Info(character: c);
+              return Column(
+                children: [
+                  Expanded(
+                    child: wide
+                        ? Row(
+                            children: [
+                              Expanded(flex: 5, child: preview),
+                              Expanded(flex: 6, child: info),
+                            ],
+                          )
+                        : ListView(children: [preview, info]),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < chars.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _Thumb(
+                              character: chars[i],
+                              selected: i == _index,
+                              onTap: () => setState(() => _index = i),
+                            ),
                           ),
-                          child: CircleAvatar(
-                            radius: i == _index ? 24 : 18,
-                            backgroundImage: AssetImage(
-                              'assets/images/${chars[i].spritePath}',
+                        const Spacer(),
+                        MemeButton(
+                          label: 'Scegli ${c.name.split(' ').first}',
+                          icon: Icons.check,
+                          color: buttonColor,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => LevelSelectScreen(character: c),
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -113,145 +96,136 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   }
 }
 
-class _CharacterCard extends StatelessWidget {
-  const _CharacterCard({required this.character});
+class _Preview extends StatelessWidget {
+  const _Preview({required this.character, required this.compact});
+
+  final MemeCharacter character;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        CharacterSpriteView(
+          key: ValueKey(character.id),
+          character: character,
+          scale: compact ? 3 : 3.6,
+          running: true,
+        ),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                character.photoAsset,
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'meme originale',
+              style: TextStyle(color: Colors.white54, fontSize: 11),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Info extends StatelessWidget {
+  const _Info({required this.character});
 
   final MemeCharacter character;
 
   @override
   Widget build(BuildContext context) {
     final c = character;
-    final best = LocalStore.instance.bestScore(c.id);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Card(
-        color: const Color(0xFF221D33),
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-          side: BorderSide(color: c.color, width: 4),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MemeText(c.name, fontSize: 30, textAlign: TextAlign.left),
+          Text(
+            c.memeAlias,
+            style: const TextStyle(
+              color: Color(0xFFFFD54F),
+              fontWeight: FontWeight.w800,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(c.lore, style: const TextStyle(color: Colors.white70)),
+          const SizedBox(height: 10),
+          Row(
             children: [
-              Stack(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.25,
-                    child: Image.asset(
-                      c.portraitAsset,
-                      fit: BoxFit.cover,
-                      alignment: const Alignment(0, -0.3),
-                    ),
-                  ),
-                  Positioned(
-                    left: 8,
-                    right: 8,
-                    top: 8,
-                    child: MemeText(c.tagline, fontSize: 18),
-                  ),
-                  Positioned(
-                    left: 8,
-                    right: 8,
-                    bottom: 8,
-                    child: MemeText(c.name, fontSize: 34),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      c.memeAlias,
-                      style: TextStyle(
-                        color: c.color == const Color(0xFF3A3A3A)
-                            ? Colors.white70
-                            : c.color,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(c.lore, style: const TextStyle(color: Colors.white70)),
-                    const SizedBox(height: 14),
-                    _Stat('Vita', c.maxHp / 140, c.maxHp.round().toString()),
-                    _Stat(
-                      'Velocità',
-                      c.speed / 215,
-                      c.speed.round().toString(),
-                    ),
-                    _Stat(
-                      'Danno/s',
-                      (c.damage / c.attackCooldown) / 37,
-                      (c.damage / c.attackCooldown).toStringAsFixed(1),
-                    ),
-                    const SizedBox(height: 12),
-                    _Ability(
-                      icon: '⚔️',
-                      title: c.attackName,
-                      text: c.attackDescription,
-                    ),
-                    _Ability(
-                      icon: '🔥',
-                      title: '${c.specialName} (${c.specialCooldown.round()}s)',
-                      text: c.specialDescription,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Record personale: $best',
-                      style: const TextStyle(color: Colors.white54),
-                    ),
-                  ],
-                ),
+              for (var i = 0; i < c.hearts; i++)
+                const Icon(Icons.favorite, color: Color(0xFFFF4F6A), size: 20),
+              const SizedBox(width: 12),
+              Text(
+                'Velocità ${c.runSpeed.round()}',
+                style: const TextStyle(color: Colors.white),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 8),
+          _Ability(
+            icon: '🧬',
+            title: c.passiveName,
+            text: c.passiveDescription,
+          ),
+          _Ability(
+            icon: '🔥',
+            title: '${c.specialName} (${c.specialCooldown}s)',
+            text: c.specialDescription,
+          ),
+        ],
       ),
     );
   }
 }
 
-class _Stat extends StatelessWidget {
-  const _Stat(this.label, this.value, this.text);
+class _Thumb extends StatelessWidget {
+  const _Thumb({
+    required this.character,
+    required this.selected,
+    required this.onTap,
+  });
 
-  final String label;
-  final double value;
-  final String text;
+  final MemeCharacter character;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(label, style: const TextStyle(color: Colors.white)),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: selected ? 60 : 50,
+        height: selected ? 60 : 50,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: selected ? character.color : Colors.white12,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? Colors.white : Colors.transparent,
+            width: 2,
           ),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: LinearProgressIndicator(
-                value: value.clamp(0, 1),
-                minHeight: 10,
-                backgroundColor: Colors.white12,
-                color: const Color(0xFFFFD54F),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 44,
-            child: Text(
-              text,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
-        ],
+        ),
+        child: Image.asset(
+          character.portraitAsset,
+          filterQuality: FilterQuality.none,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }
@@ -267,25 +241,29 @@ class _Ability extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 22)),
-          const SizedBox(width: 10),
+          Text(icon, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: 8),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$title  ',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-                Text(text, style: const TextStyle(color: Colors.white60)),
-              ],
+                  TextSpan(
+                    text: text,
+                    style: const TextStyle(color: Colors.white60),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
