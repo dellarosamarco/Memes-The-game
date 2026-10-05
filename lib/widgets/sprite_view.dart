@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../models/hats.dart';
 import '../models/meme_character.dart';
+import '../services/local_store.dart';
+import 'pixel_ui.dart';
 
 /// Shows a character's pixel-art animation strip in Flutter UI.
 class CharacterSpriteView extends StatefulWidget {
@@ -9,11 +12,19 @@ class CharacterSpriteView extends StatefulWidget {
     required this.character,
     this.scale = 3,
     this.running = false,
+    this.showHat = true,
+    this.hat,
   });
 
   final MemeCharacter character;
   final double scale;
   final bool running;
+
+  /// Wears the hat equipped in the shop.
+  final bool showHat;
+
+  /// Shows this hat instead of the equipped one (shop preview).
+  final Hat? hat;
 
   @override
   State<CharacterSpriteView> createState() => _CharacterSpriteViewState();
@@ -38,7 +49,13 @@ class _CharacterSpriteViewState extends State<CharacterSpriteView>
   @override
   Widget build(BuildContext context) {
     final s = widget.scale;
-    return SizedBox(
+    final hat = !widget.showHat
+        ? null
+        : widget.hat ??
+              (LocalStore.ready
+                  ? Hat.byId(LocalStore.instance.equippedHat)
+                  : null);
+    final sprite = SizedBox(
       width: _frame * s,
       height: _frame * s,
       child: ClipRect(
@@ -67,6 +84,38 @@ class _CharacterSpriteViewState extends State<CharacterSpriteView>
           ),
         ),
       ),
+    );
+    if (hat == null) return sprite;
+    final a = widget.character.hatAnchor;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        sprite,
+        AnimatedBuilder(
+          animation: _ctrl,
+          builder: (context, child) {
+            // Follow the sprite's little bob (frames 1, 3, 5 are 1px lower).
+            final v = _ctrl.value;
+            final frame = widget.running
+                ? 2 + (v * 8).floor() % 4
+                : (v * 2.5).floor() % 2;
+            final bob = frame.isOdd ? 1.0 : 0.0;
+            return Positioned(
+              left: (30 + a.x - Hat.width / 2) * s,
+              top: (58 + a.y - Hat.height + 3 + bob) * s,
+              child: child!,
+            );
+          },
+          child: SheetIcon(
+            asset: 'assets/images/${Hat.sheet}',
+            index: hat.index,
+            frames: Hat.all.length,
+            size: Hat.width,
+            height: Hat.height,
+            scale: s,
+          ),
+        ),
+      ],
     );
   }
 }

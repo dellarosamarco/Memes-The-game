@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../screens/game_screen.dart';
+import '../../services/achievements.dart';
 import '../../services/firebase_service.dart';
 import '../../services/local_store.dart';
 import '../../widgets/pixel_ui.dart';
@@ -39,6 +40,13 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay> {
       score: game.score,
       stars: game.stars,
     );
+    game.recordRunStats();
+    Achievements.unlock('first_win');
+    if (game.stars == 3) Achievements.unlock('three_stars');
+    if (!game.damageTaken) Achievements.unlock('no_damage');
+    if (game.elapsed < 30) Achievements.unlock('speedrun');
+    if (game.level.hasBoss) Achievements.unlock('boss');
+    Achievements.checkStats();
     if (!mounted) return;
     setState(() {
       _newBest = best;
@@ -155,6 +163,9 @@ class _GameOverOverlayState extends State<GameOverOverlay>
       _ticker.lastElapsedDuration?.inMilliseconds.toDouble() ?? 0;
 
   void _payRespects() {
+    LocalStore.instance.addStat('respects', 1).then((_) {
+      Achievements.checkStats();
+    });
     setState(() {
       _respects++;
       for (var i = 0; i < 4; i++) {

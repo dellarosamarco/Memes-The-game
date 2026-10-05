@@ -57,6 +57,15 @@ class MemeCharacter {
   /// Random lines shown when the character gets hit.
   final List<String> hurtLines;
 
+  /// Where hats sit, relative to the feet (sprite frame: feet at y=58,
+  /// centered at x=30), facing right.
+  ({double x, double y}) get hatAnchor => switch (id) {
+    'wig_dog' => (x: 0.5, y: -51),
+    'stare_cat' => (x: 0.5, y: -44),
+    'robber_dog' => (x: -11, y: -54),
+    _ => (x: -4.5, y: -52),
+  };
+
   /// Animation strip, relative to assets/images/ (Flame's image prefix).
   String get spriteSheet => 'sprites/$id.png';
 

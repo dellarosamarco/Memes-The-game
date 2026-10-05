@@ -35,6 +35,44 @@ class LocalStore {
   Future<void> setSfxOn(bool v) => _prefs.setBool('sfx', v);
   Future<void> setHapticsOn(bool v) => _prefs.setBool('haptics', v);
 
+  // ------------------------------------------------- wallet & cosmetics
+
+  /// Likes you can spend in the shop.
+  int get wallet => (_prefs.getInt('wallet') ?? 0) + (_rich ? 2000 : 0);
+
+  /// Dev aid: `--dart-define=MEMES_RICH=true` adds 2000 likes to spend.
+  static const _rich = bool.fromEnvironment('MEMES_RICH');
+  Future<void> addToWallet(int likes) =>
+      _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) + likes);
+
+  Set<String> get ownedHats => (_prefs.getStringList('hats') ?? []).toSet();
+  String? get equippedHat => _prefs.getString('hat');
+  Future<void> equipHat(String? id) =>
+      id == null ? _prefs.remove('hat') : _prefs.setString('hat', id);
+
+  /// Returns false when you can't afford it.
+  Future<bool> buyHat(String id, int price) async {
+    if (wallet < price || ownedHats.contains(id)) return false;
+    await _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) - price);
+    await _prefs.setStringList('hats', [...ownedHats, id]);
+    return true;
+  }
+
+  // --------------------------------------------------- stats & trophies
+
+  int stat(String key) => _prefs.getInt('stat_$key') ?? 0;
+  Future<void> addStat(String key, int amount) =>
+      _prefs.setInt('stat_$key', stat(key) + amount);
+
+  Set<String> get trophies => (_prefs.getStringList('trophies') ?? []).toSet();
+  Future<void> addTrophy(String id) =>
+      _prefs.setStringList('trophies', [...trophies, id]);
+
+  Set<String> get playedWith =>
+      (_prefs.getStringList('playedWith') ?? []).toSet();
+  Future<void> markPlayedWith(String characterId) =>
+      _prefs.setStringList('playedWith', {...playedWith, characterId}.toList());
+
   int bestScore(String levelId) => _prefs.getInt('best_$levelId') ?? 0;
 
   /// Sum of the stars of every level.

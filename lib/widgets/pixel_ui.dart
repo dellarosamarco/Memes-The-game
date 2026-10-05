@@ -722,31 +722,36 @@ class SheetIcon extends StatelessWidget {
     required this.index,
     required this.frames,
     required this.size,
+    this.height,
     this.scale = 2,
   });
 
   final String asset;
   final int index;
   final int frames;
+
+  /// Frame width (and height, unless [height] is given), in art pixels.
   final double size;
+  final double? height;
   final double scale;
 
   @override
   Widget build(BuildContext context) {
-    final s = size * scale;
+    final w = size * scale;
+    final h = (height ?? size) * scale;
     return SizedBox(
-      width: s,
-      height: s,
+      width: w,
+      height: h,
       child: ClipRect(
         child: OverflowBox(
-          maxWidth: s * frames,
+          maxWidth: w * frames,
           alignment: Alignment.topLeft,
           child: Transform.translate(
-            offset: Offset(-index * s, 0),
+            offset: Offset(-index * w, 0),
             child: Image.asset(
               asset,
-              width: s * frames,
-              height: s,
+              width: w * frames,
+              height: h,
               fit: BoxFit.fill,
               filterQuality: FilterQuality.none,
             ),

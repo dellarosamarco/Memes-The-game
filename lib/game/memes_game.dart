@@ -6,7 +6,10 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/hats.dart';
 import '../models/meme_character.dart';
+import '../services/achievements.dart';
+import '../services/local_store.dart';
 import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
@@ -62,6 +65,11 @@ class MemesGame extends FlameGame with KeyboardEvents {
   final input = GameInput();
 
   late final Player player;
+
+  /// Hat equipped in the shop (cosmetic).
+  final Hat? hat = LocalStore.ready
+      ? Hat.byId(LocalStore.instance.equippedHat)
+      : null;
   final List<Enemy> enemies = [];
   final List<MovingPlatform> platforms = [];
 
@@ -75,6 +83,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   int kills = 0;
   int enemyScore = 0;
   bool finished = false;
+
+  /// True once the player has lost a heart in this run.
+  bool damageTaken = false;
 
   bool _bossIntroDone = false;
 
@@ -119,6 +130,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       'sprites/dust.png',
       'sprites/powerups.png',
       'sprites/sunglasses.png',
+      Hat.sheet,
       'sprites/sparkle.png',
       'sprites/bg_${level.theme.name}_far.png',
       'sprites/bg_${level.theme.name}_clouds.png',
@@ -167,6 +179,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
     camera.follow(target, maxSpeed: 900);
     Sound.music('level');
     overlays.add(overlayIntro);
+    if (LocalStore.ready) {
+      LocalStore.instance.markPlayedWith(character.id);
+      Achievements.checkStats();
+    }
   }
 
   /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
@@ -316,6 +332,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       ),
     );
     player.applyPowerUp(item.kind);
+    if (item.kind == PowerUpKind.sunglasses) Achievements.unlock('deal');
+    if (item.kind == PowerUpKind.stonks) Achievements.unlock('stonks');
   }
 
   /// Points multiplier while the Stonks power-up is active.
@@ -391,6 +409,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void fellInPit() {
     if (finished || isOver) return;
     player.hearts--;
+    damageTaken = true;
     Sound.play('hurt');
     shake(0.3);
     if (player.hearts <= 0) {
@@ -425,6 +444,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (isOver) return;
     isOver = true;
     input.clear();
+    recordRunStats();
     Sound.stopMusic();
     Sound.play('gameover');
     hudTick.value++;
@@ -432,6 +452,19 @@ class MemesGame extends FlameGame with KeyboardEvents {
     overlays.add(overlayGameOver);
     pauseEngine();
   }
+
+  /// Saves likes (to the shop wallet) and stomps from this run.
+  void recordRunStats() {
+    if (!LocalStore.ready || _statsRecorded) return;
+    _statsRecorded = true;
+    final s = LocalStore.instance;
+    s.addToWallet(likes);
+    s.addStat('likes', likes);
+    s.addStat('stomps', kills);
+    Achievements.checkStats();
+  }
+
+  bool _statsRecorded = false;
 
   void togglePause() {
     if (isOver || finished) return;

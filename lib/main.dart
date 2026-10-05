@@ -6,6 +6,7 @@ import 'services/firebase_service.dart';
 import 'services/local_store.dart';
 import 'services/sound.dart';
 import 'widgets/pixel_ui.dart';
+import 'widgets/trophy_toasts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,8 @@ class MemesApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF14121F),
       ),
       home: const HomeScreen(),
+      builder: (context, child) =>
+          Stack(children: [child ?? const SizedBox(), const TrophyToasts()]),
     );
   }
 }

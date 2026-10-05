@@ -743,3 +743,96 @@ def sunglasses_overlay() -> Image.Image:
     d.rectangle([13, 1, 22, 6], fill=(20, 20, 28, 255))
     d.point([(3, 2), (4, 3), (15, 2), (16, 3)], fill=WHITE)
     return im
+
+
+# ======================================================================= hats
+
+HAT_W, HAT_H = 24, 18
+
+
+def _hat_party(d):
+    d.polygon([(6, 17), (18, 17), (12, 2)], fill=(255, 130, 180, 255))
+    for y in (7, 11, 15):
+        w = (y - 2) * 6 // 15
+        d.line([(12 - w, y), (12 + w, y)], fill=(255, 230, 120, 255))
+    d.ellipse([10, 0, 14, 4], fill=(140, 220, 255, 255))
+
+
+def _hat_crown(d):
+    d.polygon([(3, 17), (3, 6), (7, 11), (12, 3), (17, 11), (21, 6), (21, 17)],
+              fill=(255, 210, 80, 255))
+    d.line([(4, 14), (20, 14)], fill=(230, 160, 40, 255))
+    for x, c in ((7, (255, 90, 120)), (12, (120, 200, 255)), (17, (140, 230, 160))):
+        d.ellipse([x - 1, 13, x + 1, 15], fill=c + (255,))
+    d.point([(12, 3), (3, 6), (21, 6)], fill=WHITE)
+
+
+def _hat_propeller(d):
+    d.pieslice([3, 7, 21, 27], 180, 360, fill=(120, 200, 255, 255))
+    d.pieslice([3, 7, 21, 27], 180, 225, fill=(255, 120, 150, 255))
+    d.pieslice([3, 7, 21, 27], 270, 315, fill=(255, 220, 110, 255))
+    d.line([(12, 7), (12, 3)], fill=PLUM)
+    d.ellipse([4, 1, 11, 4], fill=(255, 110, 140, 255))
+    d.ellipse([13, 1, 20, 4], fill=(140, 220, 160, 255))
+
+
+def _hat_cap(d):
+    d.pieslice([4, 6, 20, 26], 180, 360, fill=(240, 80, 100, 255))
+    d.rounded_rectangle([12, 14, 23, 17], 2, fill=(200, 50, 80, 255))
+    d.point((12, 7), fill=WHITE)
+    d.line([(8, 10), (11, 9)], fill=(255, 150, 160, 255))
+
+
+def _hat_bow(d):
+    d.polygon([(12, 12), (3, 6), (3, 17)], fill=(255, 130, 190, 255))
+    d.polygon([(12, 12), (21, 6), (21, 17)], fill=(255, 130, 190, 255))
+    d.ellipse([9, 9, 15, 15], fill=(255, 90, 160, 255))
+    d.point([(5, 9), (19, 9)], fill=WHITE)
+
+
+def _hat_halo(d):
+    d.ellipse([3, 4, 21, 11], outline=(255, 230, 110, 255), width=2)
+    d.point([(6, 5), (17, 5)], fill=WHITE)
+
+
+def _hat_chef(d):
+    d.rectangle([6, 11, 18, 17], fill=WHITE)
+    for x in (4, 9, 14):
+        d.ellipse([x, 2, x + 8, 12], fill=WHITE)
+    d.line([(6, 13), (18, 13)], fill=(220, 220, 235, 255))
+
+
+def _hat_witch(d):
+    d.rounded_rectangle([1, 14, 23, 17], 2, fill=(130, 80, 180, 255))
+    d.polygon([(6, 15), (18, 15), (15, 1), (19, 0)], fill=(150, 100, 210, 255))
+    d.line([(7, 13), (17, 13)], fill=(255, 210, 90, 255), width=2)
+
+
+def _hat_cowboy(d):
+    d.rounded_rectangle([0, 13, 23, 17], 2, fill=(170, 110, 70, 255))
+    d.rounded_rectangle([6, 4, 18, 15], 3, fill=(190, 130, 80, 255))
+    d.line([(6, 12), (18, 12)], fill=(120, 70, 50, 255), width=2)
+    d.line([(12, 4), (12, 7)], fill=(150, 100, 60, 255))
+
+
+def _hat_flowers(d):
+    d.line([(2, 15), (22, 15)], fill=(110, 190, 110, 255), width=2)
+    for x, c in ((4, (255, 130, 180)), (9, (255, 230, 110)), (14, (160, 200, 255)),
+                 (19, (255, 160, 120))):
+        for dx, dy in ((-2, 0), (2, 0), (0, -2), (0, 2)):
+            d.ellipse([x + dx - 1, 12 + dy - 1, x + dx + 1, 12 + dy + 1],
+                      fill=c + (255,))
+        d.point((x, 12), fill=(255, 250, 220, 255))
+
+
+HATS = [_hat_party, _hat_crown, _hat_propeller, _hat_cap, _hat_bow, _hat_halo,
+        _hat_chef, _hat_witch, _hat_cowboy, _hat_flowers]
+
+
+def hats_sheet() -> Image.Image:
+    sheet = Image.new('RGBA', (HAT_W * len(HATS), HAT_H))
+    for i, draw in enumerate(HATS):
+        im = Image.new('RGBA', (HAT_W, HAT_H))
+        draw(ImageDraw.Draw(im))
+        sheet.alpha_composite(outline(im), (i * HAT_W, 0))
+    return sheet

@@ -10,6 +10,8 @@ import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import 'character_select_screen.dart';
 import 'leaderboard_screen.dart';
+import 'shop_screen.dart';
+import 'trophies_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -199,6 +201,42 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
+                ),
+              ),
+              Positioned(
+                right: 12,
+                bottom: 92,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    PixelButton(
+                      label: 'Negozio',
+                      icon: 'like',
+                      color: PixelColor.yellow,
+                      height: 44,
+                      fontSize: 14,
+                      onPressed: () => Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                              builder: (_) => const ShopScreen(),
+                            ),
+                          )
+                          .then((_) => setState(() {})),
+                    ),
+                    const SizedBox(height: 8),
+                    PixelButton(
+                      label: 'Trofei',
+                      icon: 'trophy',
+                      color: PixelColor.mint,
+                      height: 44,
+                      fontSize: 14,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const TrophiesScreen(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Positioned(

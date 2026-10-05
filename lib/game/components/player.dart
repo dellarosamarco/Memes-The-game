@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/hats.dart';
 import '../../models/meme_character.dart';
 import '../level.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
+import '../../services/achievements.dart';
 import '../../services/sound.dart';
 import '../physics.dart';
 import 'body.dart';
@@ -91,9 +93,12 @@ class Player extends PositionComponent
   static const _jumpFrame = 6;
   static const _fallFrame = 7;
 
+  late final Strip _hats;
+
   @override
   Future<void> onLoad() async {
     _strip = Strip(game.images.fromCache(character.spriteSheet), 60, 60);
+    _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
   }
 
   @override
@@ -260,6 +265,7 @@ class Player extends PositionComponent
     final idle = dir == 0 && onGround && game.input.jumpBuffer <= 0;
     _idleTime = idle ? _idleTime + dt : 0;
     if (_idleTime > 5) {
+      Achievements.unlock('nap');
       _zTimer -= dt;
       if (_zTimer <= 0) {
         _zTimer = 1.1;
@@ -317,6 +323,8 @@ class Player extends PositionComponent
         _cuttable = false;
         game.world.add(Sparkles(position: e.mid));
         _combo++;
+        if (_combo >= 3) Achievements.unlock('combo3');
+        if (_combo >= 6) Achievements.unlock('combo6');
         if (_combo >= 2) {
           final line = _comboLines[min(_combo - 2, _comboLines.length - 1)];
           game.enemyScore += (_combo - 1) * 20;
@@ -353,6 +361,7 @@ class Player extends PositionComponent
   void takeDamage({required double fromX}) {
     if (invulnerable || game.finished || game.isOver) return;
     hearts--;
+    game.damageTaken = true;
     Sound.play('hurt');
     Sound.haptic(strong: true);
     _invulnerable = 1.3;
@@ -507,6 +516,18 @@ class Player extends PositionComponent
         game.images.fromCache('sprites/sunglasses.png'),
         Offset(-12 + (facingRight ? 3 : -3), _eyeY),
         pixelPaint,
+      );
+    }
+    final hat = game.hat;
+    if (hat != null) {
+      final a = character.hatAnchor;
+      final bob = _frame.isOdd ? 1.0 : 0.0;
+      final x = facingRight ? a.x : -a.x;
+      _hats.draw(
+        canvas,
+        hat.index,
+        Offset(x - Hat.width / 2, a.y - Hat.height + 3 + bob),
+        flip: !facingRight,
       );
     }
     canvas.restore();

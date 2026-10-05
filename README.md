@@ -57,6 +57,15 @@ Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
 - Al traguardo il personaggio **saltella di gioia**.
 - Al game over puoi **premere F per rendere omaggio**.
 
+## Negozio e trofei
+
+- I like raccolti finiscono in un **portafoglio**: nel **Negozio** li spendi in 10 cappellini
+  pixel (festa, fiocco, berretto, fiori, elica, chef, cowboy, strega, aureola, corona) che i
+  tuoi meme indossano in gioco e nei menu.
+- **17 trofei** da sbloccare (primo livello, 3 stelle, senza danni, speedrun, boss, combo,
+  100 nemici, 1000 like, Deal with it, Stonks, pisolino, F, collezionista...), con una
+  notifica pixel che compare su qualsiasi schermata.
+
 ## Comandi
 
 - **Mobile** (orizzontale): frecce a sinistra, salto e mossa speciale a destra.
@@ -75,7 +84,8 @@ Senza Firebase il gioco funziona **offline** (record e livelli sbloccati salvati
 Opzioni utili durante lo sviluppo:
 
 ```bash
-flutter run --dart-define=MEMES_UNLOCK_ALL=true --dart-define=MEMES_START_COL=40
+flutter run --dart-define=MEMES_UNLOCK_ALL=true --dart-define=MEMES_START_COL=40 \
+  --dart-define=MEMES_RICH=true   # +2000 like da spendere nel negozio
 ```
 
 Test: `flutter test` (risolve tutti i 500 livelli e avvia il gioco vero su alcuni livelli
