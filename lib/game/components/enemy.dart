@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/sound.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
 import 'body.dart';
@@ -100,11 +101,12 @@ class Enemy extends PositionComponent
   }
 
   /// Stomped, slashed, dashed through...
-  void hit({bool heavy = false}) {
+  void hit({bool heavy = false, bool stomp = false}) {
     if (dead || _hurtCooldown > 0) return;
     hp -= kind.isBoss ? 1 : (heavy ? hp : 1);
     _flash = 0.15;
     if (kind.isBoss) {
+      Sound.play('boss_hit');
       _hurtCooldown = 1.0;
       frozenTime = 0;
       game.shake(0.3);
@@ -113,7 +115,14 @@ class Enemy extends PositionComponent
     }
     if (hp <= 0) {
       dead = true;
-      game.world.add(PoofEffect(position: mid));
+      if (stomp && !kind.isBoss) {
+        // Squashed flat like a pancake, then poof.
+        game.world.add(
+          FlatEnemy(strip: _strip, position: position.clone(), flip: _dir > 0),
+        );
+      } else {
+        game.world.add(PoofEffect(position: mid));
+      }
       game.onEnemyKilled(this);
       removeFromParent();
     }
@@ -258,5 +267,43 @@ class Enemy extends PositionComponent
         Paint()..color = const Color(0xFF2ECC71),
       );
     }
+  }
+}
+
+/// A stomped enemy, squashed flat for a moment before vanishing.
+class FlatEnemy extends PositionComponent {
+  FlatEnemy({required this.strip, required super.position, required this.flip})
+    : super(priority: 14);
+
+  final Strip strip;
+  final bool flip;
+  double _t = 0;
+  static const _d = 0.4;
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    if (_t >= _d) {
+      parent?.add(PoofEffect(position: position - Vector2(0, 6)));
+      removeFromParent();
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final fw = strip.frameWidth;
+    final squash = 0.35 + 0.1 * sin(_t * 40).abs() * (1 - _t / _d);
+    canvas.save();
+    canvas.scale(1.25, squash);
+    strip.draw(
+      canvas,
+      0,
+      Offset(-fw / 2, -fw),
+      flip: flip,
+      paint: Paint()
+        ..filterQuality = FilterQuality.none
+        ..color = Color.fromRGBO(255, 255, 255, 1 - (_t / _d) * .5),
+    );
+    canvas.restore();
   }
 }

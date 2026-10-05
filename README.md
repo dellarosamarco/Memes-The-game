@@ -106,6 +106,14 @@ a checkpoint e traguardo, schizzi quando si cade in una buca e punteggi fluttuan
 
 Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy`).
 
+## Audio
+
+Effetti sonori e musiche chiptune sono **sintetizzati da zero** da `tool/generate_audio.py`
+(onde quadre/triangolari + rumore, nessun file di terzi) in `assets/audio/`: salto, like,
+schiacciata, danno, molla, mossa speciale, checkpoint, traguardo, game over, boss, e tre
+musiche in loop (menu, livello, boss). Si riproducono con `flame_audio`; musica, effetti
+e vibrazione si attivano/disattivano dalle impostazioni (ingranaggio nella home o pausa).
+
 **Aggiungere un meme:** scontorna la foto con rembg, salvala in `tool/sprite_sources/<id>.png`,
 aggiungi una voce in `FIGURES` dentro `generate_sprites.py` e in `lib/models/meme_character.dart`,
 poi rilancia lo script.

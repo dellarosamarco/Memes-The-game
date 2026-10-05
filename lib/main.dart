@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 import 'services/firebase_service.dart';
 import 'services/local_store.dart';
+import 'services/sound.dart';
 import 'widgets/pixel_ui.dart';
 
 Future<void> main() async {
@@ -16,6 +17,7 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await PixelAssets.preload();
   await LocalStore.init();
+  await Sound.init();
   await FirebaseService.instance.init();
   runApp(const MemesApp());
 }

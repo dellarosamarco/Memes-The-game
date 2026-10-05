@@ -40,7 +40,9 @@ class PauseOverlay extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: body,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
+              const SettingsPanel(),
+              const SizedBox(height: 10),
               Wrap(
                 spacing: 10,
                 runSpacing: 8,

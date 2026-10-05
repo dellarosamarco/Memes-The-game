@@ -7,6 +7,7 @@ import '../../models/meme_character.dart';
 import '../level.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
+import '../../services/sound.dart';
 import '../physics.dart';
 import 'body.dart';
 import 'items.dart';
@@ -67,6 +68,7 @@ class Player extends PositionComponent
     onGround = false;
     _cuttable = false;
     game.springUsed(col, row);
+    Sound.play('spring');
     game.world.add(
       Sparkles(position: Vector2((col + .5) * kTile, row * kTile)),
     );
@@ -132,10 +134,12 @@ class Player extends PositionComponent
       if (input.jumpBuffer > 0) {
         if (_coyote > 0) {
           _jump(character.jumpSpeed);
+          Sound.play('jump', volume: .5);
           input.jumpBuffer = 0;
         } else if (_airJumps > 0) {
           _airJumps--;
           _jump(character.jumpSpeed * .9);
+          Sound.play('double_jump', volume: .5);
           input.jumpBuffer = 0;
           game.world.add(PoofEffect(position: position.clone()));
         }
@@ -219,8 +223,10 @@ class Player extends PositionComponent
       }
       final stomp = velocity.y > 0 && prevBottom <= e.top + 10;
       if (stomp) {
-        e.hit(heavy: character.passive == Passive.tough);
+        e.hit(heavy: character.passive == Passive.tough, stomp: true);
         velocity.y = game.input.jump ? -460 : -300;
+        Sound.play('stomp');
+        Sound.haptic();
         _cuttable = false;
         game.world.add(Sparkles(position: e.mid));
         _airJumps = character.passive == Passive.doubleJump ? 1 : 0;
@@ -246,6 +252,8 @@ class Player extends PositionComponent
   void takeDamage({required double fromX}) {
     if (invulnerable || game.finished || game.isOver) return;
     hearts--;
+    Sound.play('hurt');
+    Sound.haptic(strong: true);
     _invulnerable = 1.3;
     velocity
       ..x = (position.x < fromX ? -1 : 1) * 170
@@ -274,6 +282,7 @@ class Player extends PositionComponent
   void useSpecial() {
     if (!specialReady || game.finished || game.isOver) return;
     specialTimer = character.specialCooldown;
+    Sound.play('special');
     game.world.add(
       FloatingText(
         position: position - Vector2(0, 70),

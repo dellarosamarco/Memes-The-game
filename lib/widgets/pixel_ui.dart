@@ -4,6 +4,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../services/local_store.dart';
+import '../services/sound.dart';
+
 /// The cute pixel-art UI kit: font, icons, 9-slice panels and buttons
 /// (all drawn by tool/pixel_world.py).
 const kPixelFont = 'Pixelify';
@@ -99,6 +102,10 @@ class PixelIcon extends StatelessWidget {
     'trophy': (10, 9),
     'edit': (10, 8),
     'bolt': (8, 9),
+    'music': (10, 9),
+    'sound': (12, 8),
+    'gear': (12, 12),
+    'vibrate': (12, 7),
   };
 
   @override
@@ -273,6 +280,8 @@ class _PixelButtonState extends State<PixelButton> {
       onTapUp: enabled
           ? (_) {
               setState(() => _down = false);
+              Sound.play('click', volume: .4);
+              Sound.ensureMusic('menu');
               widget.onPressed!();
             }
           : null,
@@ -618,3 +627,89 @@ class _BouncyTextState extends State<BouncyText>
     );
   }
 }
+
+/// Music / sound effects / vibration switches.
+class SettingsPanel extends StatefulWidget {
+  const SettingsPanel({super.key});
+
+  @override
+  State<SettingsPanel> createState() => _SettingsPanelState();
+}
+
+class _SettingsPanelState extends State<SettingsPanel> {
+  @override
+  Widget build(BuildContext context) {
+    final store = LocalStore.instance;
+    Widget row(
+      String icon,
+      String label,
+      bool on,
+      Future<void> Function(bool) set,
+    ) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(width: 30, child: PixelIcon(icon, scale: 2)),
+            SizedBox(
+              width: 110,
+              child: PixelText(
+                label,
+                size: 15,
+                color: kPlum,
+                outline: false,
+                align: TextAlign.left,
+              ),
+            ),
+            PixelButton(
+              label: on ? 'Sì' : 'No',
+              height: 40,
+              width: 76,
+              fontSize: 14,
+              color: on ? PixelColor.mint : PixelColor.grey,
+              onPressed: () async {
+                await set(!on);
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        row('music', 'Musica', store.musicOn, Sound.setMusicOn),
+        row('sound', 'Effetti', store.sfxOn, store.setSfxOn),
+        row('vibrate', 'Vibrazione', store.hapticsOn, store.setHapticsOn),
+      ],
+    );
+  }
+}
+
+Future<void> showSettings(BuildContext context) => showDialog<void>(
+  context: context,
+  builder: (ctx) => Dialog(
+    backgroundColor: Colors.transparent,
+    child: PixelPanel(
+      width: 330,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const PixelText('Impostazioni', size: 22, color: Color(0xFFFF82B4)),
+          const SizedBox(height: 8),
+          const SettingsPanel(),
+          const SizedBox(height: 10),
+          PixelButton(
+            label: 'Ok',
+            color: PixelColor.pink,
+            height: 44,
+            onPressed: () => Navigator.pop(ctx),
+          ),
+        ],
+      ),
+    ),
+  ),
+);

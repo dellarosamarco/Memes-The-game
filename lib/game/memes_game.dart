@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/meme_character.dart';
+import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
 import 'components/enemy.dart';
@@ -52,6 +53,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
   static const overlayPause = 'pause';
   static const overlayComplete = 'complete';
   static const overlayGameOver = 'gameOver';
+  static const overlayIntro = 'intro';
+  static const overlayBoss = 'boss';
 
   final MemeCharacter character;
   final int levelIndex;
@@ -71,6 +74,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
   int kills = 0;
   int enemyScore = 0;
   bool finished = false;
+
+  bool _bossIntroDone = false;
 
   /// Countdown to the "level complete" screen after touching the flag.
   double? _completeIn;
@@ -159,6 +164,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
     final target = _CameraTarget(player);
     world.add(target);
     camera.follow(target, maxSpeed: 900);
+    Sound.music('level');
+    overlays.add(overlayIntro);
   }
 
   /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
@@ -200,7 +207,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
       }
     }
     super.update(dt);
-    if (isLoaded) _clampCamera();
+    if (isLoaded) {
+      _clampCamera();
+      _checkBossIntro();
+    }
     _updateShake(dt);
     _hudAcc += dt;
     if (_hudAcc > 0.1) {
@@ -246,6 +256,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void collectLike(Like like) {
     likes++;
+    Sound.play('like', volume: .45);
     world.add(Sparkles(position: like.position.clone()));
     world.add(
       FloatingText(
@@ -265,6 +276,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   /// The player's head hit a solid tile from below.
   void bumpBlock(int col, int row) {
     if (level.tileAt(col, row) != '?') return;
+    Sound.play('block');
     level.setTile(col, row, 'U');
     world.add(
       Like(
@@ -276,6 +288,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void reachCheckpoint(Checkpoint cp) {
     _checkpoint = cp.position.clone();
+    Sound.play('checkpoint');
     world.add(Confetti(position: cp.position - Vector2(0, 30), count: 30));
     world.add(
       FloatingText(position: cp.position - Vector2(0, 52), text: 'SALVATO!'),
@@ -311,6 +324,21 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  /// When the player gets close to L'Algoritmo: roar, banner, boss music.
+  void _checkBossIntro() {
+    if (_bossIntroDone || !_bossAlive) return;
+    for (final e in enemies) {
+      if (e.kind.isBoss && (e.position.x - player.position.x).abs() < 380) {
+        _bossIntroDone = true;
+        Sound.music('boss');
+        Sound.play('boss_roar');
+        shake(0.6);
+        overlays.add(overlayBoss);
+        return;
+      }
+    }
+  }
+
   void spawnMinion(Vector2 at) {
     if (!_bossAlive) return;
     final kind = _rnd.nextBool() ? EnemyKind.normie : EnemyKind.cringe;
@@ -328,6 +356,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void fellInPit() {
     if (finished || isOver) return;
     player.hearts--;
+    Sound.play('hurt');
     shake(0.3);
     if (player.hearts <= 0) {
       gameOver();
@@ -341,6 +370,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (finished) return;
     finished = true;
     input.clear();
+    Sound.stopMusic();
+    Sound.play('finish');
+    Sound.haptic(strong: true);
     world.add(Confetti(position: player.position - Vector2(0, 40), count: 80));
     world.add(
       FloatingText(
@@ -358,6 +390,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (isOver) return;
     isOver = true;
     input.clear();
+    Sound.stopMusic();
+    Sound.play('gameover');
     hudTick.value++;
     overlays.remove(overlayHud);
     overlays.add(overlayGameOver);
@@ -369,10 +403,12 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (overlays.isActive(overlayPause)) {
       overlays.remove(overlayPause);
       resumeEngine();
+      Sound.resumeMusic();
     } else {
       input.clear();
       overlays.add(overlayPause);
       pauseEngine();
+      Sound.pauseMusic();
     }
   }
 

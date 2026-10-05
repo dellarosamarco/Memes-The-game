@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
 import '../services/local_store.dart';
+import '../services/sound.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import 'character_select_screen.dart';
@@ -23,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen>
     vsync: this,
     duration: const Duration(milliseconds: 1600),
   )..repeat(reverse: true);
+
+  @override
+  void initState() {
+    super.initState();
+    Sound.music('menu');
+  }
 
   @override
   void dispose() {
@@ -192,6 +199,17 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                   ),
+                ),
+              ),
+              Positioned(
+                left: 12,
+                bottom: 96,
+                child: PixelButton(
+                  icon: 'gear',
+                  color: PixelColor.blue,
+                  height: 46,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  onPressed: () => showSettings(context),
                 ),
               ),
               Positioned(

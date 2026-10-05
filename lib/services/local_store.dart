@@ -5,12 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Local persistence: player name, unlocked levels, bests and stars.
 class LocalStore {
   LocalStore._(this._prefs);
-  static late LocalStore instance;
+  static LocalStore? _instance;
+  static LocalStore get instance => _instance!;
+  static bool get ready => _instance != null;
 
   final SharedPreferences _prefs;
 
   static Future<void> init() async {
-    instance = LocalStore._(await SharedPreferences.getInstance());
+    _instance = LocalStore._(await SharedPreferences.getInstance());
     if (instance.playerName.isEmpty) {
       await instance.setPlayerName('Anon${Random().nextInt(9000) + 1000}');
     }
@@ -25,6 +27,13 @@ class LocalStore {
 
   /// Dev aid: `--dart-define=MEMES_UNLOCK_ALL=true`.
   static const _unlockAll = bool.fromEnvironment('MEMES_UNLOCK_ALL');
+
+  bool get musicOn => _prefs.getBool('music') ?? true;
+  bool get sfxOn => _prefs.getBool('sfx') ?? true;
+  bool get hapticsOn => _prefs.getBool('haptics') ?? true;
+  Future<void> setMusicOn(bool v) => _prefs.setBool('music', v);
+  Future<void> setSfxOn(bool v) => _prefs.setBool('sfx', v);
+  Future<void> setHapticsOn(bool v) => _prefs.setBool('haptics', v);
 
   int bestScore(String levelId) => _prefs.getInt('best_$levelId') ?? 0;
 
