@@ -1,7 +1,7 @@
-import 'dart:math' hide Rectangle;
+import 'dart:math';
 
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +13,10 @@ import 'components/enemy.dart';
 import 'components/items.dart';
 import 'components/player.dart';
 import 'level.dart';
-import 'levels.dart';
+import 'level_gen.dart';
+
+/// World units of extra ground drawn under the level.
+const kGroundBelow = kTile * 3;
 
 /// Dev aid: `--dart-define=MEMES_START_COL=120` drops the player at that
 /// column to test the end of a level.
@@ -43,7 +46,7 @@ class GameInput {
 /// "Memes: the game" — a 2D platformer starring real memes.
 class MemesGame extends FlameGame with KeyboardEvents {
   MemesGame({required this.character, required this.levelIndex})
-    : level = kLevels[levelIndex].copy();
+    : level = levelAt(levelIndex).copy();
 
   static const overlayHud = 'hud';
   static const overlayPause = 'pause';
@@ -57,6 +60,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   late final Player player;
   final List<Enemy> enemies = [];
+  final List<MovingPlatform> platforms = [];
+
+  /// When each spring tile was last used (for its animation).
+  final Map<int, double> springTimes = {};
 
   // Run state.
   double elapsed = 0;
@@ -64,6 +71,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   int kills = 0;
   int enemyScore = 0;
   bool finished = false;
+
+  /// Countdown to the "level complete" screen after touching the flag.
+  double? _completeIn;
   bool isOver = false;
   bool _bossAlive = false;
   late Vector2 _checkpoint;
@@ -99,6 +109,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       character.spriteSheet,
       for (final k in EnemyKind.values) k.spritePath,
       'sprites/tiles_${level.theme.name}.png',
+      'sprites/moving_${level.theme.name}.png',
+      'sprites/sparkle.png',
       'sprites/bg_${level.theme.name}_far.png',
       'sprites/bg_${level.theme.name}_clouds.png',
       'sprites/like.png',
@@ -127,6 +139,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
           world.add(Checkpoint(position: s.feet));
         case 'F':
           world.add(FinishFlag(position: s.feet));
+        case 'M':
+          world.add(MovingPlatform(spawn: s));
       }
     }
     _checkpoint = start ?? Vector2(kTile * 2, kTile * 10);
@@ -136,10 +150,27 @@ class MemesGame extends FlameGame with KeyboardEvents {
     player = Player(character: character, position: _checkpoint.clone());
     world.add(player);
 
-    camera.follow(player, maxSpeed: 900);
-    camera.setBounds(
-      Rectangle.fromLTRB(0, 0, level.width, level.height),
-      considerViewport: true,
+    // Follow a point a bit below the feet, so the player sits above the
+    // touch controls.
+    final target = _CameraTarget(player);
+    world.add(target);
+    camera.follow(target, maxSpeed: 900);
+  }
+
+  /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
+  /// the zoom). The extra ground below the level lifts the action above the
+  /// touch controls at the bottom of the screen.
+  void _clampCamera() {
+    final vf = camera.viewfinder;
+    final half = size / vf.zoom / 2;
+    final maxY = level.height + kGroundBelow;
+    vf.position = Vector2(
+      half.x * 2 >= level.width
+          ? level.width / 2
+          : vf.position.x.clamp(half.x, level.width - half.x),
+      half.y * 2 >= maxY
+          ? maxY / 2
+          : vf.position.y.clamp(half.y, maxY - half.y),
     );
   }
 
@@ -155,7 +186,17 @@ class MemesGame extends FlameGame with KeyboardEvents {
     dt = min(dt, 1 / 30);
     if (!finished && !isOver) elapsed += dt;
     if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
+    final completeIn = _completeIn;
+    if (completeIn != null) {
+      _completeIn = completeIn - dt;
+      if (_completeIn! <= 0) {
+        _completeIn = null;
+        overlays.remove(overlayHud);
+        overlays.add(overlayComplete);
+      }
+    }
     super.update(dt);
+    if (isLoaded) _clampCamera();
     _updateShake(dt);
     _hudAcc += dt;
     if (_hudAcc > 0.1) {
@@ -201,6 +242,11 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void collectLike(Like like) {
     likes++;
+    world.add(Sparkles(position: like.position.clone()));
+  }
+
+  void springUsed(int col, int row) {
+    springTimes[row * 10000 + col] = elapsed;
   }
 
   /// The player's head hit a solid tile from below.
@@ -265,7 +311,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       return;
     }
     player.respawn(_checkpoint.clone());
-    camera.viewfinder.position = _checkpoint.clone();
+    camera.viewfinder.position = _checkpoint + Vector2(20, 30);
   }
 
   void finish() {
@@ -281,10 +327,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
         duration: 2,
       ),
     );
-    Future.delayed(const Duration(milliseconds: 1400), () {
-      overlays.remove(overlayHud);
-      overlays.add(overlayComplete);
-    });
+    _completeIn = 1.4;
   }
 
   void gameOver() {
@@ -329,5 +372,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void onRemove() {
     hudTick.dispose();
     super.onRemove();
+  }
+}
+
+class _CameraTarget extends PositionComponent {
+  _CameraTarget(this.player);
+
+  final Player player;
+
+  @override
+  void update(double dt) {
+    position.setValues(player.position.x + 20, player.position.y + 30);
   }
 }

@@ -12,7 +12,7 @@ service cloud.firestore {
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 16
-        && request.resource.data.levelId in ['feed', 'comments', 'server']
+        && request.resource.data.levelId.matches('L[0-9]{3}')
         && request.resource.data.characterId in ['wig_dog', 'stare_cat', 'robber_dog', 'smile_dog']
         && request.resource.data.score is int
         && request.resource.data.score >= 0

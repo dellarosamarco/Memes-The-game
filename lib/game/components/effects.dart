@@ -94,6 +94,7 @@ class FloatingText extends PositionComponent {
   @override
   Future<void> onLoad() async {
     TextStyle style(Paint? fg) => TextStyle(
+      fontFamily: 'Pixelify',
       fontSize: fontSize,
       fontWeight: FontWeight.w900,
       foreground: fg,
@@ -106,7 +107,7 @@ class FloatingText extends PositionComponent {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = fontSize / 4
-            ..color = Colors.black,
+            ..color = const Color(0xFF3A2440),
         ),
       ),
       textAlign: TextAlign.center,

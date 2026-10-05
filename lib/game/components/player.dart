@@ -7,7 +7,9 @@ import '../../models/meme_character.dart';
 import '../level.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
+import '../physics.dart';
 import 'body.dart';
+import 'items.dart';
 import 'effects.dart';
 
 class Player extends PositionComponent
@@ -53,8 +55,26 @@ class Player extends PositionComponent
   }
 
   @override
-  Iterable<TileBody> get extraPlatforms =>
-      game.enemies.where((e) => e.frozen && !e.dead);
+  Iterable<Surface> get extraPlatforms => [
+    ...game.platforms,
+    ...game.enemies.where((e) => e.frozen && !e.dead),
+  ];
+
+  @override
+  void onLandTile(int col, int row) {
+    if (game.level.tileAt(col, row) != 'S') return;
+    velocity.y = -Phys.springSpeed;
+    onGround = false;
+    _cuttable = false;
+    game.springUsed(col, row);
+    game.world.add(
+      Sparkles(position: Vector2((col + .5) * kTile, row * kTile)),
+    );
+  }
+
+  /// Only jumps started by the player get shorter when the button is
+  /// released; springs and stomps keep their full bounce.
+  bool _cuttable = false;
 
   @override
   void onCeiling(int col, int row) => game.bumpBlock(col, row);
@@ -76,6 +96,9 @@ class Player extends PositionComponent
 
     final input = game.input;
     final prevBottom = bottom;
+    // Ride moving platforms.
+    final ride = standingOn;
+    if (ride is MovingPlatform) position.x += ride.lastDx;
 
     if (_dash > 0) {
       _dash -= dt;
@@ -111,7 +134,10 @@ class Player extends PositionComponent
           game.world.add(PoofEffect(position: position.clone()));
         }
       }
-      if (!input.jump && velocity.y < -220) velocity.y = -220;
+      if (_cuttable && !input.jump && velocity.y < -Phys.jumpCut) {
+        velocity.y = -Phys.jumpCut;
+      }
+      if (onGround) _cuttable = false;
 
       applyGravity(dt);
       // Wig glide: the wig works as a parachute.
@@ -133,6 +159,7 @@ class Player extends PositionComponent
 
   void _jump(double speed) {
     velocity.y = -speed;
+    _cuttable = true;
     _coyote = 0;
     onGround = false;
   }
@@ -153,6 +180,8 @@ class Player extends PositionComponent
       if (stomp) {
         e.hit(heavy: character.passive == Passive.tough);
         velocity.y = game.input.jump ? -460 : -300;
+        _cuttable = false;
+        game.world.add(Sparkles(position: e.mid));
         _airJumps = character.passive == Passive.doubleJump ? 1 : 0;
       } else {
         takeDamage(fromX: e.position.x);

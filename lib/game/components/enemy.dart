@@ -49,6 +49,7 @@ class Enemy extends PositionComponent
 
   final EnemyKind kind;
   late int hp;
+  late int maxHp;
   late final Strip _strip;
   final _rnd = Random();
 
@@ -67,6 +68,7 @@ class Enemy extends PositionComponent
 
   @override
   Future<void> onLoad() async {
+    maxHp = hp = kind.isBoss ? game.level.bossHp : kind.hp;
     final img = game.images.fromCache(kind.spritePath);
     final fw = kind.isBoss ? 56.0 : 28.0;
     _strip = Strip(img, fw, fw);
@@ -147,7 +149,7 @@ class Enemy extends PositionComponent
       _dir = dx > 0 ? -1 : 1;
       speed *= 1.6;
     }
-    if (kind.isBoss) speed *= 1 + (kind.hp - hp) * 0.15;
+    if (kind.isBoss) speed *= 1 + (maxHp - hp) / maxHp * 0.8;
 
     _actionTimer -= dt;
     switch (kind) {
@@ -175,7 +177,7 @@ class Enemy extends PositionComponent
         if (dx.abs() < 400) _dir = dx > 0 ? 1 : -1;
         if (onGround && _actionTimer <= 0) {
           velocity.y = -520;
-          _actionTimer = 2.2 - (kind.hp - hp) * 0.25;
+          _actionTimer = 2.2 - (maxHp - hp) / maxHp * 1.2;
           if (game.enemies.length < 4) game.spawnMinion(position.clone());
         }
       default:
@@ -246,7 +248,7 @@ class Enemy extends PositionComponent
         Paint()..color = Colors.black87,
       );
       canvas.drawRect(
-        Rect.fromLTWH(-w / 2 + 1, -63, (w - 2) * hp / kind.hp, 3),
+        Rect.fromLTWH(-w / 2 + 1, -63, (w - 2) * hp / maxHp, 3),
         Paint()..color = const Color(0xFF2ECC71),
       );
     }

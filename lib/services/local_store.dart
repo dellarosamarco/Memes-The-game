@@ -21,12 +21,18 @@ class LocalStore {
       _prefs.setString('playerName', name);
 
   /// Number of levels the player can choose (at least the first).
-  int get unlockedLevels => _unlockAll ? 99 : _prefs.getInt('unlocked') ?? 1;
+  int get unlockedLevels => _unlockAll ? 500 : _prefs.getInt('unlocked') ?? 1;
 
   /// Dev aid: `--dart-define=MEMES_UNLOCK_ALL=true`.
   static const _unlockAll = bool.fromEnvironment('MEMES_UNLOCK_ALL');
 
   int bestScore(String levelId) => _prefs.getInt('best_$levelId') ?? 0;
+
+  /// Sum of the stars of every level.
+  int get totalStars => _prefs
+      .getKeys()
+      .where((k) => k.startsWith('stars_'))
+      .fold(0, (s, k) => s + (_prefs.getInt(k) ?? 0));
   int stars(String levelId) => _prefs.getInt('stars_$levelId') ?? 0;
 
   /// Saves a completed level. Returns true when [score] is a new best.

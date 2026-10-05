@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
 import '../services/local_store.dart';
-import '../widgets/meme_text.dart';
+import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import 'character_select_screen.dart';
 import 'leaderboard_screen.dart';
@@ -15,30 +15,72 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late final _bob = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _bob.dispose();
+    super.dispose();
+  }
+
   Future<void> _editName() async {
     final ctrl = TextEditingController(text: LocalStore.instance.playerName);
     final name = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Il tuo nome'),
-        content: TextField(
-          controller: ctrl,
-          maxLength: 16,
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'xX_MemeLord_Xx'),
-          onSubmitted: (v) => Navigator.pop(ctx, v),
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: PixelPanel(
+          width: 360,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const PixelText(
+                'Il tuo nome',
+                size: 22,
+                color: Color(0xFFFF82B4),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: ctrl,
+                maxLength: 16,
+                autofocus: true,
+                style: const TextStyle(
+                  fontFamily: kPixelFont,
+                  fontSize: 20,
+                  color: kPlum,
+                ),
+                decoration: const InputDecoration(hintText: 'xX_MemeLord_Xx'),
+                onSubmitted: (v) => Navigator.pop(ctx, v),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PixelButton(
+                    label: 'Annulla',
+                    color: PixelColor.grey,
+                    height: 46,
+                    fontSize: 15,
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                  const SizedBox(width: 10),
+                  PixelButton(
+                    label: 'Salva',
+                    color: PixelColor.mint,
+                    height: 46,
+                    fontSize: 15,
+                    onPressed: () => Navigator.pop(ctx, ctrl.text),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Annulla'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, ctrl.text),
-            child: const Text('Salva'),
-          ),
-        ],
       ),
     );
     final trimmed = name?.trim() ?? '';
@@ -50,95 +92,126 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final store = LocalStore.instance;
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF7FD3FF), Color(0xFFD6F2FF)],
-          ),
-        ),
+      body: PixelBackdrop(
         child: SafeArea(
           child: Stack(
             children: [
-              // A grass strip with the four memes standing on it.
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+              // The four memes hanging out on the grass.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        for (final c in MemeCharacter.all)
-                          CharacterSpriteView(character: c, scale: 1.6),
-                      ],
-                    ),
-                    Container(height: 10, color: const Color(0xFF58C448)),
-                    Container(height: 22, color: const Color(0xFF966038)),
+                    for (final c in MemeCharacter.all)
+                      CharacterSpriteView(character: c, scale: 1.6),
                   ],
                 ),
               ),
-              Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 120),
-                  child: Column(
+              Align(
+                alignment: const Alignment(0, -0.62),
+                child: AnimatedBuilder(
+                  animation: _bob,
+                  builder: (context, child) => Transform.translate(
+                    offset: Offset(0, -4 * _bob.value),
+                    child: child,
+                  ),
+                  child: const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const MemeText('Memes:', fontSize: 52),
-                      const MemeText(
-                        'the game',
-                        fontSize: 30,
-                        color: Color(0xFFFFD54F),
-                      ),
-                      const SizedBox(height: 18),
-                      Wrap(
-                        spacing: 14,
-                        runSpacing: 12,
-                        alignment: WrapAlignment.center,
-                        children: [
-                          MemeButton(
-                            label: 'Gioca',
-                            icon: Icons.play_arrow,
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const CharacterSelectScreen(),
-                              ),
+                      PixelText('MEMES', size: 64, color: Color(0xFFFF82B4)),
+                      PixelText('the game', size: 26, color: Color(0xFFFFE07A)),
+                    ],
+                  ),
+                ),
+              ),
+              Align(
+                alignment: const Alignment(0, 0.02),
+                child: Wrap(
+                  spacing: 14,
+                  runSpacing: 10,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    PixelButton(
+                      label: 'Gioca',
+                      icon: 'play',
+                      width: 220,
+                      onPressed: () => Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                              builder: (_) => const CharacterSelectScreen(),
                             ),
-                          ),
-                          MemeButton(
-                            label: 'Classifica',
-                            icon: Icons.leaderboard,
-                            color: const Color(0xFF7E57C2),
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const LeaderboardScreen(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      TextButton.icon(
-                        onPressed: _editName,
-                        icon: const Icon(Icons.edit, color: Colors.black87),
-                        label: Text(
-                          'Giocatore: ${LocalStore.instance.playerName}',
-                          style: const TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          )
+                          .then((_) => setState(() {})),
+                    ),
+                    PixelButton(
+                      label: 'Classifica',
+                      icon: 'trophy',
+                      width: 220,
+                      color: PixelColor.purple,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const LeaderboardScreen(),
                         ),
                       ),
-                      Text(
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 12,
+                top: 8,
+                child: GestureDetector(
+                  onTap: _editName,
+                  child: PixelPanel(
+                    px: 1.5,
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        PixelText(
+                          store.playerName,
+                          size: 14,
+                          color: kPlum,
+                          outline: false,
+                        ),
+                        const SizedBox(width: 8),
+                        const PixelIcon('edit', scale: 1.5),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 12,
+                top: 8,
+                child: PixelPanel(
+                  px: 1.5,
+                  padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const PixelIcon('star', scale: 1.5),
+                      const SizedBox(width: 6),
+                      PixelText(
+                        '${store.totalStars} / 1500',
+                        size: 14,
+                        color: kPlum,
+                        outline: false,
+                      ),
+                      const SizedBox(width: 10),
+                      PixelText(
                         FirebaseService.instance.available
-                            ? '🟢 Online'
-                            : '⚪ Offline (Firebase non configurato)',
-                        style: const TextStyle(
-                          color: Colors.black54,
-                          fontSize: 12,
-                        ),
+                            ? 'online'
+                            : 'offline',
+                        size: 12,
+                        color: FirebaseService.instance.available
+                            ? const Color(0xFF3FAF7A)
+                            : const Color(0xFF9A8FB0),
+                        outline: false,
                       ),
                     ],
                   ),

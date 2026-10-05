@@ -1,7 +1,24 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memes_the_game/game/level.dart';
-import 'package:memes_the_game/game/levels.dart';
+import 'package:memes_the_game/game/level_gen.dart';
+import 'package:memes_the_game/game/level_solver.dart';
 import 'package:memes_the_game/models/meme_character.dart';
+
+LevelData _flatWithGap(int gap, {String obstacle = ' '}) {
+  final cols = 12 + gap + 12;
+  String row(String Function(int c) f) => List.generate(cols, f).join();
+  return LevelData(
+    index: 0,
+    theme: LevelTheme.feed,
+    parTime: 60,
+    map: [
+      for (var r = 0; r < 11; r++) row((_) => ' '),
+      row((c) => c == 2 ? 'P' : (c == cols - 3 ? 'F' : ' ')),
+      for (var r = 0; r < 2; r++)
+        row((c) => c >= 12 && c < 12 + gap ? obstacle : '#'),
+    ].join('\n'),
+  );
+}
 
 void main() {
   test('every character has a unique id, passive and special', () {
@@ -16,40 +33,30 @@ void main() {
     expect(MemeCharacter.byId('nope'), MemeCharacter.all.first);
   });
 
-  for (final level in kLevels) {
-    group('level ${level.id}', () {
-      test('has exactly one start and one finish', () {
-        expect(level.spawns.where((s) => s.code == 'P').length, 1);
-        expect(level.spawns.where((s) => s.code == 'F').length, 1);
-      });
+  test('solver: 3-tile gaps are jumpable, 6-tile gaps are not', () {
+    expect(LevelSolver(_flatWithGap(3)).solve(), isTrue);
+    expect(LevelSolver(_flatWithGap(6)).solve(), isFalse);
+  });
 
-      test('is 14 rows tall and every spawn is a known code', () {
-        expect(level.rows, 14);
-        for (final s in level.spawns) {
-          expect('PoKFncbhA'.contains(s.code), isTrue, reason: s.code);
-        }
-      });
+  test('level ids, names and worlds', () {
+    final l = levelAt(123);
+    expect(l.id, 'L124');
+    expect(l.world, 3);
+    expect(l.number, 24);
+    expect(l.name, '3-24');
+    expect(l.theme, LevelTheme.beach);
+  });
 
-      test('start and finish stand on solid ground', () {
-        for (final code in ['P', 'F']) {
-          final s = level.spawns.firstWhere((s) => s.code == code);
-          expect(level.isStandable(s.col, s.row + 1), isTrue, reason: code);
-        }
-      });
-
-      test('copy restores mutated tiles', () {
-        final l = level.copy();
-        l.setTile(0, 13, ' ');
-        expect(l.copy().tileAt(0, 13), level.tileAt(0, 13));
-      });
-    });
-  }
+  test('copy restores mutated tiles', () {
+    final l = levelAt(0).copy();
+    l.setTile(0, 13, ' ');
+    expect(l.copy().tileAt(0, 13), levelAt(0).tileAt(0, 13));
+  });
 
   test('isSolid treats the level sides as walls and the bottom as a pit', () {
-    final l = kLevels.first;
+    final l = levelAt(0);
     expect(l.isSolid(-1, 5), isTrue);
     expect(l.isSolid(l.cols, 5), isTrue);
     expect(l.isSolid(5, l.rows), isFalse);
-    expect(kTile, 24);
   });
 }

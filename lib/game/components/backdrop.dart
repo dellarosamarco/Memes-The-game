@@ -3,21 +3,15 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-import '../level.dart';
 import '../memes_game.dart';
 import '../pixel.dart';
+import '../theme_colors.dart';
 
 /// Sky gradient + two pixel-art parallax layers, drawn in screen space.
 class Backdrop extends Component with HasGameReference<MemesGame> {
   late final ui.Image _far;
   late final ui.Image _clouds;
   double _t = 0;
-
-  static const _skies = {
-    LevelTheme.feed: [Color(0xFF7FD3FF), Color(0xFFD6F2FF)],
-    LevelTheme.comments: [Color(0xFF2B1B4A), Color(0xFF7A4FB0)],
-    LevelTheme.server: [Color(0xFF05070D), Color(0xFF14273A)],
-  };
 
   @override
   Future<void> onLoad() async {
@@ -32,7 +26,8 @@ class Backdrop extends Component with HasGameReference<MemesGame> {
   @override
   void render(Canvas canvas) {
     final size = game.size;
-    final colors = _skies[game.level.theme]!;
+    final th = ThemeColors.of(game.level.theme);
+    final colors = [th.skyTop, th.skyBottom];
     canvas.drawRect(
       Offset.zero & size.toSize(),
       Paint()

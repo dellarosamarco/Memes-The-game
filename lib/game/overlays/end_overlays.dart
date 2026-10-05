@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../screens/game_screen.dart';
 import '../../services/firebase_service.dart';
 import '../../services/local_store.dart';
-import '../../widgets/meme_text.dart';
-import '../levels.dart';
+import '../../widgets/pixel_ui.dart';
+import '../level_gen.dart';
 import '../memes_game.dart';
 
 enum _Upload { sending, done, failed, offline }
@@ -57,60 +57,60 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    final hasNext = game.levelIndex + 1 < kLevels.length;
+    final hasNext = game.levelIndex + 1 < kLevelCount;
     return _Panel(
       children: [
-        const MemeText('Virale!', fontSize: 46, color: Color(0xFFFFD54F)),
-        MemeText('${game.level.name} completato', fontSize: 16),
-        const SizedBox(height: 6),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < 3; i++)
-              Icon(
-                i < game.stars ? Icons.star_rounded : Icons.star_border_rounded,
-                color: const Color(0xFFFFD54F),
-                size: 44,
-                shadows: const [Shadow(blurRadius: 2)],
-              ),
-          ],
+        PixelText(
+          game.level.hasBoss ? 'Mondo completato!' : 'Virale!',
+          size: 34,
+          color: const Color(0xFFFF82B4),
         ),
+        PixelText(
+          'Livello ${game.level.name} superato',
+          size: 14,
+          color: kPlum,
+          outline: false,
+        ),
+        const SizedBox(height: 6),
+        PixelStars(game.stars, scale: 3.5),
+        const SizedBox(height: 6),
         _Stats(game: game),
         if (_newBest)
-          const MemeText(
-            'Nuovo record!',
-            fontSize: 16,
-            color: Color(0xFFFFD54F),
-          ),
-        const SizedBox(height: 6),
-        Text(switch (_upload) {
-          _Upload.sending => 'Invio in classifica…',
-          _Upload.done => 'Punteggio inviato alla classifica ✅',
-          _Upload.failed => 'Invio in classifica fallito ❌',
-          _Upload.offline => 'Classifica online non disponibile (offline)',
-        }, style: const TextStyle(color: Colors.white60, fontSize: 12)),
-        const SizedBox(height: 16),
+          const PixelText('Nuovo record!', size: 15, color: Color(0xFFFFC94A)),
+        PixelText(
+          switch (_upload) {
+            _Upload.sending => 'Invio in classifica...',
+            _Upload.done => 'Inviato alla classifica!',
+            _Upload.failed => 'Invio in classifica fallito',
+            _Upload.offline => 'Classifica offline',
+          },
+          size: 11,
+          color: const Color(0xFF9A8FB0),
+          outline: false,
+        ),
+        const SizedBox(height: 10),
         Wrap(
-          spacing: 12,
-          runSpacing: 10,
+          spacing: 10,
+          runSpacing: 8,
           alignment: WrapAlignment.center,
           children: [
             if (hasNext)
-              _SmallButton(
-                label: 'Prossimo livello',
-                icon: Icons.skip_next,
+              PixelButton(
+                label: 'Avanti',
+                icon: 'play',
+                color: PixelColor.mint,
                 onPressed: () => _goto(context, game.levelIndex + 1),
               ),
-            _SmallButton(
-              label: 'Rigioca',
-              icon: Icons.replay,
-              color: const Color(0xFF7E57C2),
+            PixelButton(
+              icon: 'replay',
+              color: PixelColor.purple,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               onPressed: () => _goto(context, game.levelIndex),
             ),
-            _SmallButton(
-              label: 'Menu',
-              icon: Icons.home,
-              color: const Color(0xFF555066),
+            PixelButton(
+              icon: 'home',
+              color: PixelColor.grey,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -138,34 +138,32 @@ class GameOverOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return _Panel(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: ColorFiltered(
-            colorFilter: const ColorFilter.matrix([
-              0.33, 0.33, 0.33, 0, 0, //
-              0.33, 0.33, 0.33, 0, 0, //
-              0.33, 0.33, 0.33, 0, 0, //
-              0, 0, 0, 1, 0,
-            ]),
-            child: Image.asset(
-              game.character.portraitAsset,
-              height: 110,
-              filterQuality: FilterQuality.none,
-            ),
+        Opacity(
+          opacity: .6,
+          child: Image.asset(
+            game.character.portraitAsset,
+            height: 96,
+            filterQuality: FilterQuality.none,
           ),
         ),
-        const SizedBox(height: 8),
-        const MemeText('Wasted', fontSize: 46, color: Color(0xFFE53935)),
-        MemeText('${game.character.name} è stato ratioato', fontSize: 14),
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
+        const PixelText('Oh no!', size: 36, color: Color(0xFFFF6F8A)),
+        PixelText(
+          '${game.character.name} è stato ratioato',
+          size: 14,
+          color: kPlum,
+          outline: false,
+        ),
+        const SizedBox(height: 12),
         Wrap(
-          spacing: 12,
-          runSpacing: 10,
+          spacing: 10,
+          runSpacing: 8,
           alignment: WrapAlignment.center,
           children: [
-            _SmallButton(
+            PixelButton(
               label: 'Riprova',
-              icon: Icons.replay,
+              icon: 'replay',
+              color: PixelColor.pink,
               onPressed: () => Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (_) => GameScreen(
@@ -175,10 +173,10 @@ class GameOverOverlay extends StatelessWidget {
                 ),
               ),
             ),
-            _SmallButton(
-              label: 'Menu',
-              icon: Icons.home,
-              color: const Color(0xFF555066),
+            PixelButton(
+              icon: 'home',
+              color: PixelColor.grey,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -196,11 +194,15 @@ class _Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withValues(alpha: 0.78),
+      color: const Color(0x993A2440),
       alignment: Alignment.center,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(mainAxisSize: MainAxisSize.min, children: children),
+        padding: const EdgeInsets.all(12),
+        child: PixelPanel(
+          width: 420,
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 20),
+          child: Column(mainAxisSize: MainAxisSize.min, children: children),
+        ),
       ),
     );
   }
@@ -215,66 +217,44 @@ class _Stats extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = game.elapsed;
     final time = '${t ~/ 60}:${(t % 60).floor().toString().padLeft(2, '0')}';
-    TableRow row(String a, String b) => TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-          child: Text(a, style: const TextStyle(color: Colors.white70)),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-          child: Text(
-            b,
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
+    Widget row(String icon, String a, String b) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1),
+      child: Row(
+        children: [
+          SizedBox(width: 26, child: PixelIcon(icon, scale: 1.5)),
+          Expanded(
+            child: PixelText(
+              a,
+              size: 13,
+              color: kPlum,
+              outline: false,
+              align: TextAlign.left,
+              bold: false,
             ),
           ),
-        ),
-      ],
-    );
-    return SizedBox(
-      width: 280,
-      child: Table(
-        children: [
-          row('👍 Like ${game.likes}/${game.totalLikes}', '${game.likes * 10}'),
-          row('💀 Nemici ${game.kills}', '${game.enemyScore}'),
-          row('⏱ Tempo $time', '${game.timeBonus}'),
-          row('❤️ Cuori ${game.player.hearts}', '${game.player.hearts * 100}'),
-          row('⭐ TOTALE', '${game.score}'),
+          PixelText(b, size: 14, color: kPlum, outline: false),
         ],
       ),
     );
-  }
-}
-
-class _SmallButton extends StatelessWidget {
-  const _SmallButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-    this.color = const Color(0xFFFF4FA3),
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon),
-      label: MemeText(label, fontSize: 16),
-      style: FilledButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: Colors.black, width: 3),
-        ),
+    return SizedBox(
+      width: 260,
+      child: Column(
+        children: [
+          row(
+            'like',
+            'Like ${game.likes}/${game.totalLikes}',
+            '${game.likes * 10}',
+          ),
+          row('skull', 'Nemici ${game.kills}', '${game.enemyScore}'),
+          row('clock', 'Tempo $time', '${game.timeBonus}'),
+          row(
+            'heart',
+            'Cuori ${game.player.hearts}',
+            '${game.player.hearts * 100}',
+          ),
+          const Divider(color: Color(0x553A2440), height: 8),
+          row('star', 'Totale', '${game.score}'),
+        ],
       ),
     );
   }

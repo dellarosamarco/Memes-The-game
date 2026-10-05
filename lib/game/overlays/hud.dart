@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/meme_text.dart';
+import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
 
 class Hud extends StatelessWidget {
@@ -35,30 +35,63 @@ class _TopBar extends StatelessWidget {
     final t = game.elapsed;
     final time = '${t ~/ 60}:${(t % 60).floor().toString().padLeft(2, '0')}';
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (var i = 0; i < game.character.hearts; i++)
-            Padding(
-              padding: const EdgeInsets.only(right: 2),
-              child: Icon(
-                i < p.hearts ? Icons.favorite : Icons.favorite_border,
-                color: const Color(0xFFFF4F6A),
-                size: 26,
-                shadows: const [Shadow(blurRadius: 2)],
-              ),
+          PixelPanel(
+            px: 1.5,
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 11),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < game.character.hearts; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 3),
+                    child: PixelIcon(
+                      i < p.hearts ? 'heart' : 'heart_empty',
+                      scale: 2,
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                const PixelIcon('like', scale: 1.5),
+                const SizedBox(width: 4),
+                PixelText(
+                  '${game.likes}/${game.totalLikes}',
+                  size: 15,
+                  color: kPlum,
+                  outline: false,
+                ),
+              ],
             ),
-          const SizedBox(width: 14),
-          MemeText('👍 ${game.likes}/${game.totalLikes}', fontSize: 18),
+          ),
           const Spacer(),
-          MemeText(game.level.name, fontSize: 14),
-          const Spacer(),
-          MemeText('⏱ $time', fontSize: 18),
-          const SizedBox(width: 10),
-          IconButton.filled(
+          PixelPanel(
+            px: 1.5,
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 11),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PixelText(
+                  game.level.name,
+                  size: 15,
+                  color: const Color(0xFFFF82B4),
+                  outline: false,
+                ),
+                const SizedBox(width: 12),
+                const PixelIcon('clock', scale: 1.5),
+                const SizedBox(width: 4),
+                PixelText(time, size: 15, color: kPlum, outline: false),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          PixelButton(
+            icon: 'pause',
+            color: PixelColor.grey,
+            height: 42,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             onPressed: game.togglePause,
-            icon: const Icon(Icons.pause),
-            style: IconButton.styleFrom(backgroundColor: Colors.black54),
           ),
         ],
       ),
@@ -77,29 +110,23 @@ class _TouchControls extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _HoldButton(
-              icon: Icons.arrow_back_rounded,
-              onChanged: (v) => input.left = v,
-            ),
-            const SizedBox(width: 14),
-            _HoldButton(
-              icon: Icons.arrow_forward_rounded,
-              onChanged: (v) => input.right = v,
-            ),
+            _HoldButton(icon: 'left', onChanged: (v) => input.left = v),
+            const SizedBox(width: 10),
+            _HoldButton(icon: 'right', onChanged: (v) => input.right = v),
             const Spacer(),
             ValueListenableBuilder<int>(
               valueListenable: game.hudTick,
               builder: (context, _, _) => _SpecialButton(game: game),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             _HoldButton(
-              icon: Icons.arrow_upward_rounded,
-              size: 84,
-              color: const Color(0xCCFF4FA3),
+              icon: 'up',
+              size: 78,
+              color: 'pink',
               onChanged: (v) {
                 if (v) {
                   input.pressJump();
@@ -115,19 +142,19 @@ class _TouchControls extends StatelessWidget {
   }
 }
 
-/// A button that reports press/release, with multi-touch support.
+/// A pixel button that reports press/release, with multi-touch support.
 class _HoldButton extends StatefulWidget {
   const _HoldButton({
     required this.icon,
     required this.onChanged,
-    this.size = 72,
-    this.color = const Color(0x66FFFFFF),
+    this.size = 66,
+    this.color = 'blue',
   });
 
-  final IconData icon;
+  final String icon;
   final ValueChanged<bool> onChanged;
   final double size;
-  final Color color;
+  final String color;
 
   @override
   State<_HoldButton> createState() => _HoldButtonState();
@@ -148,18 +175,17 @@ class _HoldButtonState extends State<_HoldButton> {
       onPointerDown: (_) => _set(true),
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
-      child: AnimatedScale(
-        scale: _down ? 0.9 : 1,
-        duration: const Duration(milliseconds: 60),
+      child: Opacity(
+        opacity: 0.85,
         child: Container(
           width: widget.size,
           height: widget.size,
-          decoration: BoxDecoration(
-            color: widget.color,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.black54, width: 3),
+          padding: EdgeInsets.only(top: _down ? 6 : 0, bottom: _down ? 0 : 6),
+          decoration: pixelFrame(
+            'assets/images/ui/button_${widget.color}'
+            '${_down ? '_down' : ''}.png',
           ),
-          child: Icon(widget.icon, color: Colors.white, size: widget.size * .5),
+          child: Center(child: PixelIcon(widget.icon, scale: 3)),
         ),
       ),
     );
@@ -177,46 +203,43 @@ class _SpecialButton extends StatelessWidget {
     final ready = p.specialReady;
     return Listener(
       onPointerDown: (_) => game.input.specialQueued = true,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 74,
-            height: 74,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox.expand(
-                  child: CircularProgressIndicator(
-                    value: p.specialProgress,
-                    strokeWidth: 6,
-                    backgroundColor: Colors.black45,
-                    color: ready ? const Color(0xFFFFD54F) : Colors.white54,
-                  ),
-                ),
-                Opacity(
-                  opacity: ready ? 1 : 0.45,
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: game.character.color,
-                    child: ClipOval(
-                      child: Image.asset(
-                        game.character.portraitAsset,
-                        width: 54,
-                        height: 54,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                        filterQuality: FilterQuality.none,
-                      ),
+      child: Opacity(
+        opacity: 0.9,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 66,
+              height: 66,
+              padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
+              decoration: pixelFrame(
+                ready
+                    ? 'assets/images/ui/button_yellow.png'
+                    : 'assets/images/ui/button_grey_down.png',
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Opacity(
+                    opacity: ready ? 1 : .4,
+                    child: Image.asset(
+                      game.character.portraitAsset,
+                      filterQuality: FilterQuality.none,
                     ),
                   ),
-                ),
-                if (!ready) MemeText('${p.specialTimer.ceil()}', fontSize: 24),
-              ],
+                  if (!ready)
+                    PixelText('${p.specialTimer.ceil()}', size: 22)
+                  else
+                    const Align(
+                      alignment: Alignment.topRight,
+                      child: PixelIcon('bolt', scale: 1.5),
+                    ),
+                ],
+              ),
             ),
-          ),
-          MemeText(game.character.specialName, fontSize: 10),
-        ],
+            PixelText(game.character.specialName, size: 10),
+          ],
+        ),
       ),
     );
   }
