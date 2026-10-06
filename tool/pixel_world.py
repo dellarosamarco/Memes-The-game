@@ -215,11 +215,11 @@ THEMES = {
                      sky=((90, 70, 150), (200, 160, 230)),
                      hill=(150, 110, 200), cloud=(240, 220, 255),
                      deco='bubbles'),
-    'beach': dict(top=(252, 228, 160), dirt=(240, 200, 130),
+    'beach': dict(top=(255, 240, 190), dirt=(232, 186, 120),
                   brick=(255, 190, 150), plat=(200, 150, 100),
                   sky=((110, 200, 250), (200, 245, 255)),
                   hill=(90, 200, 220), cloud=(255, 255, 255), deco='shells'),
-    'desert': dict(top=(250, 200, 120), dirt=(226, 160, 96),
+    'desert': dict(top=(255, 214, 140), dirt=(214, 146, 90),
                    brick=(214, 130, 90), plat=(190, 130, 80),
                    sky=((255, 190, 140), (255, 236, 190)),
                    hill=(240, 180, 110), cloud=(255, 240, 220), deco='cacti'),
@@ -288,7 +288,17 @@ def tileset(theme: str) -> Image.Image:
     for i, name in enumerate(TILE_NAMES):
         t = Image.new('RGBA', (T, T))
         d = ImageDraw.Draw(t)
-        if name in ('ground_top', 'ground'):
+        if name in ('ground_top', 'ground', 'brick', 'platform', 'spikes'):
+            import pixel_tiles as pt
+            trnd = np.random.default_rng(sum(map(ord, theme)) + 11)
+            t = {'ground_top': lambda: pt.top_tile(theme, trnd),
+                 'ground': lambda: pt.body(theme, trnd),
+                 'brick': lambda: pt.brick(theme, trnd),
+                 'platform': lambda: pt.platform(theme),
+                 'spikes': pt.spikes}[name]()
+            img.alpha_composite(t, (i * T, 0))
+            continue
+        if name in ('ground_top_old', 'ground_old'):
             d.rectangle([0, 0, T - 1, T - 1], fill=dirt)
             # Soft strata lines (tile seamlessly) and little pebbles.
             for y0 in (9, 18):

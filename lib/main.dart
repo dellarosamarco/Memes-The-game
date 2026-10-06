@@ -41,8 +41,17 @@ class MemesApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF14121F),
       ),
       home: const HomeScreen(),
-      builder: (context, child) =>
-          Stack(children: [child ?? const SizedBox(), const TrophyToasts()]),
+      // Text a bit larger than the platform default: the game is played
+      // on phones held at arm's length, in landscape.
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: MediaQuery.textScalerOf(context)
+              .clamp(minScaleFactor: 1.12, maxScaleFactor: 1.3),
+        ),
+        child: Stack(
+          children: [child ?? const SizedBox(), const TrophyToasts()],
+        ),
+      ),
     );
   }
 }

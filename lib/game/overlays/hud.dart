@@ -69,11 +69,11 @@ class _TopBar extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const PixelIcon('like', scale: 1.5),
+                      const PixelIcon('like', scale: 1.8),
                       const SizedBox(width: 4),
                       PixelText(
                         '${game.likes}/${game.totalLikes}',
-                        size: 15,
+                        size: 17,
                         color: kPlum,
                         outline: false,
                       ),
@@ -118,14 +118,14 @@ class _TopBar extends StatelessWidget {
               children: [
                 PixelText(
                   game.level.name,
-                  size: 15,
+                  size: 17,
                   color: const Color(0xFFFF82B4),
                   outline: false,
                 ),
                 const SizedBox(width: 12),
-                const PixelIcon('clock', scale: 1.5),
+                const PixelIcon('clock', scale: 1.8),
                 const SizedBox(width: 4),
-                PixelText(time, size: 15, color: kPlum, outline: false),
+                PixelText(time, size: 17, color: kPlum, outline: false),
               ],
             ),
           ),
@@ -133,8 +133,8 @@ class _TopBar extends StatelessWidget {
           PixelButton(
             icon: 'pause',
             color: PixelColor.grey,
-            height: 42,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             onPressed: game.togglePause,
           ),
         ],
@@ -167,7 +167,7 @@ class _TouchControls extends StatelessWidget {
             const SizedBox(width: 12),
             _HoldButton(
               icon: 'up',
-              size: 78,
+              size: 86,
               color: 'pink',
               onChanged: (v) {
                 if (v) {
@@ -196,7 +196,7 @@ class _DPad extends StatefulWidget {
 }
 
 class _DPadState extends State<_DPad> {
-  static const _size = 70.0;
+  static const _size = 78.0;
   static const _gap = 8.0;
   static const _width = _size * 2 + _gap;
 
@@ -274,7 +274,7 @@ class _HoldButton extends StatefulWidget {
   const _HoldButton({
     required this.icon,
     required this.onChanged,
-    this.size = 66,
+    this.size = 72,
     this.color = 'blue',
   });
 
@@ -337,8 +337,8 @@ class _SpecialButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 66,
-              height: 66,
+              width: 74,
+              height: 74,
               padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
               decoration: pixelFrame(
                 ready
@@ -458,6 +458,6 @@ class _HeartState extends State<_Heart> with SingleTickerProviderStateMixin {
       final beat = v < .15 ? v / .15 : (v < .3 ? (.3 - v) / .15 : 0.0);
       return Transform.scale(scale: 1 + 0.22 * beat, child: child);
     },
-    child: PixelIcon(widget.full ? 'heart' : 'heart_empty', scale: 2),
+    child: PixelIcon(widget.full ? 'heart' : 'heart_empty', scale: 2.4),
   );
 }

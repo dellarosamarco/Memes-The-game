@@ -25,7 +25,15 @@ class Strip {
     double scale = 1,
     double bleed = 0,
   }) {
-    final src = Rect.fromLTWH(frame * frameWidth, 0, frameWidth, frameHeight);
+    // Tiles (drawn with [bleed]) also sample a hair inside their frame, so
+    // the GPU never picks up a sliver of the neighbouring frame in the sheet.
+    final inset = bleed > 0 ? 0.3 : 0.0;
+    final src = Rect.fromLTWH(
+      frame * frameWidth + inset,
+      inset,
+      frameWidth - inset * 2,
+      frameHeight - inset * 2,
+    );
     // [bleed] slightly enlarges the destination to hide hairline seams
     // between adjacent tiles at fractional zoom levels.
     final w = frameWidth * scale + bleed;

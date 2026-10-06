@@ -19,6 +19,9 @@ import 'components/player.dart';
 import 'level.dart';
 import 'level_gen.dart';
 
+/// Tiles visible vertically (sets the zoom).
+const double kTilesVisible = 9.5;
+
 /// World units of extra ground drawn under the level.
 const kGroundBelow = kTile * 2;
 
@@ -216,8 +219,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    // Show ~11 tiles vertically, whatever the screen.
-    camera.viewfinder.zoom = size.y / (kTile * 11);
+    // Show ~9.5 tiles vertically, whatever the screen: big enough to read
+    // the memes on a phone, with plenty of room ahead in landscape.
+    camera.viewfinder.zoom = size.y / (kTile * kTilesVisible);
   }
 
   @override

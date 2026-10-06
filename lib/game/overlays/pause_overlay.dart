@@ -34,15 +34,6 @@ class PauseOverlay extends StatelessWidget {
                 outline: false,
               ),
               const SizedBox(height: 10),
-              Text(
-                '${c.passiveName}: ${c.passiveDescription}\n'
-                '${c.specialName}: ${c.specialDescription}',
-                textAlign: TextAlign.center,
-                style: body,
-              ),
-              const SizedBox(height: 10),
-              const SettingsPanel(),
-              const SizedBox(height: 10),
               Wrap(
                 spacing: 10,
                 runSpacing: 8,
@@ -61,6 +52,15 @@ class PauseOverlay extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              const SettingsPanel(),
+              const SizedBox(height: 10),
+              Text(
+                '${c.passiveName}: ${c.passiveDescription}\n'
+                '${c.specialName}: ${c.specialDescription}',
+                textAlign: TextAlign.center,
+                style: body,
               ),
               const SizedBox(height: 10),
               const Text(
