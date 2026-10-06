@@ -78,7 +78,7 @@ class PoofEffect extends PositionComponent {
 
 /// Meme-style caption: white bold text with a black outline, floats up and
 /// fades out.
-class FloatingText extends PositionComponent {
+class FloatingText extends PositionComponent with HasGameReference<FlameGame> {
   FloatingText({
     required super.position,
     required this.text,
@@ -122,6 +122,12 @@ class FloatingText extends PositionComponent {
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: 260);
+    // Keep long shouts inside the screen (e.g. near the level's left edge).
+    final view = game.camera.visibleWorldRect;
+    final half = _stroke.width / 2 + 4;
+    if (view.width > half * 2) {
+      position.x = position.x.clamp(view.left + half, view.right - half);
+    }
   }
 
   @override

@@ -25,11 +25,17 @@ class Hat {
     Hat('bow', 'Fiocco', 60, 4),
     Hat('cap', 'Berretto', 90, 3),
     Hat('flowers', 'Coroncina di fiori', 120, 9),
+    Hat('beanie', 'Berretta col pompon', 140, 13),
+    Hat('frog', 'Cappello rana', 180, 14),
     Hat('propeller', 'Elica', 160, 2),
     Hat('chef', 'Cappello da chef', 200, 6),
     Hat('cowboy', 'Cowboy', 260, 8),
+    Hat('mushroom', 'Fungo', 280, 15),
+    Hat('pirate', 'Pirata', 350, 12),
     Hat('witch', 'Strega', 320, 7),
     Hat('halo', 'Aureola', 400, 5),
+    Hat('viking', 'Elmo vichingo', 450, 11),
+    Hat('tophat', 'Cilindro', 600, 10),
     Hat('crown', 'Corona', 500, 1),
   ];
 }

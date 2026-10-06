@@ -825,8 +825,60 @@ def _hat_flowers(d):
         d.point((x, 12), fill=(255, 250, 220, 255))
 
 
+def _hat_tophat(d):
+    d.rounded_rectangle([2, 14, 22, 17], 1, fill=(40, 34, 48, 255))
+    d.rectangle([6, 1, 18, 15], fill=(52, 44, 62, 255))
+    d.rectangle([6, 10, 18, 12], fill=(220, 60, 90, 255))
+    d.line([(8, 2), (8, 8)], fill=(90, 80, 104, 255))
+
+
+def _hat_viking(d):
+    d.pieslice([4, 5, 20, 27], 180, 360, fill=(170, 176, 190, 255))
+    d.line([(4, 15), (20, 15)], fill=(200, 150, 60, 255), width=2)
+    d.line([(12, 5), (12, 14)], fill=(200, 150, 60, 255))
+    for sx in (1, -1):
+        x0 = 12 + sx * 8
+        d.polygon([(x0, 12), (x0 + sx * 3, 9), (x0 + sx * 4, 2),
+                   (x0 + sx * 1, 8)], fill=(250, 240, 214, 255))
+    d.point((8, 8), fill=WHITE)
+
+
+def _hat_pirate(d):
+    d.polygon([(0, 15), (4, 8), (12, 4), (20, 8), (23, 15), (12, 12)],
+              fill=(44, 38, 52, 255))
+    d.line([(1, 15), (12, 12), (22, 15)], fill=(230, 190, 80, 255))
+    d.ellipse([10, 6, 14, 10], fill=WHITE)
+    d.point([(11, 7), (13, 7)], fill=(44, 38, 52, 255))
+
+
+def _hat_beanie(d):
+    d.pieslice([4, 5, 20, 25], 180, 360, fill=(120, 200, 170, 255))
+    d.rectangle([4, 13, 20, 17], fill=(90, 170, 140, 255))
+    for x in range(5, 20, 3):
+        d.line([(x, 13), (x, 17)], fill=(70, 140, 115, 255))
+    d.ellipse([9, 0, 15, 6], fill=(255, 240, 245, 255))
+    d.point((10, 1), fill=WHITE)
+
+
+def _hat_frog(d):
+    d.pieslice([3, 6, 21, 28], 180, 360, fill=(120, 210, 110, 255))
+    for x in (4, 14):
+        d.ellipse([x, 2, x + 6, 8], fill=(120, 210, 110, 255))
+        d.ellipse([x + 1, 3, x + 5, 7], fill=WHITE)
+        d.rectangle([x + 2, 4, x + 3, 6], fill=(30, 26, 36, 255))
+    d.point([(8, 14), (16, 14)], fill=(255, 150, 170, 255))
+
+
+def _hat_mushroom(d):
+    d.pieslice([1, 3, 23, 29], 180, 360, fill=(240, 70, 80, 255))
+    d.rectangle([1, 15, 23, 17], fill=(255, 236, 214, 255))
+    for x, y, r in ((6, 8, 2), (12, 5, 2), (18, 9, 2), (12, 12, 1)):
+        d.ellipse([x - r, y - r, x + r, y + r], fill=WHITE)
+
+
 HATS = [_hat_party, _hat_crown, _hat_propeller, _hat_cap, _hat_bow, _hat_halo,
-        _hat_chef, _hat_witch, _hat_cowboy, _hat_flowers]
+        _hat_chef, _hat_witch, _hat_cowboy, _hat_flowers, _hat_tophat,
+        _hat_viking, _hat_pirate, _hat_beanie, _hat_frog, _hat_mushroom]
 
 
 def hats_sheet() -> Image.Image:

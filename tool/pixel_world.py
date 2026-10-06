@@ -631,6 +631,18 @@ ICONS = {
         "kwwk..kwwk",
         "kkkk..kkkk",
     ],
+    'dice': [
+        ".kkkkkkkkkk.",
+        "kwwwwwwwwwwk",
+        "kwkkwwwwwwwk",
+        "kwkkwwwwwwwk",
+        "kwwwwkkwwwwk",
+        "kwwwwkkwwwwk",
+        "kwwwwwwwkkwk",
+        "kwwwwwwwkkwk",
+        "kwwwwwwwwwwk",
+        ".kkkkkkkkkk.",
+    ],
     'play': [
         "kk......",
         "kwkk....",

@@ -186,6 +186,13 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
               ),
+              // Meme of the day banner, on the grass.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 10,
+                child: Center(child: _DailyMeme(MemeCharacter.ofTheDay())),
+              ),
               Positioned(
                 left: 12,
                 top: 8,
@@ -317,4 +324,41 @@ class _Hopper extends StatelessWidget {
       child: child,
     );
   }
+}
+
+class _DailyMeme extends StatelessWidget {
+  const _DailyMeme(this.character);
+
+  final MemeCharacter character;
+
+  @override
+  Widget build(BuildContext context) => PixelPanel(
+    px: 1.5,
+    padding: const EdgeInsets.fromLTRB(10, 4, 14, 8),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          character.portraitAsset,
+          height: 26,
+          filterQuality: FilterQuality.none,
+        ),
+        const SizedBox(width: 8),
+        PixelText(
+          'Meme del giorno: ${character.name}',
+          size: 13,
+          color: kPlum,
+          outline: false,
+        ),
+        const SizedBox(width: 8),
+        const PixelIcon('like', scale: 1.4),
+        const PixelText(
+          ' x2',
+          size: 13,
+          color: Color(0xFFFF82B4),
+          outline: false,
+        ),
+      ],
+    ),
+  );
 }

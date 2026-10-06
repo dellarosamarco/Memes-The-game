@@ -15,6 +15,7 @@ void _pixmap(
   List<String> rows,
   Map<String, Paint> palette, {
   bool flip = false,
+  double px = 2,
 }) {
   final w = rows.first.length;
   for (var y = 0; y < rows.length; y++) {
@@ -23,7 +24,7 @@ void _pixmap(
       if (p == null) continue;
       final dx = flip ? w - 1 - x : x;
       canvas.drawRect(
-        Rect.fromLTWH(dx - w / 2, y - rows.length.toDouble(), 1, 1),
+        Rect.fromLTWH((dx - w / 2) * px, (y - rows.length) * px, px, px),
         p,
       );
     }
@@ -35,13 +36,14 @@ class ChickMinion extends PositionComponent
     with HasGameReference<MemesGame>, TileBody {
   ChickMinion({required super.position, required this.dir, this.delay = 0})
     : super(priority: 21) {
-    bodyWidth = 10;
-    bodyHeight = 10;
+    bodyWidth = 16;
+    bodyHeight = 18;
   }
 
   final int dir;
   double delay;
   double _t = 0;
+  double _stuck = 0;
 
   static final _pal = {
     'k': _p(0xFF1E1A22),
@@ -71,16 +73,17 @@ class ChickMinion extends PositionComponent
     }
     _t += dt;
     velocity.x = dir * 210;
-    if (onGround && _t % 0.3 < dt) velocity.y = -160;
+    if (onGround) velocity.y = hitWall ? -420 : -170;
+    _stuck = hitWall ? _stuck + dt : 0;
     applyGravity(dt);
     moveAndCollide(dt);
     for (final e in game.enemies.toList()) {
-      if (!e.dead && e.mid.distanceTo(position - Vector2(0, 5)) < 18) {
+      if (!e.dead && e.mid.distanceTo(position - Vector2(0, 9)) < 22) {
         e.hit(heavy: true);
       }
     }
-    if (_t > 2.6 || hitWall || position.y > game.level.height + 40) {
-      game.world.add(PoofEffect(position: position - Vector2(0, 5)));
+    if (_t > 2.6 || _stuck > 0.4 || position.y > game.level.height + 40) {
+      game.world.add(PoofEffect(position: position - Vector2(0, 9)));
       removeFromParent();
     }
   }
@@ -96,8 +99,8 @@ class ChickMinion extends PositionComponent
 class EggBomb extends PositionComponent
     with HasGameReference<MemesGame>, TileBody {
   EggBomb({required super.position, required double vx}) : super(priority: 21) {
-    bodyWidth = 8;
-    bodyHeight = 10;
+    bodyWidth = 14;
+    bodyHeight = 16;
     velocity.setValues(vx, -120);
   }
 
@@ -133,7 +136,7 @@ class EggBomb extends PositionComponent
         ..x *= 0.5;
     }
     final touching = game.enemies.any(
-      (e) => !e.dead && e.mid.distanceTo(position) < 16,
+      (e) => !e.dead && e.mid.distanceTo(position) < 22,
     );
     if (_bounces >= 2 || touching || _t > 2.5) _explode();
   }
@@ -157,7 +160,9 @@ class EggBomb extends PositionComponent
   @override
   void render(Canvas canvas) {
     canvas.save();
+    canvas.translate(0, -8);
     canvas.rotate(sin(_t * 18) * 0.25);
+    canvas.translate(0, 8);
     _pixmap(canvas, _rows, _pal);
     canvas.restore();
   }
@@ -234,7 +239,7 @@ class WaterJet extends PositionComponent with HasGameReference<MemesGame> {
   Future<void> onLoad() async {
     for (final e in game.enemies.toList()) {
       final d = e.mid - position;
-      if (d.x * dir > -6 && d.x * dir < _len && d.y.abs() < 22) {
+      if (d.x * dir > -6 && d.x * dir < _len && d.y.abs() < 28) {
         e.hit(heavy: true);
       }
     }
@@ -254,10 +259,10 @@ class WaterJet extends PositionComponent with HasGameReference<MemesGame> {
     final paint = _water..color = _water.color.withValues(alpha: fade);
     for (var x = 0.0; x < reach; x += 6) {
       final wob = sin(x * 0.2 + _t * 30) * 2;
-      final h = 6 - x / _len * 2;
-      canvas.drawRect(Rect.fromLTWH(dir * x - 3, wob - h / 2, 6, h), paint);
+      final h = 14 - x / _len * 6;
+      canvas.drawRect(Rect.fromLTWH(dir * x - 3, wob - h / 2, 7, h), paint);
       if ((x ~/ 6).isEven) {
-        canvas.drawRect(Rect.fromLTWH(dir * x - 1, wob - 1, 2, 2), _light);
+        canvas.drawRect(Rect.fromLTWH(dir * x - 2, wob - 3, 3, 3), _light);
       }
     }
   }
