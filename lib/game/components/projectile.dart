@@ -28,7 +28,7 @@ class RatioProjectile extends PositionComponent
   void update(double dt) {
     super.update(dt);
     _life -= dt;
-    position.x += direction * 170 * dt;
+    position.x += direction * 170 * dt * game.enemyTimeScale;
     final c = (position.x / kTile).floor();
     final r = (position.y / kTile).floor();
     if (_life <= 0 || game.level.isSolid(c, r)) {

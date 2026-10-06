@@ -84,6 +84,7 @@ class Player extends PositionComponent
   // Stomp combos and idle naps.
   int _combo = 0;
   double _idleTime = 0;
+  double _relax = 0;
   double _zTimer = 0;
   static const _comboLines = [
     'Double kill!',
@@ -116,6 +117,8 @@ class Player extends PositionComponent
     'masha_man' => -38,
     'rock_patrick' => -40,
     'bottle_patrick' => -36,
+    'rock_monkey' => -38,
+    'chill_dog' => -30,
     _ => -40,
   };
 
@@ -374,6 +377,22 @@ class Player extends PositionComponent
   void _napCheck(int dir, double dt) {
     final idle = dir == 0 && onGround && game.input.jumpBuffer <= 0;
     _idleTime = idle ? _idleTime + dt : 0;
+    // Total relax: a heart back every 4 seconds of doing nothing.
+    _relax = idle ? _relax + dt : 0;
+    if (character.passive == Passive.chill && _relax >= 4) {
+      _relax = 0;
+      if (hearts < character.hearts) {
+        hearts++;
+        game.world.add(
+          FloatingText(
+            position: position - Vector2(0, 66),
+            text: '+1 cuore (relax)',
+            fontSize: 10,
+            color: const Color(0xFFFF82B4),
+          ),
+        );
+      }
+    }
     if (_idleTime > 5) {
       Achievements.unlock('nap');
       _zTimer -= dt;
@@ -494,9 +513,11 @@ class Player extends PositionComponent
     Sound.play('hurt');
     Sound.haptic(strong: true);
     _invulnerable = 1.3;
-    velocity
-      ..x = (position.x < fromX ? -1 : 1) * 170
-      ..y = -260;
+    if (character.passive != Passive.rockSolid) {
+      velocity
+        ..x = (position.x < fromX ? -1 : 1) * 170
+        ..y = -260;
+    }
     game.shake(0.25);
     final lines = character.hurtLines;
     game.world.add(
@@ -809,6 +830,20 @@ class Player extends PositionComponent
 
       case SpecialType.rockRoll:
         _roll = 1.2;
+
+      case SpecialType.rockThrow:
+        game.world.add(
+          RockProjectile(
+            position: center - Vector2(0, 14),
+            dir: facingRight ? 1 : -1,
+          ),
+        );
+
+      case SpecialType.vacation:
+        game.slowMo = 5;
+        game.camera.viewport.add(
+          ScreenFlash(color: const Color(0x5540C4FF), duration: 0.6),
+        );
 
       case SpecialType.waterJet:
         game.world.add(

@@ -158,7 +158,11 @@ class Enemy extends PositionComponent
 
   @override
   void update(double dt) {
-    super.update(dt);
+    super.update(dt * game.enemyTimeScale);
+    _tick(dt * game.enemyTimeScale);
+  }
+
+  void _tick(double dt) {
     _t += dt;
     if (_flash > 0) _flash -= dt;
     if (_hurtCooldown > 0) _hurtCooldown -= dt;

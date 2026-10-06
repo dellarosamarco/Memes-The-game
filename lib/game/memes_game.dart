@@ -79,6 +79,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
   // Run state.
   double elapsed = 0;
   int likes = 0;
+
+  /// Seconds of slow motion for enemies (Chihuahua Relax's holidays).
+  double slowMo = 0;
+  double get enemyTimeScale => slowMo > 0 ? 0.3 : 1;
   int likeScore = 0;
   int kills = 0;
   int enemyScore = 0;
@@ -211,6 +215,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   @override
   void update(double dt) {
+    if (slowMo > 0) slowMo -= dt;
     dt = min(dt, 1 / 30);
     if (!finished && !isOver) elapsed += dt;
     if (input.jumpBuffer > 0) input.jumpBuffer -= dt;

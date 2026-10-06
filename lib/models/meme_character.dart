@@ -24,6 +24,8 @@ enum Passive {
   bossBrawler,
   rockHead,
   refill,
+  rockSolid,
+  chill,
 }
 
 /// Signature move, on a cooldown.
@@ -50,6 +52,8 @@ enum SpecialType {
   superJump,
   rockRoll,
   waterJet,
+  rockThrow,
+  vacation,
 }
 
 /// A playable meme. Every field is meant to stay faithful to the original
@@ -127,6 +131,8 @@ class MemeCharacter {
     'masha_man' => (x: -0.5, y: -50),
     'rock_patrick' => (x: -4, y: -53),
     'bottle_patrick' => (x: 2, y: -55),
+    'rock_monkey' => (x: 3, y: -46),
+    'chill_dog' => (x: 0, y: -41),
     _ => (x: -4.5, y: -52),
   };
 
@@ -176,6 +182,8 @@ class MemeCharacter {
     mashaMan,
     rockPatrick,
     bottlePatrick,
+    rockMonkey,
+    chillDog,
   ];
 
   static const wigDog = MemeCharacter(
@@ -743,5 +751,55 @@ class MemeCharacter {
     specialCooldown: 4,
     specialShout: 'GLU GLU!',
     hurtLines: ['Glub!', 'Il boccione!', 'Ho sete.'],
+  );
+
+  static const rockMonkey = MemeCharacter(
+    id: 'rock_monkey',
+    name: 'Scimmia col Sasso',
+    memeAlias: 'Il cappuccino che minaccia col sasso',
+    tagline: 'Faccino dolcissimo. Sasso in mano.',
+    lore:
+        'Una scimmietta cappuccino con gli occhioni più teneri del mondo '
+        'e un sasso alzato sopra la testa. Ti guarda come per dire: '
+        '"ripeti quello che hai detto". Meglio di no.',
+    color: Color(0xFFA0582A),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 510,
+    passive: Passive.rockSolid,
+    passiveName: 'Presa Salda',
+    passiveDescription: 'Quando lo colpiscono non viene sbalzato indietro.',
+    specialType: SpecialType.rockThrow,
+    specialName: 'Tiro del Sasso',
+    specialDescription:
+        'Lancia il sasso a parabola: stende il primo nemico che colpisce.',
+    specialCooldown: 1.8,
+    specialShout: 'RIPETILO, SE HAI CORAGGIO',
+    hurtLines: ['Uh-uh!', 'Il mio sasso!', '*occhioni*'],
+  );
+
+  static const chillDog = MemeCharacter(
+    id: 'chill_dog',
+    name: 'Chihuahua Relax',
+    memeAlias: 'Il chihuahua sdraiato con le zampe dietro la testa',
+    tagline: 'Zampe dietro la testa, gambe accavallate. Zen.',
+    lore:
+        'Il chihuahua biondo spaparanzato sul cuscino con le zampe dietro '
+        'la testa e le gambe accavallate, come un capo in ferie. '
+        'Lo stress non sa nemmeno dove abita.',
+    color: Color(0xFFD9B48A),
+    hearts: 3,
+    runSpeed: 140,
+    jumpSpeed: 500,
+    passive: Passive.chill,
+    passiveName: 'Relax Totale',
+    passiveDescription:
+        'Se resta fermo 4 secondi si riposa e recupera un cuore.',
+    specialType: SpecialType.vacation,
+    specialName: 'Modalità Ferie',
+    specialDescription: 'Tutti i nemici vanno al rallentatore per 5 secondi.',
+    specialCooldown: 12,
+    specialShout: 'IO SONO IN FERIE',
+    hurtLines: ['Che stress.', 'Mi rovini il relax.', 'Ehi, calma.'],
   );
 }

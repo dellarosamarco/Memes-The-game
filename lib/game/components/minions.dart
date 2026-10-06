@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/sound.dart';
+import '../level.dart';
 import '../memes_game.dart';
 import 'body.dart';
 import 'effects.dart';
@@ -265,5 +267,63 @@ class WaterJet extends PositionComponent with HasGameReference<MemesGame> {
         canvas.drawRect(Rect.fromLTWH(dir * x - 2, wob - 3, 3, 3), _light);
       }
     }
+  }
+}
+
+/// The capuchin's rock: thrown in an arc, knocks out the first enemy.
+class RockProjectile extends PositionComponent
+    with HasGameReference<MemesGame> {
+  RockProjectile({required super.position, required this.dir})
+    : super(priority: 26);
+
+  final int dir;
+  late final Vector2 _v = Vector2(dir * 280.0, -300);
+  double _t = 0;
+
+  static final _pal = {
+    'k': _p(0xFF3A2440),
+    'r': _p(0xFFD8D2C4),
+    'R': _p(0xFFB0A898),
+    'w': _p(0xFFF2EEE4),
+  };
+  static const _rows = [
+    '.kkkkk.',
+    'kwrrrRk',
+    'krrRrRk',
+    'krRrrRk',
+    '.kRRRk.',
+    '..kkk..',
+  ];
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _t += dt;
+    _v.y += 900 * dt;
+    position += _v * dt;
+    final c = (position.x / kTile).floor();
+    final r = (position.y / kTile).floor();
+    if (game.level.isSolid(c, r) || _t > 3) {
+      game.world.add(PoofEffect(position: position.clone()));
+      removeFromParent();
+      return;
+    }
+    for (final e in game.enemies.toList()) {
+      if (e.dead || e.mid.distanceTo(position) > 20) continue;
+      e.hit(heavy: true);
+      game.world.add(PoofEffect(position: position.clone()));
+      Sound.play('stomp', volume: .6);
+      removeFromParent();
+      return;
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    canvas.save();
+    canvas.rotate(_t * 12 * dir);
+    canvas.translate(0, 6);
+    _pixmap(canvas, _rows, _pal);
+    canvas.restore();
   }
 }

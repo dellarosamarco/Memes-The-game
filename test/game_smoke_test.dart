@@ -124,6 +124,17 @@ void main() {
     expect(game.level.tileAt(2, 2), ' ');
   });
 
+  testWidgets('holidays slow the enemies down', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.chillDog);
+    expect(game.enemyTimeScale, 1);
+    game.player.useSpecial();
+    expect(game.enemyTimeScale, lessThan(1));
+    for (var i = 0; i < 6 * 60; i++) {
+      game.update(1 / 60);
+    }
+    expect(game.enemyTimeScale, 1);
+  });
+
   testWidgets('lady terrier likes are worth double', (tester) async {
     final game = await boot(tester, 0, MemeCharacter.pearlTerrier);
     game.collectLike(Like(position: game.player.position.clone()));

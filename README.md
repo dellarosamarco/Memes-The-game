@@ -35,6 +35,8 @@ vengono aggiunte solo le zampette animate.
 | **Masha Baffuta**: Masha col faccione da uomo | *Mani Pesanti*: 4 cuori, doppio danno al boss | *Salto di Masha*: salto altissimo con onda d'urto |
 | **Patrick Roccia**: elmo di roccia e alghe | *Testa di Roccia*: rompe i mattoni di testa | *Roccia Rotolante*: rotola travolgendo i nemici |
 | **Patrick Boccione**: la testa nel boccione | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: getto che stende i nemici davanti |
+| **Scimmia col Sasso**: cappuccino col sasso alzato | *Presa Salda*: niente contraccolpo quando lo colpiscono | *Tiro del Sasso*: sasso lanciato a parabola |
+| **Chihuahua Relax**: zampe dietro la testa | *Relax Totale*: +1 cuore dopo 4 secondi fermo | *Modalità Ferie*: nemici al rallentatore per 5 secondi |
 
 ## 500 livelli, 10 mondi
 

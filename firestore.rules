@@ -18,7 +18,7 @@ service cloud.firestore {
                'snow_baby', 'pink_monkey', 'shrek_kid', 'ears_dog',
                'drip_pig', 'bowl_chick', 'helmet_pigeon', 'pietro_pigeon',
                'bike_dog', 'sneaker_hen', 'gta_bean', 'masha_man',
-               'rock_patrick', 'bottle_patrick']
+               'rock_patrick', 'bottle_patrick', 'rock_monkey', 'chill_dog']
         && request.resource.data.score is int
         && request.resource.data.score >= 0
         && request.resource.data.score < 10000000
