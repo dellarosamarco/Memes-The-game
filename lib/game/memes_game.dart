@@ -99,6 +99,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   bool _bossAlive = false;
   late Vector2 _checkpoint;
   double _shake = 0;
+  double _shakeDur = 1;
+  double _shakeAmp = 0;
+  double _hitStop = 0;
   final _rnd = Random();
 
   /// Bumped ~10 times a second so Flutter overlays can rebuild.
@@ -180,7 +183,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     // touch controls.
     final target = _CameraTarget(player);
     world.add(target);
-    camera.follow(target, maxSpeed: 900);
+    camera.follow(target);
     Sound.music('level');
     overlays.add(overlayIntro);
     if (LocalStore.ready) {
@@ -215,8 +218,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   @override
   void update(double dt) {
-    if (slowMo > 0) slowMo -= dt;
     dt = min(dt, 1 / 30);
+    if (_hitStop > 0) {
+      _hitStop -= dt;
+      _updateShake(dt);
+      return;
+    }
+    if (slowMo > 0) slowMo -= dt;
     if (!finished && !isOver) elapsed += dt;
     if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
     final completeIn = _completeIn;
@@ -263,6 +271,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       if (jumpKeys.contains(k)) input.pressJump();
       if (k == LogicalKeyboardKey.keyX ||
           k == LogicalKeyboardKey.keyK ||
+          k == LogicalKeyboardKey.keyJ ||
+          k == LogicalKeyboardKey.keyC ||
           k == LogicalKeyboardKey.shiftLeft ||
           k == LogicalKeyboardKey.shiftRight) {
         input.specialQueued = true;
@@ -276,12 +286,35 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   // ----------------------------------------------------------- level events
 
+  // Likes picked up in quick succession play rising notes.
+  int _likeStreak = 0;
+  double _lastLike = -1;
+
   void collectLike(Like like) {
     likes++;
+    _likeStreak = elapsed - _lastLike < 0.6 ? _likeStreak + 1 : 0;
+    _lastLike = elapsed;
     final value =
         10 * multiplier * (character.passive == Passive.jewels ? 2 : 1);
     likeScore += value;
-    Sound.play('like', volume: .45);
+    Sound.play(
+      _likeStreak == 0 ? 'like' : 'like_${min(_likeStreak, 5)}',
+      volume: .45,
+    );
+    if (likes == totalLikes && totalLikes > 0) {
+      // Every like in the level: a little party.
+      Sound.play('checkpoint');
+      world.add(Confetti(position: player.position - Vector2(0, 40)));
+      world.add(
+        FloatingText(
+          position: player.position - Vector2(0, 90),
+          text: 'TUTTI I LIKE!',
+          fontSize: 16,
+          color: const Color(0xFFFF82B4),
+          duration: 1.6,
+        ),
+      );
+    }
     world.add(Sparkles(position: like.position.clone()));
     world.add(
       FloatingText(
@@ -514,14 +547,25 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   // ----------------------------------------------------------- camera shake
 
-  void shake(double seconds) => _shake = max(_shake, seconds);
+  /// Screen shake that fades out; [intensity] is the max offset in pixels.
+  void shake(double seconds, {double intensity = 4}) {
+    if (_shake <= 0 || intensity >= _shakeAmp * (_shake / _shakeDur)) {
+      _shake = seconds;
+      _shakeDur = seconds;
+      _shakeAmp = intensity;
+    }
+  }
+
+  /// Freezes the action for a few frames to sell an impact.
+  void hitStop(double seconds) => _hitStop = max(_hitStop, seconds);
 
   void _updateShake(double dt) {
     if (_shake > 0) {
       _shake -= dt;
+      final a = _shakeAmp * max(0.0, _shake / _shakeDur);
       camera.viewport.position = Vector2(
-        (_rnd.nextDouble() - .5) * 8,
-        (_rnd.nextDouble() - .5) * 8,
+        (_rnd.nextDouble() * 2 - 1) * a,
+        (_rnd.nextDouble() * 2 - 1) * a,
       );
     } else if (!camera.viewport.position.isZero()) {
       camera.viewport.position = Vector2.zero();
@@ -535,13 +579,37 @@ class MemesGame extends FlameGame with KeyboardEvents {
   }
 }
 
+/// Where the camera looks: a smoothed point that leads the player in the
+/// direction they run (so you see what's coming) and dips when falling.
 class _CameraTarget extends PositionComponent {
   _CameraTarget(this.player);
 
   final Player player;
+  double _ahead = 20;
+  bool _placed = false;
 
   @override
   void update(double dt) {
-    position.setValues(player.position.x + 20, player.position.y + 12);
+    final p = player.position;
+    final speed = player.velocity.x;
+    final wantAhead = speed.abs() > 40
+        ? speed.sign * 70
+        : (player.facingRight ? 30.0 : -30.0);
+    _ahead += (wantAhead - _ahead) * min(1.0, dt * 2.2);
+    final fall = player.velocity.y > 300 ? 36.0 : 0.0;
+    final wantX = p.x + _ahead;
+    final wantY = p.y + 12 + fall;
+    if (!_placed ||
+        (position.x - wantX).abs() > 400 ||
+        (position.y - wantY).abs() > 300) {
+      // First frame or respawn: jump straight there.
+      _placed = true;
+      position.setValues(wantX, wantY);
+      return;
+    }
+    position.x += (wantX - position.x) * min(1.0, dt * 9);
+    // Vertical: lazy while going up, quicker when falling.
+    final ky = wantY > position.y ? 7.0 : 4.0;
+    position.y += (wantY - position.y) * min(1.0, dt * ky);
   }
 }

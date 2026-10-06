@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memes_the_game/game/components/enemy.dart';
 import 'package:memes_the_game/game/components/items.dart';
+import 'package:memes_the_game/game/level.dart';
 import 'package:memes_the_game/game/level_gen.dart';
 import 'package:memes_the_game/game/memes_game.dart';
 import 'package:memes_the_game/models/meme_character.dart';
@@ -133,6 +134,31 @@ void main() {
       game.update(1 / 60);
     }
     expect(game.enemyTimeScale, 1);
+  });
+
+  testWidgets('head bumps on a corner slide around it', (tester) async {
+    final game = await boot(tester, 0, MemeCharacter.wigDog);
+    final p = game.player;
+    for (var i = 0; i < 30; i++) {
+      game.update(1 / 60); // land on the ground first
+    }
+    final col = ((p.position.x + 12) / kTile).floor() + 1;
+    final tileL = col * kTile;
+    p.position.x = tileL - 7; // right side 5px under the brick
+    final row = ((p.top - 30) / kTile).floor();
+    for (var c = col - 1; c <= col + 1; c++) {
+      for (var r = row; r < row + 1; r++) {
+        game.level.setTile(c, r, ' ');
+      }
+    }
+    game.level.setTile(col, row, 'B');
+    p.velocity.y = -480;
+    p.onGround = false;
+    for (var i = 0; i < 12; i++) {
+      game.update(1 / 60);
+    }
+    expect(p.right, lessThanOrEqualTo(tileL));
+    expect(p.top, lessThan((row + 1) * kTile)); // got past the brick
   });
 
   testWidgets('lady terrier likes are worth double', (tester) async {

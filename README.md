@@ -88,9 +88,22 @@ Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
 
 ## Comandi
 
-- **Mobile** (orizzontale): frecce a sinistra, salto e mossa speciale a destra.
-- **Tastiera**: `←/→` o `A/D` per muoverti, `SPAZIO`/`↑`/`W` per saltare, `X`/`K`/`Shift` per la
-  speciale, `ESC`/`P` per la pausa.
+- **Mobile** (orizzontale): croce direzionale a sinistra (fai scorrere il pollice da una
+  freccia all'altra senza staccarlo), salto e mossa speciale a destra, con vibrazione.
+- **Tastiera**: `←/→` o `A/D` per muoverti, `SPAZIO`/`↑`/`W` per saltare,
+  `X`/`K`/`J`/`C`/`Shift` per la speciale, `ESC`/`P` per la pausa.
+
+### Game feel
+
+- Salto tenuto più a lungo = più alto, con un attimo di "galleggiamento" in cima all'arco;
+  coyote time e salto "prenotato" se premi poco prima di atterrare.
+- Se sbatti la testa sullo spigolo di un blocco scivoli di lato invece di fermarti.
+- Inversioni di marcia scattanti con sgommata e polvere; il personaggio si inclina quando
+  corre e fa una capriola nel doppio salto.
+- Camera fluida che guarda avanti nella direzione di corsa e un po' in basso quando cadi.
+- Impatti con micro-pausa (hit-stop), tremolio dello schermo che si smorza, flash rosso
+  quando vieni colpito, atterraggi pesanti che fanno tremare il terreno.
+- I like raccolti in fila suonano note sempre più alte; raccoglierli tutti fa festa.
 
 ## Avvio
 

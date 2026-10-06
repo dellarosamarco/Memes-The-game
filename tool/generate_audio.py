@@ -107,6 +107,18 @@ def sfx():
     write('double_jump', square(slide(620, 1250, d, 0.6), d, 0.125) *
           env(int(SR * d), release=0.06), 0.3)
     write('like', seq(tone('B5', 0.05), tone('E6', 0.11, rel=0.08)), 0.3)
+    # Rising versions for like streaks (one step up the scale each).
+    b5, e6 = hz('B5'), hz('E6')
+    for i, semis in enumerate([2, 4, 5, 7, 9], start=1):
+        k = 2 ** (semis / 12)
+        write(f'like_{i}', seq(tone(b5 * k, 0.05), tone(e6 * k, 0.11, rel=0.08)),
+              0.3)
+    d = 0.09
+    write('land', triangle(slide(220, 90, d), d) * env(int(SR * d), release=.05)
+          + noise(d, 7) * env(int(SR * d), release=.06) * .15, 0.45)
+    d = 0.12
+    write('skid', noise(d, 13) * env(int(SR * d), release=.08) *
+          np.linspace(1, .3, int(SR * d)), 0.18)
     d = 0.16
     write('stomp', triangle(slide(700, 180, d, 0.5), d) *
           env(int(SR * d), release=0.08) +

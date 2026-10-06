@@ -180,11 +180,49 @@ class Player extends PositionComponent
   double _squash = 1;
   bool _wasOnGround = true;
   double _dustTimer = 0;
+  double _skid = 0;
+  bool _wasSkidding = false;
+
+  /// Somersault after an air jump (radians left to spin).
+  double _flip = 0;
+
+  /// Smoothed running lean (radians).
+  double _lean = 0;
   bool _splashed = false;
+
+  /// Sideways nudge that turns a head bump on a corner into a slide.
+  double _nudge = 0;
+
+  /// Upward speed before this frame's collision (restored after a nudge).
+  double _vyBefore = 0;
+
+  /// Pixels of a tile corner the head can slide around (Mario-style).
+  static const _cornerSlack = 8.0;
+
+  bool _cornerCorrect(int col, int row) {
+    final t = game.level.tileAt(col, row);
+    if (t != '#' && t != 'B' && t != 'U') return false;
+    final tileL = col * kTile;
+    final tileR = tileL + kTile;
+    final inLeft = right - tileL; // how deep our right side is in the tile
+    final inRight = tileR - left;
+    if (inLeft <= _cornerSlack && !game.level.isSolid(col - 1, row)) {
+      _nudge = -(inLeft + 0.5);
+      return true;
+    }
+    if (inRight <= _cornerSlack && !game.level.isSolid(col + 1, row)) {
+      _nudge = inRight + 0.5;
+      return true;
+    }
+    return false;
+  }
 
   @override
   void onCeiling(int col, int row) {
+    if (_vyBefore < -150 && _cornerCorrect(col, row)) return;
     game.bumpBlock(col, row);
+    game.shake(0.06, intensity: 2);
+    _squash = 1.12;
     // Rock helmet: bricks shatter.
     if (character.passive == Passive.rockHead &&
         game.level.tileAt(col, row) == 'B') {
@@ -275,7 +313,23 @@ class Player extends PositionComponent
           (onGround ? _accelGround : _accelAir) *
           (character.passive == Passive.sneakers ? 3 : 1);
       final dv = target - velocity.x;
-      velocity.x += dv.clamp(-accel * dt, accel * dt);
+      // Turning around (or stopping) grips harder than speeding up: snappy.
+      final reversing = target * velocity.x < 0 || (dir == 0 && onGround);
+      final grip = reversing ? 1.8 : 1.0;
+      velocity.x += dv.clamp(-accel * grip * dt, accel * grip * dt);
+      final skidding =
+          onGround && target * velocity.x < 0 && velocity.x.abs() > 90;
+      if (skidding && !_wasSkidding) Sound.play('skid', volume: .5);
+      _wasSkidding = skidding;
+      if (skidding) {
+        _skid += dt;
+        if (_skid > 0.05) {
+          _skid = 0;
+          game.world.add(
+            Dust(position: position.clone(), dx: velocity.x.sign * 20),
+          );
+        }
+      }
 
       // Jumping: coyote time + buffered presses + variable height.
       if (onGround) {
@@ -292,6 +346,7 @@ class Player extends PositionComponent
         } else if (_airJumps > 0) {
           _airJumps--;
           _jump(character.jumpSpeed * .9);
+          _flip = 2 * pi;
           Sound.play('double_jump', volume: .5);
           input.jumpBuffer = 0;
           game.world.add(PoofEffect(position: position.clone()));
@@ -302,7 +357,11 @@ class Player extends PositionComponent
       }
       if (onGround) _cuttable = false;
 
+      // Apex hang: holding jump gives a floaty moment at the top of the arc.
+      final hang = input.jump && velocity.y.abs() < 60 && !onGround;
+      if (hang) gravity *= 0.55;
       applyGravity(dt);
+      if (hang) gravity /= 0.55;
       // Wig glide: the wig works as a parachute.
       if (character.passive == Passive.glide && input.jump && velocity.y > 70) {
         velocity.y = 70;
@@ -330,7 +389,22 @@ class Player extends PositionComponent
       useSpecial();
     }
 
+    _vyBefore = velocity.y;
+    _nudge = 0;
+    final fallSpeed = velocity.y;
     moveAndCollide(dt);
+    if (_nudge != 0) {
+      position.x += _nudge;
+      velocity.y = _vyBefore;
+    }
+    if (onGround && !_wasOnGround && fallSpeed > 520) {
+      // Big landing: thud.
+      game.shake(0.12, intensity: 3);
+      Sound.play('land', volume: .6);
+      game.world.add(Dust(position: position + Vector2(-14, 0), dx: -30));
+      game.world.add(Dust(position: position + Vector2(14, 0), dx: 30));
+      _squash = 0.66;
+    }
     if (_slamming && onGround) _slamImpact();
     if (_spin > 0) _spinHits();
     _juice(dt);
@@ -354,11 +428,16 @@ class Player extends PositionComponent
     if (onGround && !_wasOnGround) {
       _combo = 0;
       _squash = 0.78;
+      Sound.play('land', volume: .22);
       game.world.add(Dust(position: position + Vector2(-8, 0), dx: -18));
       game.world.add(Dust(position: position + Vector2(8, 0), dx: 18));
     }
     _wasOnGround = onGround;
     _squash += (1 - _squash) * min(1.0, dt * 12);
+    if (_flip > 0) _flip = max(0, _flip - dt * 18);
+    if (onGround) _flip = 0;
+    final targetLean = onGround ? velocity.x / 2400 : velocity.x / 4000;
+    _lean += (targetLean - _lean) * min(1.0, dt * 10);
     if (onGround && velocity.x.abs() > 90) {
       _dustTimer -= dt;
       if (_dustTimer <= 0) {
@@ -450,6 +529,9 @@ class Player extends PositionComponent
         velocity.y = (game.input.jump ? -460 : -300) * bounce;
         Sound.play('stomp');
         Sound.haptic();
+        game.hitStop(0.045);
+        game.shake(0.12, intensity: 2.5);
+        _squash = 1.2;
         _cuttable = false;
         game.world.add(Sparkles(position: e.mid));
         _combo++;
@@ -513,6 +595,10 @@ class Player extends PositionComponent
     Sound.play('hurt');
     Sound.haptic(strong: true);
     _invulnerable = 1.3;
+    game.hitStop(0.09);
+    game.camera.viewport.add(
+      ScreenFlash(color: const Color(0x55FF4D5E), duration: 0.3),
+    );
     if (character.passive != Passive.rockSolid) {
       velocity
         ..x = (position.x < fromX ? -1 : 1) * 170
@@ -896,6 +982,14 @@ class Player extends PositionComponent
     canvas.scale((1 + (1 - _squash) * 0.7) * puff, _squash * puff);
     // Braid spin: turns left/right really fast.
     final faceRight = _spin > 0 ? (_t * 20).floor().isEven : facingRight;
+    // Running lean (around the feet) and air-jump somersault (around the
+    // body's center).
+    canvas.rotate(_lean);
+    if (_flip > 0) {
+      canvas.translate(0, -bodyHeight / 2);
+      canvas.rotate((facingRight ? 1 : -1) * (2 * pi - _flip));
+      canvas.translate(0, bodyHeight / 2);
+    }
     if (rolling) {
       // Rolling rock: spin around the body's center.
       canvas.translate(0, -bodyHeight / 2);

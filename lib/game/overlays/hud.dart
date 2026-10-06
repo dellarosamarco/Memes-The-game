@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/sound.dart';
 import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
 
@@ -140,9 +141,7 @@ class _TouchControls extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _HoldButton(icon: 'left', onChanged: (v) => input.left = v),
-            const SizedBox(width: 10),
-            _HoldButton(icon: 'right', onChanged: (v) => input.right = v),
+            _DPad(input: input),
             const Spacer(),
             ValueListenableBuilder<int>(
               valueListenable: game.hudTick,
@@ -162,6 +161,91 @@ class _TouchControls extends StatelessWidget {
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Left/right pad: one touch zone you can slide your thumb across to change
+/// direction without lifting it (much better than two separate buttons).
+class _DPad extends StatefulWidget {
+  const _DPad({required this.input});
+
+  final GameInput input;
+
+  @override
+  State<_DPad> createState() => _DPadState();
+}
+
+class _DPadState extends State<_DPad> {
+  static const _size = 70.0;
+  static const _gap = 8.0;
+  static const _width = _size * 2 + _gap;
+
+  /// Horizontal position of each finger on the pad.
+  final Map<int, double> _fingers = {};
+
+  void _update() {
+    var left = false;
+    var right = false;
+    for (final x in _fingers.values) {
+      if (x < _width / 2) {
+        left = true;
+      } else {
+        right = true;
+      }
+    }
+    if (left != widget.input.left || right != widget.input.right) {
+      if (left || right) Sound.haptic();
+      widget.input
+        ..left = left
+        ..right = right;
+      setState(() {});
+    }
+  }
+
+  void _set(PointerEvent e) {
+    _fingers[e.pointer] = e.localPosition.dx;
+    _update();
+  }
+
+  void _lift(PointerEvent e) {
+    _fingers.remove(e.pointer);
+    _update();
+  }
+
+  Widget _half(String icon, bool down) => Container(
+    width: _size,
+    height: _size,
+    padding: EdgeInsets.only(top: down ? 6 : 0, bottom: down ? 0 : 6),
+    decoration: pixelFrame(
+      'assets/images/ui/button_blue${down ? '_down' : ''}.png',
+    ),
+    child: Center(child: PixelIcon(icon, scale: 3)),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: _set,
+      onPointerMove: _set,
+      onPointerUp: _lift,
+      onPointerCancel: _lift,
+      child: Opacity(
+        opacity: 0.85,
+        child: Padding(
+          // Generous invisible margin: thumbs are not precise.
+          padding: const EdgeInsets.only(top: 24, right: 12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _half('left', widget.input.left),
+              const SizedBox(width: _gap),
+              _half('right', widget.input.right),
+            ],
+          ),
         ),
       ),
     );
@@ -192,6 +276,7 @@ class _HoldButtonState extends State<_HoldButton> {
   void _set(bool v) {
     if (_down == v) return;
     setState(() => _down = v);
+    if (v) Sound.haptic();
     widget.onChanged(v);
   }
 
