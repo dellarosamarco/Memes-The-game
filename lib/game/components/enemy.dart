@@ -163,6 +163,7 @@ class Enemy extends PositionComponent
   }
 
   void _tick(double dt) {
+    if (game.isOver) return; // everyone freezes for the game over hop
     _t += dt;
     if (_flash > 0) _flash -= dt;
     if (_hurtCooldown > 0) _hurtCooldown -= dt;

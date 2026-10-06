@@ -195,6 +195,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
   /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
   /// the zoom). The extra ground below the level lifts the action above the
   /// touch controls at the bottom of the screen.
+  /// Open sky the camera may show above the level, so high jumps don't end
+  /// up under the HUD.
+  static const _skyAbove = kTile * 2.5;
+
   void _clampCamera() {
     final vf = camera.viewfinder;
     final half = size / vf.zoom / 2;
@@ -203,9 +207,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
       half.x * 2 >= level.width
           ? level.width / 2
           : vf.position.x.clamp(half.x, level.width - half.x),
-      half.y * 2 >= maxY
-          ? maxY / 2
-          : vf.position.y.clamp(half.y, maxY - half.y),
+      half.y * 2 >= maxY + _skyAbove
+          ? (maxY - _skyAbove) / 2
+          : vf.position.y.clamp(half.y - _skyAbove, maxY - half.y),
     );
   }
 
@@ -227,6 +231,15 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (slowMo > 0) slowMo -= dt;
     if (!finished && !isOver) elapsed += dt;
     if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
+    final overIn = _gameOverIn;
+    if (overIn != null) {
+      _gameOverIn = overIn - dt;
+      if (_gameOverIn! <= 0) {
+        _gameOverIn = null;
+        overlays.add(overlayGameOver);
+        pauseEngine();
+      }
+    }
     final completeIn = _completeIn;
     if (completeIn != null) {
       _completeIn = completeIn - dt;
@@ -505,11 +518,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
     recordRunStats();
     Sound.stopMusic();
     Sound.play('gameover');
+    Sound.haptic(strong: true);
     hudTick.value++;
     overlays.remove(overlayHud);
-    overlays.add(overlayGameOver);
-    pauseEngine();
+    // The meme does a sad little hop off the screen before the panel.
+    player.die();
+    shake(0.3, intensity: 5);
+    _gameOverIn = 1.5;
   }
+
+  double? _gameOverIn;
 
   /// Likes this run adds to the shop wallet (hen hustle, meme of the day).
   int get walletGain =>
@@ -608,8 +626,10 @@ class _CameraTarget extends PositionComponent {
       return;
     }
     position.x += (wantX - position.x) * min(1.0, dt * 9);
-    // Vertical: lazy while going up, quicker when falling.
-    final ky = wantY > position.y ? 7.0 : 4.0;
+    // Vertical: a touch lazier going up (no jitter on small hops), quick
+    // when falling; far away (big jumps, springs) it catches up fast.
+    final gap = (wantY - position.y).abs();
+    final ky = (wantY > position.y ? 9.0 : 6.0) + (gap > 90 ? 6 : 0);
     position.y += (wantY - position.y) * min(1.0, dt * ky);
   }
 }

@@ -128,6 +128,8 @@ class FloatingText extends PositionComponent with HasGameReference<FlameGame> {
     if (view.width > half * 2) {
       position.x = position.x.clamp(view.left + half, view.right - half);
     }
+    final top = view.top + _stroke.height / 2 + 30; // below the HUD bar
+    if (position.y < top) position.y = top;
   }
 
   @override

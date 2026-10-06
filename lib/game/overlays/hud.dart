@@ -46,22 +46,39 @@ class _TopBar extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (var i = 0; i < game.character.hearts; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 3),
-                    child: PixelIcon(
-                      i < p.hearts ? 'heart' : 'heart_empty',
-                      scale: 2,
-                    ),
+                _Bump(
+                  value: p.hearts,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < game.character.hearts; i++)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 3),
+                          child: _Heart(
+                            full: i < p.hearts,
+                            // The last heart left beats: you're in danger.
+                            beating: p.hearts == 1 && i == 0,
+                          ),
+                        ),
+                    ],
                   ),
+                ),
                 const SizedBox(width: 10),
-                const PixelIcon('like', scale: 1.5),
-                const SizedBox(width: 4),
-                PixelText(
-                  '${game.likes}/${game.totalLikes}',
-                  size: 15,
-                  color: kPlum,
-                  outline: false,
+                _Bump(
+                  value: game.likes,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const PixelIcon('like', scale: 1.5),
+                      const SizedBox(width: 4),
+                      PixelText(
+                        '${game.likes}/${game.totalLikes}',
+                        size: 15,
+                        color: kPlum,
+                        outline: false,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -354,4 +371,93 @@ class _SpecialButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Gives its child a quick bounce whenever [value] changes.
+class _Bump extends StatefulWidget {
+  const _Bump({required this.value, required this.child});
+
+  final int value;
+  final Widget child;
+
+  @override
+  State<_Bump> createState() => _BumpState();
+}
+
+class _BumpState extends State<_Bump> with SingleTickerProviderStateMixin {
+  late final _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 260),
+  );
+
+  @override
+  void didUpdateWidget(_Bump old) {
+    super.didUpdateWidget(old);
+    if (old.value != widget.value) _ctrl.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _ctrl,
+    builder: (context, child) {
+      final v = _ctrl.value;
+      final s = 1 + 0.25 * (v < .4 ? v / .4 : (1 - v) / .6);
+      return Transform.scale(scale: _ctrl.isAnimating ? s : 1, child: child);
+    },
+    child: widget.child,
+  );
+}
+
+class _Heart extends StatefulWidget {
+  const _Heart({required this.full, required this.beating});
+
+  final bool full;
+  final bool beating;
+
+  @override
+  State<_Heart> createState() => _HeartState();
+}
+
+class _HeartState extends State<_Heart> with SingleTickerProviderStateMixin {
+  late final _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.beating) _ctrl.repeat();
+  }
+
+  @override
+  void didUpdateWidget(_Heart old) {
+    super.didUpdateWidget(old);
+    if (widget.beating && !_ctrl.isAnimating) _ctrl.repeat();
+    if (!widget.beating && _ctrl.isAnimating) _ctrl.reset();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _ctrl,
+    builder: (context, child) {
+      final v = _ctrl.value;
+      // Two quick beats, then a pause.
+      final beat = v < .15 ? v / .15 : (v < .3 ? (.3 - v) / .15 : 0.0);
+      return Transform.scale(scale: 1 + 0.22 * beat, child: child);
+    },
+    child: PixelIcon(widget.full ? 'heart' : 'heart_empty', scale: 2),
+  );
 }

@@ -270,6 +270,12 @@ class Player extends PositionComponent
     if (_trail.length > 5 || (!trailing && _trail.isNotEmpty)) {
       _trail.removeAt(0);
     }
+    if (_dying) {
+      // Game over: pop up, spin, fall through everything.
+      velocity.y += Phys.gravity * dt;
+      position += velocity * dt;
+      return;
+    }
     if (game.finished) {
       // Victory walk (with happy hops) towards the flag.
       velocity.x = 60;
@@ -613,6 +619,22 @@ class Player extends PositionComponent
       ),
     );
     if (hearts <= 0) game.gameOver();
+  }
+
+  bool _dying = false;
+
+  /// Game over hop (no more collisions).
+  void die() {
+    _dying = true;
+    _invulnerable = 0;
+    velocity.setValues(0, -560);
+    game.world.add(
+      FloatingText(
+        position: position - Vector2(0, 66),
+        text: character.hurtLines.first,
+        fontSize: 12,
+      ),
+    );
   }
 
   /// Puts the player back on a checkpoint after a fall.
@@ -973,6 +995,19 @@ class Player extends PositionComponent
         const Rect.fromLTRB(-14, -3, 14, 3),
         Paint()..color = const Color(0x333A2440),
       );
+    }
+    if (_dying) {
+      canvas.save();
+      canvas.translate(0, -bodyHeight / 2);
+      canvas.rotate(_t * 9);
+      _strip.draw(
+        canvas,
+        _fallFrame,
+        Offset(-30, -58 + bodyHeight / 2),
+        flip: !facingRight,
+      );
+      canvas.restore();
+      return;
     }
     final blink = _invulnerable > 0 && !dashing && (_t * 16).floor().isEven;
     if (blink) return;
