@@ -145,14 +145,10 @@ class Stage {
     Stage(
       name: 'Nuvole Virali',
       theme: LevelTheme.clouds,
-      islands: [(11, 13, 26)],
-      platforms: [
-        (8, 6, 12),
-        (8, 27, 33),
-        (5, 15, 24),
-        (11, 7, 11),
-        (11, 28, 32),
-      ],
+      // A small cloud island with floating side clouds above the edges
+      // (no low "safety net" clouds: they made KOs nearly impossible).
+      islands: [(11, 12, 27)],
+      platforms: [(8, 8, 13), (8, 26, 31), (5, 16, 23)],
     ),
     Stage(
       name: 'Data Center',

@@ -202,7 +202,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       overlays.add(overlayTutorial);
     }
     Sound.music(stage.music);
-    if (debugBridge) publishDebugState(_debugState);
+    if (debugBridge) publishDebugState(_debugState, _debugCommand);
     if (LocalStore.ready) {
       LocalStore.instance.markPlayedWith(config.player.id);
       Achievements.checkStats();
@@ -251,7 +251,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
     if (!frozenFighters) {
       if (config.items) _spawnItems(dt);
-      brain.think(dt);
+      if (!_cpuOff) brain.think(dt);
       _autopilot?.think(dt);
     }
     super.update(dt);
@@ -302,6 +302,27 @@ class MemesGame extends FlameGame with KeyboardEvents {
       world.add(FightItem(kind, position: at));
       world.add(Sparkles(position: Vector2(x, at.y + 40)));
       return;
+    }
+  }
+
+  bool _cpuOff = false;
+
+  void _debugCommand(String name) {
+    switch (name) {
+      case 'cpuOff':
+        _cpuOff = true;
+        cpu.input.clear();
+      case 'cpuOn':
+        _cpuOff = false;
+      case 'reset':
+        for (final f in fighters) {
+          f.percent = 0;
+          f.velocity.setZero();
+        }
+        final top = stage.mainTop * kTile;
+        final l = stage.left * kTile, r = (stage.right + 1) * kTile;
+        player.position.setValues(l + (r - l) * .3, top);
+        cpu.position.setValues(l + (r - l) * .7, top);
     }
   }
 

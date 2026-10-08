@@ -455,8 +455,11 @@ class Fighter extends PositionComponent
       _coyote -= dt;
     }
     // Drop through one-way platforms by holding down.
-    _downHeld = input.down ? _downHeld + dt : 0;
-    if (onGround && _downHeld > .1 && _onOneWay) {
+    // (Not right after an attack: a down tilt must not drop you through.)
+    _downHeld = input.down && _bufAttack <= 0 && !input.attack
+        ? _downHeld + dt
+        : 0;
+    if (onGround && _downHeld > .12 && _onOneWay) {
       _dropTimer = .22;
       dropThrough = true;
       position.y += 2;

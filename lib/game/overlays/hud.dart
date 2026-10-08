@@ -310,8 +310,10 @@ class _JoystickState extends State<_Joystick> {
     final i = widget.input;
     final wasX = i.x.abs() > .5;
     i.x = nx.abs() < .25 ? 0 : nx.clamp(-1.0, 1.0);
-    i.up = ny < -.5;
-    i.down = ny > .5;
+    // Up/down only when they dominate: running a bit diagonally must not
+    // turn a forward attack into an up attack.
+    i.up = ny < -.5 && ny.abs() > nx.abs() * .8;
+    i.down = ny > .5 && ny.abs() > nx.abs() * .8;
     if (!wasX && i.x.abs() > .5) Sound.haptic();
     setState(() => _offset = d);
   }

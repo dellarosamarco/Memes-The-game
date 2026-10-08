@@ -99,7 +99,7 @@ class Moves {
     damage: 8,
     angle: 32,
     baseKb: 230,
-    kbGrowth: 6.5,
+    kbGrowth: 7.8,
     box: Rect.fromLTWH(6, -36, 38, 26),
     lunge: 120,
   );
@@ -112,7 +112,7 @@ class Moves {
     damage: 7,
     angle: 88,
     baseKb: 250,
-    kbGrowth: 6,
+    kbGrowth: 7.2,
     box: Rect.fromLTWH(-22, -70, 44, 34),
   );
 
@@ -124,7 +124,7 @@ class Moves {
     damage: 6,
     angle: 22,
     baseKb: 170,
-    kbGrowth: 5,
+    kbGrowth: 5.6,
     box: Rect.fromLTWH(-34, -14, 68, 14),
   );
 
@@ -136,7 +136,7 @@ class Moves {
     damage: 9,
     angle: 48,
     baseKb: 230,
-    kbGrowth: 6.5,
+    kbGrowth: 7.6,
     box: Rect.fromLTWH(0, -38, 36, 32),
     lunge: 280,
   );
@@ -163,7 +163,7 @@ class Moves {
     damage: 7,
     angle: 45,
     baseKb: 200,
-    kbGrowth: 5.5,
+    kbGrowth: 6.3,
     box: Rect.fromLTWH(-28, -46, 56, 46),
     aerial: true,
   );
@@ -176,7 +176,7 @@ class Moves {
     damage: 9,
     angle: 38,
     baseKb: 230,
-    kbGrowth: 7,
+    kbGrowth: 8.2,
     box: Rect.fromLTWH(6, -40, 38, 30),
     aerial: true,
   );
@@ -189,7 +189,7 @@ class Moves {
     damage: 8,
     angle: 85,
     baseKb: 230,
-    kbGrowth: 6.5,
+    kbGrowth: 7.6,
     box: Rect.fromLTWH(-24, -76, 48, 32),
     aerial: true,
   );
