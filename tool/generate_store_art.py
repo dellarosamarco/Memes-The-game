@@ -50,11 +50,12 @@ def feature_graphic() -> Image.Image:
 
 
 CAPTIONS = {
-    '1_home': 'I meme più iconici in un platform!',
-    '2_select': '24 meme, ognuno con la sua mossa',
-    '3_special': 'Mosse speciali assurde',
-    '4_shop': 'Cappelli, trofei e classifica',
-    '5_map': '500 livelli in 10 mondi',
+    '1_home': 'I meme più iconici se le danno!',
+    '2_select': '24 lottatori, ognuno con la sua mossa',
+    '3_fight': 'Scaraventali fuori dall\'arena!',
+    '4_special': 'Mosse speciali assurde',
+    '5_arcade': 'Arcade: 8 avversari sempre più forti',
+    '6_shop': 'Cappelli e trofei da sbloccare',
 }
 
 
