@@ -79,9 +79,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      Expanded(
-                        child: PixelText(widget.title, size: 24),
-                      ),
+                      Expanded(child: PixelText(widget.title, size: 24)),
                       const SizedBox(width: 56),
                     ],
                   ),

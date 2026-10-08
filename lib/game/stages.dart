@@ -54,7 +54,12 @@ class Stage {
     for (final (top, c0, c1) in islands) {
       // A floating island: full width on top, tapering below.
       for (var r = top; r < rows - 1; r++) {
-        final inset = switch (r - top) { 0 || 1 => 0, 2 => 1, 3 => 2, _ => 4 };
+        final inset = switch (r - top) {
+          0 || 1 => 0,
+          2 => 1,
+          3 => 2,
+          _ => 4,
+        };
         if (c1 - c0 - 2 * inset < 2) break;
         for (var c = c0 + inset; c <= c1 - inset; c++) {
           put(r, c, '#');
@@ -141,7 +146,13 @@ class Stage {
       name: 'Nuvole Virali',
       theme: LevelTheme.clouds,
       islands: [(11, 13, 26)],
-      platforms: [(8, 6, 12), (8, 27, 33), (5, 15, 24), (11, 7, 11), (11, 28, 32)],
+      platforms: [
+        (8, 6, 12),
+        (8, 27, 33),
+        (5, 15, 24),
+        (11, 7, 11),
+        (11, 28, 32),
+      ],
     ),
     Stage(
       name: 'Data Center',

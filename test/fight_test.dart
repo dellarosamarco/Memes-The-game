@@ -75,8 +75,10 @@ void main() {
       weight: w,
     );
     expect(v(100), greaterThan(v(20)));
-    expect(v(100, w: Fighter.weightOf(MemeCharacter.all.first) * 1.25),
-        lessThan(v(100)));
+    expect(
+      v(100, w: Fighter.weightOf(MemeCharacter.all.first) * 1.25),
+      lessThan(v(100)),
+    );
   });
 
   test('a smash at ~120% launches a fighter from mid-stage past the side', () {
@@ -125,7 +127,9 @@ void main() {
     );
     final secs = await brawl(tester, game);
     // ignore: avoid_print
-    print('  match lasted ${secs.round()}s, winner ${game.winner?.character.name}');
+    print(
+      '  match lasted ${secs.round()}s, winner ${game.winner?.character.name}',
+    );
     expect(game.matchOver, isTrue);
     expect(game.winner, isNotNull);
     expect(game.winner!.stocks, greaterThan(0));

@@ -22,8 +22,7 @@ extension FighterSpecials on Fighter {
     );
   }
 
-  double get _specialPower =>
-      character.passive == Passive.drip ? 1.2 : 1.0;
+  double get _specialPower => character.passive == Passive.drip ? 1.2 : 1.0;
 
   Iterable<Fighter> _near(double radius) =>
       opponents.where((o) => o.mid.distanceTo(mid) < radius);
@@ -31,7 +30,8 @@ extension FighterSpecials on Fighter {
   void _shout() {
     game.world.add(
       FloatingText(
-        position: position - Vector2(0, 76),
+        // The CPU's shout sits a line higher so two shouts don't overlap.
+        position: position - Vector2(0, slot == 0 ? 76 : 96),
         text: character.specialShout,
         fontSize: 11,
         duration: 1.3,
@@ -52,7 +52,11 @@ extension FighterSpecials on Fighter {
     switch (character.specialType) {
       case SpecialType.manager:
         game.world.add(
-          ShockwaveEffect(position: c, maxRadius: 110, color: const Color(0xFFFF7043)),
+          ShockwaveEffect(
+            position: c,
+            maxRadius: 110,
+            color: const Color(0xFFFF7043),
+          ),
         );
         for (final o in _near(110).toList()) {
           _hit(o, damage: 11, angle: 42, base: 300, growth: 7);
@@ -92,7 +96,14 @@ extension FighterSpecials on Fighter {
         for (final o in opponents.toList()) {
           final d = o.mid - c;
           if (d.x * dir > -6 && d.x * dir < 66 && d.y.abs() < 40) {
-            _hit(o, damage: 13, angle: 35, base: 280, growth: 9, right: facingRight);
+            _hit(
+              o,
+              damage: 13,
+              angle: 35,
+              base: 280,
+              growth: 9,
+              right: facingRight,
+            );
           }
         }
 
@@ -106,7 +117,12 @@ extension FighterSpecials on Fighter {
       case SpecialType.lullaby:
         percent = max(0, percent - 12);
         game.world.add(
-          ShockwaveEffect(position: c, maxRadius: 220, color: const Color(0xFFB39DDB), duration: .7),
+          ShockwaveEffect(
+            position: c,
+            maxRadius: 220,
+            color: const Color(0xFFB39DDB),
+            duration: .7,
+          ),
         );
         for (final o in _near(220)) {
           o.asleep = 1.6;
@@ -176,7 +192,11 @@ extension FighterSpecials on Fighter {
         _jump(900);
         usedRecovery = true;
         game.world.add(
-          ShockwaveEffect(position: position.clone(), maxRadius: 90, color: const Color(0xFFE0218A)),
+          ShockwaveEffect(
+            position: position.clone(),
+            maxRadius: 90,
+            color: const Color(0xFFE0218A),
+          ),
         );
         for (final o in _near(90).toList()) {
           _hit(o, damage: 8, angle: 70, base: 240, growth: 5);
@@ -221,7 +241,14 @@ extension FighterSpecials on Fighter {
         continue;
       }
       _hitThisMove.add(o);
-      _hit(o, damage: dash > 0 ? 10 : 11, angle: 38, base: 260, growth: 7, right: facingRight);
+      _hit(
+        o,
+        damage: dash > 0 ? 10 : 11,
+        angle: 38,
+        base: 260,
+        growth: 7,
+        right: facingRight,
+      );
     }
     if (dash <= 0 && rolling <= 0) {
       _spinAngle = 0;
@@ -242,10 +269,20 @@ extension FighterSpecials on Fighter {
       for (final o in opponents.toList()) {
         if (o.hurtbox.overlaps(hurtbox.inflate(4)) && velocity.x.abs() > 120) {
           _turboHit = .5;
-          _hit(o, damage: 8, angle: 40, base: 230, growth: 6, right: velocity.x > 0);
+          _hit(
+            o,
+            damage: 8,
+            angle: 40,
+            base: 230,
+            growth: 6,
+            right: velocity.x > 0,
+          );
         }
       }
-      if (_t % .06 < dt) game.world.add(Dust(position: position.clone(), dx: -velocity.x.sign * 20));
+      if (_t % .06 < dt)
+        game.world.add(
+          Dust(position: position.clone(), dx: -velocity.x.sign * 20),
+        );
     }
     if (balloon > 0) {
       balloon -= dt;
@@ -277,7 +314,11 @@ extension FighterSpecials on Fighter {
     game.shake(.35, intensity: 5);
     Sound.play('boss_hit', volume: .7);
     game.world.add(
-      ShockwaveEffect(position: position.clone(), maxRadius: 150, color: const Color(0xFF8BC34A)),
+      ShockwaveEffect(
+        position: position.clone(),
+        maxRadius: 150,
+        color: const Color(0xFF8BC34A),
+      ),
     );
     for (final o in opponents.toList()) {
       final d = o.position - position;

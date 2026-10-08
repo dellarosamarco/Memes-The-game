@@ -6,19 +6,13 @@ import 'stages.dart';
 
 /// One Arcade run: eight CPU fights in a row, each a bit harder.
 class ArcadeRun {
-  ArcadeRun({
-    required this.player,
-    required this.difficulty,
-    Random? random,
-  }) {
+  ArcadeRun({required this.player, required this.difficulty, Random? random}) {
     final rnd = random ?? Random();
     final pool = MemeCharacter.all.where((c) => c.id != player.id).toList()
       ..shuffle(rnd);
     opponents = pool.take(rounds).toList();
     final arenas = List.generate(Stage.all.length, (i) => i)..shuffle(rnd);
-    stages = [
-      for (var i = 0; i < rounds; i++) arenas[i % arenas.length],
-    ];
+    stages = [for (var i = 0; i < rounds; i++) arenas[i % arenas.length]];
   }
 
   static const rounds = 8;

@@ -120,9 +120,9 @@ class _HomeScreenState extends State<HomeScreen>
           MaterialPageRoute(
             builder: (_) => CharacterSelectScreen(
               title: title,
-              onChosen: (ctx, c) => Navigator.of(
-                ctx,
-              ).push(MaterialPageRoute(builder: (_) => next(c))),
+              onChosen: (ctx, c) =>
+                  Navigator.of(ctx)
+                      .push(MaterialPageRoute(builder: (_) => next(c))),
             ),
           ),
         )

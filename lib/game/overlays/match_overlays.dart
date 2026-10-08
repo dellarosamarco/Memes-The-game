@@ -110,12 +110,16 @@ class ResultsOverlay extends StatelessWidget {
                 BouncyText(
                   title,
                   size: 40,
-                  color: won ? const Color(0xFFFFE07A) : const Color(0xFF9AB4FF),
+                  color: won
+                      ? const Color(0xFFFFE07A)
+                      : const Color(0xFF9AB4FF),
                 ),
                 const SizedBox(height: 4),
                 _Winner(character: winner),
                 PixelText(
-                  won ? '${winner.name} vince!' : '${winner.name} ti ha battuto',
+                  won
+                      ? '${winner.name} vince!'
+                      : '${winner.name} ti ha battuto',
                   size: 15,
                 ),
               ],
@@ -224,7 +228,13 @@ class _StatsTable extends StatelessWidget {
     final p = game.player, c = game.cpu;
     TableRow row(String label, String a, String b) => TableRow(
       children: [
-        PixelText(label, size: 13, color: kPlum, outline: false, align: TextAlign.left),
+        PixelText(
+          label,
+          size: 13,
+          color: kPlum,
+          outline: false,
+          align: TextAlign.left,
+        ),
         PixelText(a, size: 14, color: const Color(0xFFFF4F8E), outline: false),
         PixelText(b, size: 14, color: const Color(0xFF3F8FE0), outline: false),
       ],

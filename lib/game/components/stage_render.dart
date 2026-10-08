@@ -228,9 +228,7 @@ class MovingPlatform extends PositionComponent
   @override
   void update(double dt) {
     _t += dt;
-    final nx =
-        _centerX +
-        sin(_t * 2 * pi / _platformPeriod) * _platformRange;
+    final nx = _centerX + sin(_t * 2 * pi / _platformPeriod) * _platformRange;
     lastDx = nx - _x;
     _x = nx;
   }
@@ -277,4 +275,3 @@ class Sparkles extends PositionComponent with HasGameReference<MemesGame> {
     }
   }
 }
-

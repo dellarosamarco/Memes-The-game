@@ -323,9 +323,12 @@ class HitSpark extends PositionComponent {
   void render(Canvas canvas) {
     final p = _t / _d;
     final r = (big ? 26.0 : 16.0) * (0.6 + p * .6);
-    final paint = Paint()..color = (big ? const Color(0xFFFFE07A) : Colors.white)
-        .withValues(alpha: 1 - p);
-    final ink = Paint()..color = const Color(0xFF3A2440).withValues(alpha: 1 - p);
+    final paint = Paint()
+      ..color = (big ? const Color(0xFFFFE07A) : Colors.white).withValues(
+        alpha: 1 - p,
+      );
+    final ink = Paint()
+      ..color = const Color(0xFF3A2440).withValues(alpha: 1 - p);
     canvas.save();
     canvas.rotate(_rot);
     for (final (pp, k) in [(ink, 1.25), (paint, 1.0)]) {
@@ -372,7 +375,10 @@ class KoBlast extends PositionComponent {
     canvas.save();
     canvas.rotate(a);
     final rect = Rect.fromLTWH(0, -w / 2, len, w);
-    canvas.drawRect(rect, Paint()..color = color.withValues(alpha: (1 - p) * .9));
+    canvas.drawRect(
+      rect,
+      Paint()..color = color.withValues(alpha: (1 - p) * .9),
+    );
     canvas.drawRect(
       rect.deflate(w * .3),
       Paint()..color = Colors.white.withValues(alpha: (1 - p)),

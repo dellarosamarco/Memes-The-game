@@ -16,8 +16,7 @@ void main() {
     expect(MemeCharacter.byId('nope'), MemeCharacter.all.first);
   });
 
-  test('arcade: 8 different opponents, never yourself, harder and harder',
-      () {
+  test('arcade: 8 different opponents, never yourself, harder and harder', () {
     for (final d in Difficulty.values) {
       final run = ArcadeRun(player: MemeCharacter.stareCat, difficulty: d);
       expect(run.opponents.length, ArcadeRun.rounds);

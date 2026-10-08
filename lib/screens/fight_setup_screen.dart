@@ -88,9 +88,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    const Expanded(
-                      child: PixelText('Lotta libera', size: 24),
-                    ),
+                    const Expanded(child: PixelText('Lotta libera', size: 24)),
                     const SizedBox(width: 56),
                   ],
                 ),
@@ -133,9 +131,8 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                                               character: c,
                                               size: 44,
                                               selected: _opponent == c,
-                                              onTap: () => setState(
-                                                () => _opponent = c,
-                                              ),
+                                              onTap: () =>
+                                                  setState(() => _opponent = c),
                                             ),
                                           ),
                                         ),

@@ -184,7 +184,11 @@ class _ShakeState extends State<_Shake> with SingleTickerProviderStateMixin {
       final s = 1 + .35 * (1 - v);
       return Transform.translate(
         offset: Offset(dx, 0),
-        child: Transform.scale(scale: s, alignment: Alignment.centerLeft, child: child),
+        child: Transform.scale(
+          scale: s,
+          alignment: Alignment.centerLeft,
+          child: child,
+        ),
       );
     },
     child: widget.child,
@@ -358,7 +362,10 @@ class _JoystickState extends State<_Joystick> {
               child: Container(
                 width: _knob,
                 height: _knob,
-                decoration: pixelFrame('assets/images/ui/button_blue.png', px: 2),
+                decoration: pixelFrame(
+                  'assets/images/ui/button_blue.png',
+                  px: 2,
+                ),
               ),
             ),
           ],
@@ -414,7 +421,10 @@ class _HoldButtonState extends State<_HoldButton> {
             Container(
               width: widget.size,
               height: widget.size,
-              padding: EdgeInsets.only(top: _down ? 5 : 0, bottom: _down ? 0 : 5),
+              padding: EdgeInsets.only(
+                top: _down ? 5 : 0,
+                bottom: _down ? 0 : 5,
+              ),
               decoration: pixelFrame(
                 'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
               ),

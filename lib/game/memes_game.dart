@@ -81,6 +81,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
   late final Fighter player;
   late final Fighter cpu;
   late final CpuBrain brain;
+
+  /// Dev only (store screenshots, attract mode): the CPU plays for you too.
+  static const demo = bool.fromEnvironment('MEMES_DEMO');
+  CpuBrain? _autopilot;
   final List<Fighter> fighters = [];
   final List<MovingPlatform> platforms = [];
 
@@ -162,6 +166,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     fighters.addAll([player, cpu]);
     world.addAll(fighters);
     brain = CpuBrain(cpu, player, config.difficulty);
+    if (demo) _autopilot = CpuBrain(player, cpu, Difficulty.hard);
     for (final f in fighters) {
       f.respawnAt = Vector2((l + r) / 2, top - kTile * 4);
     }
@@ -200,7 +205,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
       // "VIA!" stays on screen for a moment.
       if (countdown <= -.7) overlays.remove(overlayCountdown);
     }
-    if (!frozenFighters) brain.think(dt);
+    if (!frozenFighters) {
+      brain.think(dt);
+      _autopilot?.think(dt);
+    }
     super.update(dt);
     if (isLoaded) {
       _resolveHits();
@@ -277,7 +285,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       at.x.clamp(view.left + 10, view.right - 10),
       at.y.clamp(view.top + 10, view.bottom - 10),
     );
-    final inward = (Vector2(view.center.dx, view.center.dy) - edge)..normalize();
+    final inward = (Vector2(view.center.dx, view.center.dy) - edge)
+      ..normalize();
     world.add(
       KoBlast(
         position: edge,
@@ -315,11 +324,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void _recordResult() {
     final won = winner == player;
     var likes = won
-        ? 40 + player.kos * 10 + switch (config.difficulty) {
-            Difficulty.easy => 0,
-            Difficulty.normal => 20,
-            Difficulty.hard => 50,
-          }
+        ? 40 +
+              player.kos * 10 +
+              switch (config.difficulty) {
+                Difficulty.easy => 0,
+                Difficulty.normal => 20,
+                Difficulty.hard => 50,
+              }
         : 10 + player.kos * 5;
     // Beating the whole Arcade ladder.
     if (won && config.arcadeRound == 8) likes += 150;

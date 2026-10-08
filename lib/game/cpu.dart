@@ -4,6 +4,7 @@ import '../models/meme_character.dart';
 import 'fighter/fighter.dart';
 import 'level.dart';
 import 'memes_game.dart';
+import 'stages.dart';
 
 /// The CPU opponent: reads the situation every "reaction" tick and presses
 /// buttons on its fighter's [FighterInput], like a player would.
@@ -22,6 +23,7 @@ class CpuBrain {
   double _downHold = 0;
   double _wander = 0;
   double _wanderDir = 0;
+  bool _gapJump = false;
 
   double get _reaction => switch (difficulty) {
     Difficulty.easy => .42,
@@ -69,6 +71,23 @@ class CpuBrain {
       i.down = _downHold > 0;
     }
 
+    // Mid gap-jump: keep going, air jump at the top of the arc.
+    if (_gapJump) {
+      if (me.onGround || me.position.y > _stageTop + 4) {
+        // Landed, or the jump fell short: the recovery takes over.
+        _gapJump = false;
+      } else {
+        if (!me.onGround &&
+            me.velocity.y > 0 &&
+            me.airJumps > 0 &&
+            !_groundBelow(me.position.x)) {
+          i.jumpPressed = true;
+        }
+        i.jump = true;
+        return;
+      }
+    }
+
     // Getting back to the stage can't wait for the next tick.
     if (_offstage) {
       _recover();
@@ -93,12 +112,44 @@ class CpuBrain {
       !me.onGround &&
       (me.position.x < _stageLeft - 4 ||
           me.position.x > _stageRight + 4 ||
-          me.position.y > _stageTop + 30);
+          me.position.y > _stageTop + 30 ||
+          // Over a gap between islands, below the platforms.
+          (me.position.y > _stageTop - 40 && !_groundBelow(me.position.x)));
+
+  bool _standable(double x) =>
+      _game.level.isStandable((x / kTile).floor(), _game.stage.mainTop);
+
+  bool _groundBelow(double x) => _standable(x);
+
+  /// X of the closest solid ground on the islands' top row.
+  double _nearestGroundX() {
+    final x = me.position.x;
+    for (var d = 0.0; d < Stage.cols * kTile; d += kTile / 2) {
+      if (_standable(x - d)) return x - d - kTile;
+      if (_standable(x + d)) return x + d + kTile;
+    }
+    return (_stageLeft + _stageRight) / 2;
+  }
 
   void _recover() {
     final i = me.input;
-    final center = (_stageLeft + _stageRight) / 2;
-    i.x = (center - me.position.x).sign;
+    var home = _nearestGroundX();
+    // Under an island: slide out from underneath before going up, or
+    // the recovery just bonks its head.
+    final under = me.position.y > _stageTop + 8 && _standable(me.position.x);
+    if (under) {
+      for (var d = 0.0; d < Stage.cols * kTile; d += kTile / 2) {
+        if (!_standable(me.position.x - d)) {
+          home = me.position.x - d - kTile;
+          break;
+        }
+        if (!_standable(me.position.x + d)) {
+          home = me.position.x + d + kTile;
+          break;
+        }
+      }
+    }
+    i.x = (home - me.position.x).sign;
     i.up = false;
     i.down = false;
     i.attack = false;
@@ -107,9 +158,7 @@ class CpuBrain {
     final y = me.position.y;
     final falling = me.velocity.y > -60;
     // Horizontal gap to the nearest edge of the main island.
-    final gap = me.position.x < _stageLeft
-        ? _stageLeft - me.position.x
-        : me.position.x - _stageRight;
+    final gap = (home - me.position.x).abs();
     final t = me.character.specialType;
     if ((t == SpecialType.balloon || t == SpecialType.flight) &&
         me.specialReady &&
@@ -121,6 +170,7 @@ class CpuBrain {
       i.jumpPressed = true;
       i.jump = true;
     } else if (!me.usedRecovery &&
+        !under &&
         falling &&
         me.airJumps == 0 &&
         (y > _stageTop - 20 || gap > 150)) {
@@ -133,13 +183,26 @@ class CpuBrain {
   /// Don't walk off the stage by accident.
   void _guardEdges() {
     final i = me.input;
-    if (!me.onGround) return;
-    final x = me.position.x;
-    final nearLeft = x < _stageLeft + kTile * 1.2;
-    final nearRight = x > _stageRight - kTile * 1.2;
+    if (!me.onGround || i.x.abs() < .1) return;
     final onMain = (me.position.y - _stageTop).abs() < 4;
     if (!onMain) return;
-    if ((nearLeft && i.x < 0) || (nearRight && i.x > 0)) i.x = 0;
+    final ahead = me.position.x + i.x.sign * kTile * 1.2;
+    if (_standable(ahead)) return;
+    // A gap: hop it if there's ground (and the target) on the other side,
+    // otherwise stop at the edge.
+    var across = false;
+    for (var t = 2; t <= 8 && !across; t++) {
+      across = _standable(me.position.x + i.x.sign * kTile * t);
+    }
+    final towardTarget = (target.position.x - me.position.x).sign == i.x.sign;
+    if (across && towardTarget) {
+      // Running jump; the approach logic adds the air jump if needed.
+      i.jumpPressed = true;
+      i.jump = true;
+      _gapJump = true;
+    } else {
+      i.x = 0;
+    }
   }
 
   void _decide() {
@@ -209,12 +272,17 @@ class CpuBrain {
     } else if (me.onGround && dy < -60 && dx.abs() < 160) {
       i.jumpPressed = true;
       i.jump = true;
-    } else if (!me.onGround && dy < -40 && me.airJumps > 0 &&
+    } else if (!me.onGround &&
+        dy < -40 &&
+        me.airJumps > 0 &&
         me.velocity.y > 0) {
       i.jumpPressed = true;
       i.jump = true;
     }
-    if (me.onGround && dy > 60 && dx.abs() < 120) {
+    if (me.onGround &&
+        dy > 60 &&
+        dx.abs() < 120 &&
+        _groundBelow(me.position.x)) {
       _downHold = .2; // drop through the platform
       i.down = true;
     }

@@ -26,7 +26,11 @@ class Achievements {
     Trophy('wins50', 'Leggenda di internet', 'Vinci 50 incontri.'),
     Trophy('kos100', 'Ratio', 'Manda KO 100 avversari in totale.'),
     Trophy('specials100', 'Spammone', 'Usa 100 mosse speciali.'),
-    Trophy('damage5000', 'Danni collaterali', 'Infliggi 5000% di danni in totale.'),
+    Trophy(
+      'damage5000',
+      'Danni collaterali',
+      'Infliggi 5000% di danni in totale.',
+    ),
     Trophy('arcade', 'Re dell\'Arcade', 'Completa la modalità Arcade.'),
     Trophy('arcade_hard', "Boss finale", 'Completa l\'Arcade a Difficile.'),
     Trophy('shopper', 'Fashion meme', 'Compra un cappellino.'),

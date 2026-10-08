@@ -60,11 +60,16 @@ class FightProjectile extends PositionComponent
     position: f.mid - Vector2(0, 14),
   )..velocity.setValues(f.facingRight ? 300 : -300, -330);
 
-  factory FightProjectile.egg(Fighter f) => FightProjectile._(
-    ProjectileKind.egg,
-    f,
-    position: f.position - Vector2(0, 8),
-  )..velocity.setValues((f.facingRight ? 1 : -1) * 120 + f.velocity.x * .3, -140);
+  factory FightProjectile.egg(Fighter f) =>
+      FightProjectile._(
+          ProjectileKind.egg,
+          f,
+          position: f.position - Vector2(0, 8),
+        )
+        ..velocity.setValues(
+          (f.facingRight ? 1 : -1) * 120 + f.velocity.x * .3,
+          -140,
+        );
 
   factory FightProjectile.chick(Fighter f, {double delay = 0}) =>
       FightProjectile._(
@@ -239,8 +244,14 @@ class FightProjectile extends PositionComponent
       Sound.play('boss_hit', volume: .5);
       for (final o in _targets.toList()) {
         if (o.mid.distanceTo(position) < 70) {
-          _strike(o, damage: 12, angle: 60, base: 250, growth: 7,
-              right: o.position.x >= position.x);
+          _strike(
+            o,
+            damage: 12,
+            angle: 60,
+            base: 250,
+            growth: 7,
+            right: o.position.x >= position.x,
+          );
         }
       }
       removeFromParent();

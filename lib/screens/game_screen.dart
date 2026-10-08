@@ -75,8 +75,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
-  void _toMenu() =>
-      Navigator.of(context).popUntil((route) => route.isFirst);
+  void _toMenu() => Navigator.of(context).popUntil((route) => route.isFirst);
 
   @override
   Widget build(BuildContext context) {

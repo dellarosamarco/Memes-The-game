@@ -60,7 +60,16 @@ class FighterInput {
   }
 }
 
-enum FighterState { normal, attack, charge, hitstun, shield, roll, helpless, ko }
+enum FighterState {
+  normal,
+  attack,
+  charge,
+  hitstun,
+  shield,
+  roll,
+  helpless,
+  ko,
+}
 
 /// A meme in the arena.
 class Fighter extends PositionComponent
@@ -167,7 +176,9 @@ class Fighter extends PositionComponent
   bool get alive => state != FighterState.ko && stocks > 0;
   bool get stunned => frozen > 0 || asleep > 0 || dizzy > 0;
   bool get intangible =>
-      invincible > 0 || state == FighterState.ko || (state == FighterState.roll && _rollT > .08);
+      invincible > 0 ||
+      state == FighterState.ko ||
+      (state == FighterState.roll && _rollT > .08);
   bool get attacking => state == FighterState.attack;
   bool get shielding => state == FighterState.shield;
   bool get specialReady => specialTimer <= 0;
@@ -195,10 +206,10 @@ class Fighter extends PositionComponent
   /// 0..1 ratings for the character select screen.
   static double speedRating(MemeCharacter c) =>
       ((c.runSpeed * (c.passive == Passive.sprint ? 1.1 : 1) +
-                  (c.passive == Passive.momentum ? 25 : 0) +
-                  (c.passive == Passive.sneakers ? 12 : 0)) -
-              125) /
-          70;
+              (c.passive == Passive.momentum ? 25 : 0) +
+              (c.passive == Passive.sneakers ? 12 : 0)) -
+          125) /
+      70;
 
   static double jumpRating(MemeCharacter c) =>
       (c.jumpSpeed * (c.passive == Passive.highJump ? 1.06 : 1) - 495) / 80 +
@@ -244,7 +255,8 @@ class Fighter extends PositionComponent
     _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
     final alt = character.afterSpecialSheet;
     if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
-    if (character.passive == Passive.featherweight) gravity = Phys.gravity * .82;
+    if (character.passive == Passive.featherweight)
+      gravity = Phys.gravity * .82;
     respawnAt = position.clone();
     airJumps = _maxAirJumps;
   }
@@ -305,6 +317,7 @@ class Fighter extends PositionComponent
 
     final fallSpeed = velocity.y;
     moveAndCollide(dt);
+    _ledgeClimb();
     _landing(fallSpeed, dt);
     _specialsAfterMove(dt);
   }
@@ -495,6 +508,42 @@ class Fighter extends PositionComponent
     _squash = 1.18;
   }
 
+  /// Falling just past the corner of an island: climb onto it (a forgiving
+  /// take on Smash's ledge grab, friendlier on a touch screen).
+  void _ledgeClimb() {
+    if (onGround ||
+        velocity.y <= 0 ||
+        state == FighterState.hitstun ||
+        input.down ||
+        stunned) {
+      return;
+    }
+    final level = game.level;
+    for (final side in [-1, 1]) {
+      final c = ((position.x + side * (bodyWidth / 2 + 8)) / kTile).floor();
+      final r = (position.y / kTile).floor();
+      // A solid tile whose top is just above our feet, with room on it.
+      if (!level.isSolid(c, r) || level.isSolid(c, r - 1)) continue;
+      if (level.isSolid(c, r - 2)) continue;
+      final top = r * kTile.toDouble();
+      if (position.y - top > 20) continue;
+      position.y = top;
+      position.x = side > 0 ? c * kTile + 10.0 : (c + 1) * kTile - 10.0;
+      velocity.setZero();
+      onGround = true;
+      _wasOnGround = true;
+      if (state == FighterState.helpless) state = FighterState.normal;
+      if (state == FighterState.attack) _endMove();
+      _lag = .12;
+      airJumps = _maxAirJumps;
+      usedRecovery = false;
+      usedAirDodge = false;
+      game.world.add(Dust(position: position.clone(), dx: -side * 18.0));
+      Sound.play('land', volume: .3);
+      return;
+    }
+  }
+
   bool get _onOneWay {
     final r = (position.y / kTile).floor();
     final c = (position.x / kTile).floor();
@@ -605,7 +654,9 @@ class Fighter extends PositionComponent
     if (input.x.abs() > .5) facingRight = input.x > 0;
     _airPhysics(dt, control: false);
     if (_t % .1 < dt) {
-      game.world.add(Sparkles(position: mid + Vector2((_rnd.nextDouble() - .5) * 30, -10)));
+      game.world.add(
+        Sparkles(position: mid + Vector2((_rnd.nextDouble() - .5) * 30, -10)),
+      );
     }
     if (!input.attack || charge >= 1.2 || !onGround) {
       _startMove(Moves.smash, chargeFactor: 1 + .5 * min(1.0, charge));
@@ -717,7 +768,8 @@ class Fighter extends PositionComponent
       weight: weight,
     );
     final heavy = speed > 650;
-    final armored = armor > 0 ||
+    final armored =
+        armor > 0 ||
         (character.passive == Passive.rockSolid && damage < 6) ||
         slamming;
     // Feedback.
@@ -737,7 +789,11 @@ class Fighter extends PositionComponent
     }
     if (armored) {
       game.world.add(
-        FloatingText(position: mid - Vector2(0, 30), text: 'ARMOR', fontSize: 8),
+        FloatingText(
+          position: mid - Vector2(0, 30),
+          text: 'ARMOR',
+          fontSize: 8,
+        ),
       );
       return;
     }
@@ -850,12 +906,14 @@ class Fighter extends PositionComponent
     velocity.x = input.x * 240;
     _spinAngle = 2 * pi;
     Sound.play('spring', volume: .5);
-    game.world.add(ShockwaveEffect(
-      position: position.clone(),
-      maxRadius: 30,
-      color: character.color,
-      duration: .25,
-    ));
+    game.world.add(
+      ShockwaveEffect(
+        position: position.clone(),
+        maxRadius: 30,
+        color: character.color,
+        duration: .25,
+      ),
+    );
   }
 
   // ------------------------------------------------------------ KO
@@ -979,7 +1037,13 @@ class Fighter extends PositionComponent
           BlendMode.srcATop,
         );
     }
-    _sheet.draw(canvas, _frame, const Offset(-30, -58), flip: !faceRight, paint: paint);
+    _sheet.draw(
+      canvas,
+      _frame,
+      const Offset(-30, -58),
+      flip: !faceRight,
+      paint: paint,
+    );
     final hat = slot == 0 ? game.hat : null;
     if (hat != null) {
       final a = character.hatAnchor;
@@ -987,7 +1051,10 @@ class Fighter extends PositionComponent
       _hats.draw(
         canvas,
         hat.index,
-        Offset(x - Hat.width / 2, a.y - Hat.height + 3 + (_frame.isOdd ? 1 : 0)),
+        Offset(
+          x - Hat.width / 2,
+          a.y - Hat.height + 3 + (_frame.isOdd ? 1 : 0),
+        ),
         flip: !faceRight,
       );
     }
