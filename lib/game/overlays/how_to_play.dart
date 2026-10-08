@@ -17,7 +17,8 @@ class HowToPlay extends StatelessWidget {
     color: Color(0xFF6B5A78),
   );
 
-  Widget _row(Widget icon, String title, String text) => Padding(
+  Widget _row(Widget icon, String title, String text) => Container(
+    width: 272,
     padding: const EdgeInsets.symmetric(vertical: 3),
     child: Row(
       children: [
@@ -61,13 +62,13 @@ class HowToPlay extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: PixelPanel(
           width: 600,
-          padding: const EdgeInsets.fromLTRB(18, 12, 18, 14),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const PixelText(
                 'Come si combatte',
-                size: 24,
+                size: 20,
                 color: Color(0xFFFF82B4),
               ),
               const SizedBox(height: 4),
@@ -77,51 +78,57 @@ class HowToPlay extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: _body,
               ),
-              const SizedBox(height: 8),
-              _row(
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0x553A2440),
-                    border: Border.all(color: kPlum, width: 2),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: pixelFrame(
-                        'assets/images/ui/button_blue.png',
-                        px: 1,
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 12,
+                alignment: WrapAlignment.center,
+                children: [
+                  _row(
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0x553A2440),
+                        border: Border.all(color: kPlum, width: 2),
+                      ),
+                      child: Center(
+                        child: Container(
+                          width: 14,
+                          height: 14,
+                          decoration: pixelFrame(
+                            'assets/images/ui/button_blue.png',
+                            px: 1,
+                          ),
+                        ),
                       ),
                     ),
+                    'Joystick',
+                    'muoviti. Giù su una piattaforma: scendi.',
                   ),
-                ),
-                'Joystick',
-                'muoviti. Giù su una piattaforma: scendi.',
-              ),
-              _row(
-                _button('fist', 'pink'),
-                'Attacco',
-                'tocca per colpire, tieni premuto per caricare lo SMASH. '
-                    'Col joystick in su o in giù cambi colpo, anche in aria.',
-              ),
-              _row(
-                _button('bolt', 'yellow'),
-                'Speciale',
-                'la mossa del tuo meme. In aria, su + speciale ti rilancia '
-                    'verso l\'arena.',
-              ),
-              _row(
-                _button('up', 'blue'),
-                'Salto',
-                'puoi saltare ancora una volta in aria.',
-              ),
-              _row(
-                _button('shield', 'grey'),
-                'Scudo',
-                'para i colpi; con una direzione rotoli via, in aria schivi.',
+                  _row(
+                    _button('fist', 'pink'),
+                    'Attacco',
+                    'tocca per colpire, tieni premuto per lo SMASH. Su o giù '
+                        'col joystick cambiano colpo.',
+                  ),
+                  _row(
+                    _button('bolt', 'yellow'),
+                    'Speciale',
+                    'la mossa del tuo meme. In aria, su + speciale ti rilancia '
+                        'verso l\'arena.',
+                  ),
+                  _row(
+                    _button('up', 'blue'),
+                    'Salto',
+                    'puoi saltare ancora una volta in aria.',
+                  ),
+                  _row(
+                    _button('shield', 'grey'),
+                    'Scudo',
+                    'para i colpi; con una direzione rotoli via, in aria schivi.',
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
               const Text(
