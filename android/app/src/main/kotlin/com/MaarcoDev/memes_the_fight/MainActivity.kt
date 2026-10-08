@@ -1,4 +1,4 @@
-package com.dellarosamarco.memes_the_fight
+package com.MaarcoDev.memes_the_fight
 
 import io.flutter.embedding.android.FlutterActivity
 
