@@ -1184,6 +1184,23 @@ class Fighter extends PositionComponent
     if (state == FighterState.charge) {
       push = sin(_t * 60) * 1.5;
     }
+    // Procedural life on top of the few sprite frames: breathing at rest,
+    // a bouncy lean when running, stretch and squash through a jump.
+    if (state == FighterState.normal && m == null) {
+      if (onGround && velocity.x.abs() < 15) {
+        final b = sin(_t * 3.2) * .022;
+        stretchY *= 1 + b;
+        stretchX *= 1 - b * .6;
+      } else if (onGround) {
+        final speed = (velocity.x.abs() / _runSpeed).clamp(0.0, 1.0);
+        pushY -= sin(_t * pi * 6).abs() * 2.2 * speed;
+        lean += (velocity.x > 0 ? 1 : -1) * .07 * speed;
+      } else {
+        final vy = (velocity.y / 600).clamp(-1.0, 1.0);
+        stretchY *= 1 - vy * .07;
+        stretchX *= 1 + vy * .05;
+      }
+    }
     // Just hit: shake in place during the impact freeze.
     final jitter = (_hitFlash > 0 && game.hitStopping) || _mashShake > 0
         ? Offset((_rnd.nextDouble() - .5) * 6, (_rnd.nextDouble() - .5) * 3)
