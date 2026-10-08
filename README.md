@@ -196,3 +196,14 @@ lib/
     overlays/                 HUD con comandi touch, pausa, fine livello, game over
 tool/                         generatori della grafica
 ```
+
+## Crediti
+
+- Decorazioni extra dei livelli (girasoli, grano, pini, pupazzi di neve, cartelli,
+  ciambelle, gelati, sirene...) dai pacchetti **Pixel Platformer** di
+  [Kenney](https://kenney.nl) (base, Farm, Food e Industrial expansion), licenza
+  **CC0**. I file usati sono in `tool/kenney/`, ricolorati col contorno prugna del gioco.
+  Lo stile dei tile (contorno spesso, puntini 2x2) è ispirato agli stessi pacchetti.
+- Font **Pixelify Sans** (licenza OFL).
+- Tutto il resto (sprite dei meme dalle foto, tile, nemici, UI, musica ed effetti) è
+  generato dagli script in `tool/`.

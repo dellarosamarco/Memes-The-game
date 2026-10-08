@@ -4,6 +4,8 @@ effect sprites (dust puffs).
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 from PIL import Image, ImageDraw
 
@@ -26,25 +28,23 @@ LIQUIDS = {
 
 
 def _edge(tile: Image.Image, left: bool, right: bool, top: bool) -> Image.Image:
-    """Adds plum outlines and rounded corners on the open sides."""
+    """Adds thick (2px, Kenney-style) plum outlines and rounded corners on
+    the open sides."""
     a = np.array(tile)
     h, w = a.shape[:2]
     shade = a.copy()
-    for side, xs in ((left, (0, 1)), (right, (w - 1, w - 2))):
+    for side, xs in ((left, (0, 1, 2)), (right, (w - 1, w - 2, w - 3))):
         if not side:
             continue
-        x0, x1 = xs
+        x0, x1, x2 = xs
         a[:, x0] = PLUM
+        a[:, x1] = PLUM
         for y in range(h):
-            if a[y, x1, 3]:
-                a[y, x1, :3] = (np.array(shade[y, x1, :3]) * .8).astype(np.uint8)
+            if a[y, x2, 3] and not (a[y, x2] == PLUM).all():
+                a[y, x2, :3] = (np.array(shade[y, x2, :3]) * .85).astype(np.uint8)
         if top:
             # Rounded corner.
             a[0, x0] = (0, 0, 0, 0)
-            a[1, x0] = (0, 0, 0, 0)
-            a[0, x1] = (0, 0, 0, 0)
-            a[1, x1] = PLUM
-            a[2, x0] = PLUM
     return Image.fromarray(a)
 
 
@@ -585,16 +585,90 @@ PROPS = {
 }
 
 
+# Extra props from Kenney's "Pixel Platformer" packs (CC0, kenney.nl), kept
+# at their native pixel size and re-outlined in our plum. (pack, tile, sways)
+KENNEY_PROPS = {
+    'feed': [('farm', 20, 1), ('farm', 57, 1), ('farm', 58, 1),
+             ('base', 124, 1), ('base', 125, 1), ('base', 128, 0),
+             ('base', 106, 0), ('base', 85, 0)],
+    'forest': [('base', 126, 1), ('base', 128, 0), ('farm', 75, 1),
+               ('farm', 73, 1), ('farm', 74, 1), ('base', 124, 1),
+               ('base', 105, 0), ('farm', 54, 0)],
+    'beach': [('food', 82, 0), ('food', 83, 0), ('farm', 104, 1),
+              ('farm', 105, 1), ('farm', 54, 0), ('base', 84, 0),
+              ('base', 124, 1), ('farm', 106, 1)],
+    'desert': [('base', 127, 0), ('farm', 104, 1), ('farm', 105, 1),
+               ('farm', 106, 1), ('farm', 107, 1), ('farm', 108, 0),
+               ('farm', 109, 0), ('base', 85, 0)],
+    'ice': [('base', 145, 0), ('base', 126, 1), ('base', 148, 0),
+            ('base', 149, 0), ('base', 144, 1), ('base', 106, 0),
+            ('base', 86, 0), ('base', 145, 0)],
+    'candy': [('food', 13, 0), ('food', 14, 0), ('food', 15, 0),
+              ('food', 25, 1), ('food', 43, 0), ('food', 107, 0),
+              ('food', 108, 0), ('food', 8, 1)],
+    'comments': [('food', 89, 0), ('food', 80, 1), ('food', 81, 1),
+                 ('base', 84, 0), ('base', 85, 0), ('base', 86, 0),
+                 ('food', 85, 0), ('food', 86, 0)],
+    # Only low, clearly decorative things: crates and barrels would look
+    # like solid obstacles you can't actually stand on.
+    'volcano': [('farm', 105, 1), ('farm', 106, 1), ('ind', 42, 0),
+                ('ind', 64, 0), ('base', 128, 0), ('farm', 104, 1),
+                ('farm', 107, 1), ('base', 85, 0)],
+    'clouds': [('base', 144, 1), ('base', 145, 0), ('food', 25, 1),
+               ('food', 107, 0), ('food', 108, 0), ('food', 14, 0),
+               ('base', 106, 0), ('base', 124, 1)],
+    'server': [('ind', 42, 0), ('ind', 64, 0), ('ind', 65, 0),
+               ('ind', 73, 0), ('food', 89, 0), ('food', 86, 0),
+               ('base', 84, 0), ('food', 85, 0)],
+}
+
+_KENNEY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kenney')
+_KENNEY_OUTLINE = (67, 74, 95)
+
+
+def kenney_tile(pack: str, tile: int) -> Image.Image:
+    """One 18x18 Kenney tile, with its slate outline turned plum."""
+    ids = open(os.path.join(_KENNEY_DIR, f'{pack}.txt')).read().split()
+    i = ids.index(str(tile))
+    sheet = Image.open(os.path.join(_KENNEY_DIR, f'{pack}.png')).convert('RGBA')
+    a = np.array(sheet.crop((i * 18, 0, i * 18 + 18, 18)))
+    m = (a[:, :, 0] == _KENNEY_OUTLINE[0]) & (a[:, :, 1] == _KENNEY_OUTLINE[1]) \
+        & (a[:, :, 2] == _KENNEY_OUTLINE[2]) & (a[:, :, 3] > 0)
+    a[m] = PLUM
+    return Image.fromarray(a)
+
+
+def _kenney_frames(pack: str, tile: int, sways: int) -> list[Image.Image]:
+    k = kenney_tile(pack, tile)
+    frames = []
+    for f in range(2):
+        im = Image.new('RGBA', (T, T))
+        im.alpha_composite(k, ((T - 18) // 2, T - 18))
+        if f and sways:
+            # Lean the top half one pixel, like the hand-drawn plants.
+            a = np.array(im)
+            a[:T // 2] = np.roll(a[:T // 2], 1, axis=1)
+            im = Image.fromarray(a)
+        frames.append(im)
+    return frames
+
+
 def props_sheet(theme: str) -> Image.Image:
-    """8 props x 2 sway frames, 24x24 each, bottom aligned."""
-    sheet = Image.new('RGBA', (T * 16, T))
-    for i, draw in enumerate(PROPS[theme]):
+    """16 props x 2 sway frames, 24x24 each, bottom aligned: 8 drawn here
+    and 8 from Kenney's packs."""
+    hand = PROPS[theme]
+    kenney = KENNEY_PROPS[theme]
+    sheet = Image.new('RGBA', (T * 2 * (len(hand) + len(kenney)), T))
+    for i, draw in enumerate(hand):
         for f in range(2):
             im = Image.new('RGBA', (T, T + 8))
             d = ImageDraw.Draw(im)
             draw(d, f)
             im = outline(im.crop((0, 0, T, T)))
             sheet.alpha_composite(im, ((i * 2 + f) * T, 0))
+    for j, (pack, tile, sways) in enumerate(kenney):
+        for f, im in enumerate(_kenney_frames(pack, tile, sways)):
+            sheet.alpha_composite(im, (((len(hand) + j) * 2 + f) * T, 0))
     return sheet
 
 

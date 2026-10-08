@@ -54,25 +54,15 @@ def body(theme: str, rnd) -> Image.Image:
             d.point((x, y), fill=light)
         return img
 
-    # Speckle texture (clusters of darker / lighter pixels).
-    for _ in range(16):
-        x, y = (int(v) for v in rnd.integers(0, T, 2))
-        c = dark if rnd.random() < .6 else light
-        d.point((x, y), fill=c)
-        if rnd.random() < .5:
-            d.point(((x + 1) % T, y), fill=c)
-    # Wavy strata bands (periodic so tiles connect).
-    for y0, ph in ((8, 0), (19, 7)):
-        for x in range(T):
-            y = y0 + _wave(x, amp=1.2, phase=ph)
-            if x % 4 != 3:
-                d.point((x, y), fill=darken(dirt, .08))
-    # One soft pebble (a strong pattern would repeat visibly every tile).
-    x, y = 14, 11
-    peb = lighten(dirt, .14) if style != 'magma' else darken(dirt, .16)
-    d.ellipse([x, y, x + 3, y + 2], fill=peb, outline=darken(dirt, .18))
-    d.point((x + 1, y), fill=lighten(dirt, .3))
-
+    # Kenney-style chunky texture: a few 2x2 darker and lighter specks plus
+    # single dots, placed by hand so the repeat reads as a pattern, not noise.
+    speck_d, speck_l = darken(dirt, .24), lighten(dirt, .2)
+    for x, y in ((3, 4), (15, 9), (8, 16), (19, 19)):
+        d.rectangle([x, y, x + 1, y + 1], fill=speck_d)
+    for x, y in ((11, 3), (4, 12)):
+        d.rectangle([x, y, x + 1, y + 1], fill=speck_l)
+    d.point([(20, 4), (12, 13), (1, 20), (14, 21)], fill=speck_d)
+    d.point([(17, 15), (7, 8)], fill=speck_l)
     if style == 'grass':
         pass
     elif style in ('snow', 'cloud'):
@@ -141,10 +131,11 @@ def top_tile(theme: str, rnd) -> Image.Image:
         d.point((x, depth + 1), fill=darken(dirt, .14))
         d.line([(x, 0), (x, depth - 1)], fill=top)
         d.point((x, depth - 1), fill=lo)
-    # Highlight band and outline.
-    d.line([(0, 1), (T - 1, 1)], fill=hi)
-    d.line([(0, 2), (T - 1, 2)], fill=lighten(top, .18))
+    # Thick (2px) outline, then a bright band, like Kenney's tiles.
     d.line([(0, 0), (T - 1, 0)], fill=PLUM)
+    d.line([(0, 1), (T - 1, 1)], fill=PLUM)
+    d.line([(0, 2), (T - 1, 2)], fill=hi)
+    d.line([(0, 3), (T - 1, 3)], fill=lighten(top, .18))
 
     if style == 'grass':
         blade = darken(top, .22)

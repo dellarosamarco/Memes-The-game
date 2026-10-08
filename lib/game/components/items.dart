@@ -257,6 +257,7 @@ class Props extends Component with HasGameReference<MemesGame> {
   Props() : super(priority: 2);
 
   late final Strip _sheet;
+  late final int _kinds;
   final List<(double, double, int, double)> _items = [];
   double _t = 0;
 
@@ -268,6 +269,7 @@ class Props extends Component with HasGameReference<MemesGame> {
       kTile,
       kTile,
     );
+    _kinds = _sheet.length ~/ 2;
     final busy = <int>{
       for (final s in level.spawns)
         for (var dc = -1; dc <= 1; dc++) s.row * 10000 + s.col + dc,
@@ -281,8 +283,13 @@ class Props extends Component with HasGameReference<MemesGame> {
           continue;
         }
         final h = LevelMap._hash(c * 7, r * 3);
-        if (h % 100 >= 28) continue;
-        _items.add((c * kTile, (r - 1) * kTile, (h ~/ 100) % 8, (h % 17) / 3));
+        if (h % 100 >= 34) continue;
+        _items.add((
+          c * kTile,
+          (r - 1) * kTile,
+          (h ~/ 100) % _kinds,
+          (h % 17) / 3,
+        ));
       }
     }
   }
