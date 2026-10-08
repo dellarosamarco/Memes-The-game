@@ -238,7 +238,7 @@ class Fighter extends PositionComponent
   static double weightRating(MemeCharacter c) => (weightOf(c) - .8) / .5;
 
   double get _runSpeed {
-    var s = character.runSpeed * 1.2;
+    var s = character.runSpeed * 1.3;
     if (character.passive == Passive.sprint) s *= 1.1;
     if (character.passive == Passive.momentum) {
       s *= 1 + .45 * min(1.0, _pedal / 1.5);
@@ -827,8 +827,20 @@ class Fighter extends PositionComponent
         (character.passive == Passive.rockSolid && damage < 6) ||
         slamming;
     // Feedback.
-    game.hitStop((.03 + damage * .004).clamp(.03, .12));
-    if (heavy) game.shake(.18, intensity: 3 + damage / 4);
+    // The hit that is going to send them flying gets the Smash treatment:
+    // a longer freeze, a camera punch-in and a flash.
+    final finisher = !armored && _wouldKo(angle, towardsRight, speed);
+    if (finisher) {
+      game.hitStop(.24);
+      game.punchIn(mid);
+      game.shake(.35, intensity: 7);
+      game.camera.viewport.add(
+        ScreenFlash(color: const Color(0x88FFFFFF), duration: .25),
+      );
+    } else {
+      game.hitStop((.03 + damage * .004).clamp(.03, .12));
+      if (heavy) game.shake(.18, intensity: 3 + damage / 4);
+    }
     Sound.play(heavy ? 'hit_heavy' : 'hit_light', volume: heavy ? .8 : .6);
     game.world.add(HitSpark(position: mid.clone(), big: heavy));
     if (heavy && character.hurtLines.isNotEmpty && _rnd.nextDouble() < .4) {
@@ -884,6 +896,18 @@ class Fighter extends PositionComponent
     // Getting hit gives your recovery back (like in Smash).
     usedRecovery = false;
     usedAirDodge = false;
+  }
+
+  /// Rough prediction: will a launch at [speed] carry us past a blast line?
+  bool _wouldKo(double angle, bool right, double speed) {
+    final d = Move.direction(angle, right);
+    final stun = .12 + speed * .00055;
+    final travel = d.dx * speed / 2.12 * (1 - pow(.12, stun));
+    final vy = d.dy * speed;
+    final rise = vy < 0 ? vy * vy / (2 * gravity) : 0.0;
+    final zone = game.blastZone;
+    final x = position.x + travel;
+    return x < zone.left || x > zone.right || mid.y - rise < zone.top;
   }
 
   void _hitstunUpdate(double dt) {

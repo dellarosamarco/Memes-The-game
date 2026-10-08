@@ -227,6 +227,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (_hitStop > 0) {
       _hitStop -= dt;
       _updateShake(dt);
+      if (_punch > 0) _updateCamera(dt);
       return;
     }
     if (_slowMo > 0) {
@@ -353,6 +354,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       'countdown': countdown,
       'over': matchOver,
       'paused': isPaused,
+      'finishers': finishers,
       'won': winner == null ? null : winner == player,
       'left': stage.left * kTile,
       'right': (stage.right + 1) * kTile,
@@ -493,7 +495,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   // ----------------------------------------------------------------- camera
 
   double get _closeZoom => size.y / (kTile * 11);
-  double get _wideZoom => size.y / (kTile * 18);
+  double get _wideZoom => size.y / (kTile * 15);
 
   void _updateCamera(double dt) {
     final pts = [
@@ -505,9 +507,12 @@ class MemesGame extends FlameGame with KeyboardEvents {
     var maxX = pts.map((p) => p.x).reduce(max) + 110;
     var minY = pts.map((p) => p.y).reduce(min) - 90;
     var maxY = pts.map((p) => p.y).reduce(max) + 80;
-    // Always keep a bit of the main island in view.
+    // Keep the main island in view while the fight is near it (not when
+    // both are up on the high platforms: that would shrink everyone).
     final top = stage.mainTop * kTile;
-    maxY = max(maxY, top + kTile * 2);
+    if (pts.any((p) => p.y > top - kTile * 6)) {
+      maxY = max(maxY, top + kTile * 2);
+    }
     // Don't chase fighters deep into the blast zone.
     final zone = blastZone.deflate(kTile * 2);
     minX = max(minX, zone.left);
@@ -516,16 +521,25 @@ class MemesGame extends FlameGame with KeyboardEvents {
     maxY = min(maxY, zone.bottom);
     // Frame the action in the band between the HUD cards (top) and the
     // touch controls (bottom), so the floor isn't hidden under the thumbs.
-    final padTop = size.y * .1, padBottom = size.y * .2;
+    final padTop = size.y * .08, padBottom = size.y * .15;
     final band = size.y - padTop - padBottom;
     final fit = min(size.x / (maxX - minX), band / (maxY - minY));
-    final zoom = fit.clamp(_wideZoom, _closeZoom);
+    var zoom = fit.clamp(_wideZoom, _closeZoom);
     final vf = camera.viewfinder;
-    final k = min(1.0, dt * 4);
+    var k = min(1.0, dt * 4);
+    final punch = _punch > 0 ? _punch / .55 : 0.0;
+    if (_punch > 0) {
+      _punch -= dt;
+      zoom *= 1 + .3 * punch;
+      k = min(1.0, dt * 12);
+    }
     vf.zoom += (zoom - vf.zoom) * k;
     final shift = (size.y / 2 - (padTop + band / 2)) / vf.zoom;
-    final target = Vector2((minX + maxX) / 2, (minY + maxY) / 2 + shift);
-    vf.position = vf.position + (target - vf.position) * min(1.0, dt * 5);
+    var target = Vector2((minX + maxX) / 2, (minY + maxY) / 2 + shift);
+    if (punch > 0) target += (_punchAt - target) * (.6 * punch);
+    vf.position =
+        vf.position +
+        (target - vf.position) * min(1.0, dt * (punch > 0 ? 12 : 5));
   }
 
   // ------------------------------------------------------------------ input
@@ -602,6 +616,18 @@ class MemesGame extends FlameGame with KeyboardEvents {
   }
 
   bool get hitStopping => _hitStop > 0;
+
+  // Camera punch-in on a finishing blow.
+  double _punch = 0;
+  Vector2 _punchAt = Vector2.zero();
+
+  int finishers = 0;
+
+  void punchIn(Vector2 at) {
+    finishers++;
+    _punch = .55;
+    _punchAt = at.clone();
+  }
 
   /// Freezes the action for a few frames to sell an impact.
   void hitStop(double seconds) => _hitStop = max(_hitStop, seconds);
