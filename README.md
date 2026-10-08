@@ -45,6 +45,7 @@ a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto,
 - **Attacchi** (un tasto + direzione): jab, laterale, in alto, in basso, in corsa;
   **smash caricato** tenendo premuto attacco; aerei neutro, avanti, su e giù
   (quello in giù schiaccia verso il basso).
+- **Congelato, addormentato o stordito?** Premi i tasti a raffica per liberarti prima.
 - **Scudo** (si consuma e può rompersi), **schivata rotolando** (scudo + direzione) e
   **schivata in aria**.
 - **Recupero**: su + speciale in aria ti rilancia verso l'arena (una volta per salto,

@@ -187,6 +187,8 @@ class Fighter extends PositionComponent
   double _spinAngle = 0;
   bool _wasOnGround = true;
   double _hitFlash = 0;
+  double _lastWiggle = 0;
+  double _mashShake = 0;
   static final _rnd = Random();
 
   bool get alive => state != FighterState.ko && stocks > 0;
@@ -310,6 +312,19 @@ class Fighter extends PositionComponent
         move = null;
         state = FighterState.normal;
       }
+      // Mash any button (or wiggle the stick) to break free sooner.
+      final wiggle = input.x.abs() > .5 && input.x.sign != _lastWiggle;
+      if (input.x.abs() > .5) _lastWiggle = input.x.sign;
+      if (input.attackPressed ||
+          input.jumpPressed ||
+          input.specialPressed ||
+          wiggle) {
+        const mash = .1;
+        if (frozen > 0) frozen -= mash;
+        if (asleep > 0) asleep -= mash;
+        if (dizzy > 0) dizzy -= mash;
+        _mashShake = .08;
+      }
       velocity.x *= pow(0.02, dt).toDouble();
       _airPhysics(dt, control: false);
     } else if (state == FighterState.hitstun) {
@@ -360,6 +375,7 @@ class Fighter extends PositionComponent
     if (turbo > 0) turbo -= dt;
     if (dizzy > 0) dizzy -= dt;
     if (_hitFlash > 0) _hitFlash -= dt;
+    if (_mashShake > 0) _mashShake -= dt;
     if (stonks > 0) stonks -= dt;
     if (coffee > 0) coffee -= dt;
     if (deal > 0) deal -= dt;
@@ -1137,7 +1153,7 @@ class Fighter extends PositionComponent
       push = sin(_t * 60) * 1.5;
     }
     // Just hit: shake in place during the impact freeze.
-    final jitter = _hitFlash > 0 && game.hitStopping
+    final jitter = (_hitFlash > 0 && game.hitStopping) || _mashShake > 0
         ? Offset((_rnd.nextDouble() - .5) * 6, (_rnd.nextDouble() - .5) * 3)
         : Offset.zero;
     canvas.translate(push + jitter.dx, pushY + jitter.dy);

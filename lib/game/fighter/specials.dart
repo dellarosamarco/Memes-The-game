@@ -71,7 +71,7 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0x6640C4FF), duration: .4),
         );
         for (final o in _near(280)) {
-          o.frozen = 1.5;
+          o.frozen = 1.2;
           o.velocity.x = 0;
         }
 
@@ -185,7 +185,7 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0x5540E070), duration: .4),
         );
         for (final o in opponents) {
-          o.frozen = 1.3;
+          o.frozen = 1.1;
           game.world.add(
             FloatingText(
               position: o.mid - Vector2(0, 36),

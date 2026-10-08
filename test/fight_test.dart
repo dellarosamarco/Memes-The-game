@@ -192,6 +192,40 @@ void main() {
     expect(p.percent + c.percent, greaterThan(before + 20));
   });
 
+  testWidgets('mashing buttons breaks a freeze sooner', (tester) async {
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.wigDog,
+        cpu: MemeCharacter.stareCat,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60);
+    }
+    final p = game.player;
+    game.cpu.specialTimer = 99;
+    double freeFor({required bool mash}) {
+      p.frozen = 1.2;
+      var t = 0.0;
+      while (p.frozen > 0 && t < 3) {
+        if (mash && (t * 60).round() % 6 == 0) p.input.pressAttack();
+        p.input.attack = false;
+        game.cpu.frozen = 5; // keep the CPU out of it
+        game.update(1 / 60);
+        t += 1 / 60;
+      }
+      return t;
+    }
+
+    final still = freeFor(mash: false);
+    final mashed = freeFor(mash: true);
+    expect(still, greaterThan(1));
+    expect(mashed, lessThan(still * .7));
+  });
+
   testWidgets('a hard CPU match ends with a winner', (tester) async {
     final game = await boot(
       tester,

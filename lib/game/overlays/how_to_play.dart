@@ -123,6 +123,13 @@ class HowToPlay extends StatelessWidget {
                 'Scudo',
                 'para i colpi; con una direzione rotoli via, in aria schivi.',
               ),
+              const SizedBox(height: 4),
+              const Text(
+                'Congelato, addormentato o stordito? Premi i tasti a raffica '
+                'per liberarti prima!',
+                textAlign: TextAlign.center,
+                style: _body,
+              ),
               const SizedBox(height: 10),
               PixelButton(
                 label: 'Ho capito!',
