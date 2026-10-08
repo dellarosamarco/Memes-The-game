@@ -157,6 +157,44 @@ def sfx():
           * env(int(SR * .7), attack=.05, release=.3), 0.3)
 
 
+def fight_sfx():
+    """Punches, smashes and KOs for the fights."""
+    # Light hit: a short "pap" (noise burst + low thump).
+    d = 0.08
+    n = int(SR * d)
+    write('hit_light', noise(d, 21) * env(n, release=.06) * .7 +
+          triangle(slide(320, 120, d), d) * env(n, release=.05) * .8, 0.5)
+    # Heavy hit: crunchier, longer, with a pitch drop.
+    d = 0.2
+    n = int(SR * d)
+    write('hit_heavy', noise(d, 22) * env(n, release=.16) * .8 +
+          square(slide(260, 55, d, .6), d, .5) * env(n, release=.15) * .6 +
+          triangle(slide(140, 40, d), d) * env(n, release=.15), 0.55)
+    # Smash charge: a rising buzzy hum.
+    d = 0.45
+    n = int(SR * d)
+    write('charge', square(vibrato(slide(180, 520, d, .8), d, 30, .04), d, .25)
+          * env(n, attack=.05, release=.05), 0.22)
+    # KO: big boom, then a falling whistle.
+    d = 0.9
+    n = int(SR * d)
+    boom = noise(d, 23) * env(n, release=.8) * np.linspace(1, 0, n) ** 2
+    whistle = square(slide(1400, 300, d, .7), d, .125) * env(n, release=.3)
+    write('ko', boom * .9 + triangle(slide(120, 35, d), d) * env(n, release=.6)
+          + whistle * .25, 0.6)
+    # Shield break: glassy crack.
+    d = 0.35
+    n = int(SR * d)
+    crack = noise(d, 24) * env(n, release=.3) * .5
+    ping = square(slide(1800, 900, d), d, .5) * env(n, release=.3) * .4
+    write('shield_break', crack + ping, 0.4)
+    # Whiff: an attack that hits nothing.
+    d = 0.09
+    n = int(SR * d)
+    write('whoosh', noise(d, 25) * env(n, attack=.02, release=.06) *
+          np.sin(np.linspace(0, np.pi, n)), 0.25)
+
+
 # --------------------------------------------------------------------- music
 
 def render_track(bpm, melody, bass, chords, drums=True, lead_duty=0.25,
@@ -264,6 +302,7 @@ def music():
 def main():
     os.makedirs(OUT, exist_ok=True)
     sfx()
+    fight_sfx()
     music()
     print('audio written to', OUT)
 

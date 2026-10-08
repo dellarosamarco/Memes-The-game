@@ -13,8 +13,8 @@ class Sound {
   static const effects = [
     'jump', 'double_jump', 'like', 'stomp', 'hurt', 'spring', 'special', //
     'checkpoint', 'finish', 'block', 'click', 'gameover', 'boss_hit',
-    'boss_roar', 'like_1', 'like_2', 'like_3', 'like_4', 'like_5', //
-    'land', 'skid',
+    'boss_roar', 'land', 'skid', 'hit_light', 'hit_heavy', 'charge', 'ko',
+    'shield_break', 'whoosh',
   ];
 
   static String? _track;

@@ -332,7 +332,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     world.add(Confetti(position: edge.clone(), count: 40));
     shake(.5, intensity: 8);
     hitStop(.08);
-    Sound.play('boss_roar', volume: .7);
+    Sound.play('ko', volume: .9);
     Sound.haptic(strong: true);
     f.blastOff();
     if (f.stocks <= 0) {

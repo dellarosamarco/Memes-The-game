@@ -487,6 +487,7 @@ class Fighter extends PositionComponent
         if (onGround) {
           state = FighterState.charge;
           charge = 0;
+          Sound.play('charge', volume: .5);
           velocity.x = 0;
           return;
         }
@@ -628,7 +629,7 @@ class Fighter extends PositionComponent
     _hitsDone = 0;
     state = FighterState.attack;
     if (m.lunge > 0) velocity.x = (facingRight ? 1 : -1) * m.lunge;
-    Sound.play('jump', volume: .15);
+    Sound.play('whoosh', volume: m.smash ? .6 : .35);
   }
 
   void _endMove() {
@@ -673,7 +674,6 @@ class Fighter extends PositionComponent
     }
     if (!input.attack || charge >= 1.2 || !onGround) {
       _startMove(Moves.smash, chargeFactor: 1 + .5 * min(1.0, charge));
-      Sound.play('special', volume: .3);
     }
   }
 
@@ -788,7 +788,7 @@ class Fighter extends PositionComponent
     // Feedback.
     game.hitStop((.03 + damage * .004).clamp(.03, .12));
     if (heavy) game.shake(.18, intensity: 3 + damage / 4);
-    Sound.play(heavy ? 'boss_hit' : 'stomp', volume: heavy ? .7 : .5);
+    Sound.play(heavy ? 'hit_heavy' : 'hit_light', volume: heavy ? .8 : .6);
     game.world.add(HitSpark(position: mid.clone(), big: heavy));
     if (heavy && character.hurtLines.isNotEmpty && _rnd.nextDouble() < .4) {
       game.world.add(
@@ -897,7 +897,7 @@ class Fighter extends PositionComponent
     state = FighterState.normal;
     dizzy = 2.0;
     velocity.y = -380;
-    Sound.play('gameover', volume: .4);
+    Sound.play('shield_break', volume: .7);
     game.world.add(
       FloatingText(
         position: mid - Vector2(0, 40),

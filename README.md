@@ -154,7 +154,7 @@ Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy
 
 Effetti sonori e musiche chiptune sono **sintetizzati da zero** da `tool/generate_audio.py`
 (onde quadre/triangolari + rumore, nessun file di terzi) in `assets/audio/`: salto, like,
-colpo, colpo forte, mossa speciale, parata, KO, vittoria, sconfitta e tre musiche in loop
+colpo leggero e forte, smash caricato, attacco a vuoto, scudo rotto, KO con esplosione, mossa speciale, vittoria, sconfitta e tre musiche in loop
 (menu, lotta, lotta finale). Si riproducono con `flame_audio`; musica, effetti
 e vibrazione si attivano/disattivano dalle impostazioni (ingranaggio nella home o pausa).
 
