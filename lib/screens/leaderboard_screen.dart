@@ -4,6 +4,7 @@ import '../game/level.dart';
 import '../game/level_gen.dart';
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
+import '../services/name_filter.dart';
 import '../services/local_store.dart';
 import '../widgets/pixel_ui.dart';
 
@@ -173,7 +174,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: PixelText(
-                      e.name,
+                      NameFilter.display(e.name),
                       size: 16,
                       color: kPlum,
                       outline: false,

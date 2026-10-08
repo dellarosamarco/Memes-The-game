@@ -43,4 +43,16 @@ void main() {
     expect(Hat.all.map((h) => h.id).toSet().length, Hat.all.length);
     expect(Hat.all.map((h) => h.index).toSet().length, Hat.all.length);
   });
+
+  test('"Cancella i miei dati" forgets everything but keeps a name', () async {
+    final s = LocalStore.instance;
+    await s.addToWallet(300);
+    await s.buyHat('party', 30);
+    await s.setPlayerName('Marco');
+    await s.clearAll();
+    expect(s.wallet, 0);
+    expect(s.ownedHats, isEmpty);
+    expect(s.playerName, startsWith('Anon'));
+    expect(s.unlockedLevels, 1);
+  });
 }

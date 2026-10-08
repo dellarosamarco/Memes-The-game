@@ -554,17 +554,26 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   bool _statsRecorded = false;
 
+  bool get isPaused => overlays.isActive(overlayPause);
+
+  /// Pauses (never resumes): used when the app goes to the background.
+  void pauseIfPlaying() {
+    if (!isPaused && !isOver && !finished && isLoaded) togglePause();
+  }
+
   void togglePause() {
     if (isOver || finished) return;
     if (overlays.isActive(overlayPause)) {
       overlays.remove(overlayPause);
       resumeEngine();
+      Sound.held = false;
       Sound.resumeMusic();
     } else {
       input.clear();
       overlays.add(overlayPause);
       pauseEngine();
       Sound.pauseMusic();
+      Sound.held = true;
     }
   }
 
@@ -597,6 +606,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   @override
   void onRemove() {
+    Sound.held = false;
     hudTick.dispose();
     super.onRemove();
   }

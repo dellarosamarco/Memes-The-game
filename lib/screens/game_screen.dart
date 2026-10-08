@@ -8,6 +8,7 @@ import '../game/overlays/hud.dart';
 import '../game/overlays/pause_overlay.dart';
 import '../models/meme_character.dart';
 import '../services/sound.dart';
+import '../widgets/pixel_ui.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -23,14 +24,27 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   late final MemesGame _game = MemesGame(
     character: widget.character,
     levelIndex: widget.levelIndex,
   );
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // A phone call, the home button...: stop the action.
+    if (state != AppLifecycleState.resumed) _game.pauseIfPlaying();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // Back to the menus.
     Sound.music('menu');
     super.dispose();
@@ -38,20 +52,34 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GameWidget<MemesGame>(
-        game: _game,
-        overlayBuilderMap: {
-          MemesGame.overlayHud: (_, g) => Hud(game: g),
-          MemesGame.overlayPause: (_, g) => PauseOverlay(game: g),
-          MemesGame.overlayComplete: (_, g) => LevelCompleteOverlay(game: g),
-          MemesGame.overlayGameOver: (_, g) => GameOverOverlay(game: g),
-          MemesGame.overlayIntro: (_, g) => LevelIntroBanner(game: g),
-          MemesGame.overlayBoss: (_, g) => BossBanner(game: g),
-        },
-        initialActiveOverlays: const [MemesGame.overlayHud],
-        loadingBuilder: (_) => const Center(child: CircularProgressIndicator()),
+    // Android back button / gesture: first pause, then (from the pause
+    // menu or an end screen) leave the level.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (_game.isPaused || _game.isOver || _game.finished) {
+          Navigator.of(context).pop();
+        } else {
+          _game.togglePause();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF8CCBFF),
+        body: GameWidget<MemesGame>(
+          game: _game,
+          overlayBuilderMap: {
+            MemesGame.overlayHud: (_, g) => Hud(game: g),
+            MemesGame.overlayPause: (_, g) => PauseOverlay(game: g),
+            MemesGame.overlayComplete: (_, g) => LevelCompleteOverlay(game: g),
+            MemesGame.overlayGameOver: (_, g) => GameOverOverlay(game: g),
+            MemesGame.overlayIntro: (_, g) => LevelIntroBanner(game: g),
+            MemesGame.overlayBoss: (_, g) => BossBanner(game: g),
+          },
+          initialActiveOverlays: const [MemesGame.overlayHud],
+          loadingBuilder: (_) =>
+              const Center(child: PixelText('Caricamento...', size: 22)),
+        ),
       ),
     );
   }

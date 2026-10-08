@@ -107,6 +107,16 @@ Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
   quando vieni colpito, atterraggi pesanti che fanno tremare il terreno.
 - I like raccolti in fila suonano note sempre più alte; raccoglierli tutti fa festa.
 
+## Pubblicazione
+
+Il gioco è pronto per Play Store, App Store e web: icona, schermata di avvio, solo
+orizzontale, firma Android, pausa automatica in background, info e crediti,
+cancellazione dei dati, filtro dei nomi in classifica e materiale per gli store
+(`store/`: testi IT/EN, icona 512, grafica 1024×500, screenshot per telefono Android,
+iPhone e iPad). Passi e checklist in **[PUBLISHING.md](PUBLISHING.md)**, informativa
+in **[PRIVACY.md](PRIVACY.md)**. La CI su GitHub esegue analisi, test e build web a
+ogni push.
+
 ## Avvio
 
 ```bash

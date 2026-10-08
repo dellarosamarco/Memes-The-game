@@ -2,11 +2,11 @@
     "name": "Memes: the game",
     "short_name": "Memes",
     "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "display": "fullscreen",
+    "background_color": "#8CCBFF",
+    "theme_color": "#FF82B4",
+    "description": "Platform 2D in pixel art con i meme più iconici: 24 personaggi, 500 livelli, boss, cappelli e classifica.",
+    "orientation": "landscape",
     "prefer_related_applications": false,
     "icons": [
         {

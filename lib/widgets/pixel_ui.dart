@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../screens/about_screen.dart';
 import '../services/local_store.dart';
 import '../services/sound.dart';
 
@@ -703,11 +704,27 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
           const SizedBox(height: 8),
           const SettingsPanel(),
           const SizedBox(height: 10),
-          PixelButton(
-            label: 'Ok',
-            color: PixelColor.pink,
-            height: 44,
-            onPressed: () => Navigator.pop(ctx),
+          Wrap(
+            spacing: 10,
+            children: [
+              PixelButton(
+                label: 'Info',
+                color: PixelColor.grey,
+                height: 44,
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AboutScreen()),
+                  );
+                },
+              ),
+              PixelButton(
+                label: 'Ok',
+                color: PixelColor.pink,
+                height: 44,
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ],
           ),
         ],
       ),

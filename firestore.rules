@@ -2,7 +2,8 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Global leaderboard: anyone can read; signed-in (anonymous) players can
-    // only append their own scores. No edits, no deletes.
+    // only append their own scores, and delete them ("Cancella i miei dati").
+    // No edits.
     match /scores/{scoreId} {
       allow read: if true;
       allow create: if request.auth != null
@@ -23,7 +24,9 @@ service cloud.firestore {
         && request.resource.data.score >= 0
         && request.resource.data.score < 10000000
         && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow delete: if request.auth != null
+        && resource.data.uid == request.auth.uid;
+      allow update: if false;
     }
   }
 }

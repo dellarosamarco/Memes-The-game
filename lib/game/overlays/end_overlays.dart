@@ -6,6 +6,7 @@ import '../../screens/game_screen.dart';
 import '../../services/achievements.dart';
 import '../../services/firebase_service.dart';
 import '../../services/local_store.dart';
+import '../../services/name_filter.dart';
 import '../../widgets/pixel_ui.dart';
 import '../level_gen.dart';
 import '../memes_game.dart';
@@ -54,7 +55,7 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay> {
     });
     if (_upload == _Upload.offline) return;
     final ok = await FirebaseService.instance.submitScore(
-      name: LocalStore.instance.playerName,
+      name: NameFilter.display(LocalStore.instance.playerName),
       levelId: game.level.id,
       characterId: game.character.id,
       score: game.score,

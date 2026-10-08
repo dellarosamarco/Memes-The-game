@@ -18,6 +18,12 @@ class LocalStore {
     }
   }
 
+  /// Forgets everything: progress, stars, likes, hats, trophies, settings.
+  Future<void> clearAll() async {
+    await _prefs.clear();
+    await setPlayerName('Anon${Random().nextInt(9000) + 1000}');
+  }
+
   String get playerName => _prefs.getString('playerName') ?? '';
   Future<void> setPlayerName(String name) =>
       _prefs.setString('playerName', name);

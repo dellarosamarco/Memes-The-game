@@ -65,12 +65,16 @@ class Sound {
     FlameAudio.bgm.stop().catchError((Object _) {});
   }
 
+  /// Set while the game is paused: coming back to the app must not restart
+  /// the music under the pause menu.
+  static bool held = false;
+
   static void pauseMusic() {
     if (_ready) FlameAudio.bgm.pause().catchError((Object _) {});
   }
 
   static void resumeMusic() {
-    if (_ready && LocalStore.instance.musicOn) {
+    if (_ready && !held && LocalStore.instance.musicOn) {
       FlameAudio.bgm.resume().catchError((Object _) {});
     }
   }

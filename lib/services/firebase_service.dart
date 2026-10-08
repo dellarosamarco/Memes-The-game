@@ -90,6 +90,29 @@ class FirebaseService {
     }
   }
 
+  /// Deletes every score this player sent and their anonymous account
+  /// ("Cancella i miei dati"). Returns false when offline or on errors.
+  Future<bool> deleteMyData() async {
+    if (!available) return false;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return true;
+      final mine = await FirebaseFirestore.instance
+          .collection(_scores)
+          .where('uid', isEqualTo: user.uid)
+          .get();
+      for (final d in mine.docs) {
+        await d.reference.delete();
+      }
+      await user.delete();
+      await FirebaseAuth.instance.signInAnonymously();
+      return true;
+    } catch (e) {
+      debugPrint('Cancellazione dati fallita: $e');
+      return false;
+    }
+  }
+
   /// Top scores of a level.
   Future<List<ScoreEntry>> topScores({
     required String levelId,

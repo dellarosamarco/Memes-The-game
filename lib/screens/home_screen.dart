@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/meme_character.dart';
 import '../services/firebase_service.dart';
 import '../services/local_store.dart';
+import '../services/name_filter.dart';
 import '../services/sound.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
@@ -99,10 +100,18 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
     final trimmed = name?.trim() ?? '';
-    if (trimmed.isNotEmpty) {
-      await LocalStore.instance.setPlayerName(trimmed);
-      setState(() {});
+    if (trimmed.isEmpty || !mounted) return;
+    if (!NameFilter.isClean(trimmed)) {
+      // The name is shown on the public leaderboard.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Questo nome non è consentito, scegline un altro.'),
+        ),
+      );
+      return;
     }
+    await LocalStore.instance.setPlayerName(trimmed);
+    setState(() {});
   }
 
   @override

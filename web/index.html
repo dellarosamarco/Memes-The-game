@@ -18,7 +18,9 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Memes: the game — platform 2D in pixel art con i meme più iconici. 24 personaggi, 500 livelli, boss, cappelli e classifica.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#FF82B4">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -31,8 +33,43 @@
 
   <title>Memes: the game</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    /* Loading screen until Flutter draws its first frame. */
+    html, body { margin: 0; height: 100%; background: #8CCBFF; overflow: hidden; }
+    #splash {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      transition: opacity .35s ease;
+    }
+    #splash img {
+      width: min(40vmin, 220px); height: auto; image-rendering: pixelated;
+      animation: hop 0.9s ease-in-out infinite;
+    }
+    #splash .bar {
+      width: min(50vmin, 260px); height: 12px; border: 3px solid #3A2440;
+      border-radius: 4px; background: #fff; overflow: hidden;
+    }
+    #splash .bar div {
+      height: 100%; width: 40%; background: #FF82B4;
+      animation: load 1.2s ease-in-out infinite;
+    }
+    @keyframes hop { 50% { transform: translateY(-10px); } }
+    @keyframes load { 0% { margin-left: -40%; } 100% { margin-left: 100%; } }
+  </style>
 </head>
 <body>
+  <div id="splash">
+    <img src="splash.png" alt="Memes: the game">
+    <div class="bar"><div></div></div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var s = document.getElementById('splash');
+      if (!s) return;
+      s.style.opacity = '0';
+      setTimeout(function () { s.remove(); }, 400);
+    });
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
