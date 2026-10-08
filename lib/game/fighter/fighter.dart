@@ -124,6 +124,13 @@ class Fighter extends PositionComponent
   int _hitsDone = 0;
   double _lag = 0;
 
+  // Input buffer: a press slightly too early (during an attack, lag or a
+  // landing) is remembered for a moment instead of being lost.
+  static const _buffer = .15;
+  double _bufAttack = 0;
+  double _bufJump = 0;
+  double _bufSpecial = 0;
+
   // Being hit.
   double hitstun = 0;
   double invincible = 0;
@@ -178,6 +185,7 @@ class Fighter extends PositionComponent
   double _squash = 1;
   double _spinAngle = 0;
   bool _wasOnGround = true;
+  double _hitFlash = 0;
   static final _rnd = Random();
 
   bool get alive => state != FighterState.ko && stocks > 0;
@@ -351,10 +359,17 @@ class Fighter extends PositionComponent
     if (armor > 0) armor -= dt;
     if (turbo > 0) turbo -= dt;
     if (dizzy > 0) dizzy -= dt;
+    if (_hitFlash > 0) _hitFlash -= dt;
     if (stonks > 0) stonks -= dt;
     if (coffee > 0) coffee -= dt;
     if (deal > 0) deal -= dt;
     if (_lag > 0) _lag -= dt;
+    if (input.attackPressed) _bufAttack = _buffer;
+    if (input.jumpPressed) _bufJump = _buffer;
+    if (input.specialPressed) _bufSpecial = _buffer;
+    if (_bufAttack > 0) _bufAttack -= dt;
+    if (_bufJump > 0) _bufJump -= dt;
+    if (_bufSpecial > 0) _bufSpecial -= dt;
     if (_dropTimer > 0) {
       _dropTimer -= dt;
       dropThrough = _dropTimer > 0;
@@ -448,7 +463,8 @@ class Fighter extends PositionComponent
       onGround = false;
     }
 
-    if (input.specialPressed) {
+    if (_bufSpecial > 0) {
+      _bufSpecial = 0;
       if (input.up) {
         _recovery();
       } else {
@@ -466,7 +482,8 @@ class Fighter extends PositionComponent
         return;
       }
     }
-    if (input.attackPressed && _lag <= 0 && scared <= 0) {
+    if (_bufAttack > 0 && _lag <= 0 && scared <= 0) {
+      _bufAttack = 0;
       if (onGround) {
         _pendingTap = true;
         _attackHeld = 0;
@@ -487,13 +504,15 @@ class Fighter extends PositionComponent
         if (onGround) {
           state = FighterState.charge;
           charge = 0;
+          if (input.x.abs() <= .5) _faceNearest(110);
           Sound.play('charge', volume: .5);
           velocity.x = 0;
           return;
         }
       }
     }
-    if (input.jumpPressed && _lag <= 0) {
+    if (_bufJump > 0 && _lag <= 0 && (_coyote > 0 || airJumps > 0)) {
+      _bufJump = 0;
       if (_coyote > 0) {
         _jump(_jumpSpeed);
         Sound.play('jump', volume: .4);
@@ -603,6 +622,7 @@ class Fighter extends PositionComponent
     } else {
       m = Moves.jab;
     }
+    if (x.abs() <= .5) _faceNearest(90);
     _startMove(m);
   }
 
@@ -619,6 +639,23 @@ class Fighter extends PositionComponent
       m = Moves.nair;
     }
     _startMove(m);
+  }
+
+  /// Aim assist for neutral inputs (handy on a touch screen): turn toward
+  /// an opponent within [range].
+  void _faceNearest(double range) {
+    Fighter? best;
+    var bestD = range;
+    for (final o in opponents) {
+      final d = (o.position.x - position.x).abs();
+      if (d < bestD && (o.position.y - position.y).abs() < 90) {
+        bestD = d;
+        best = o;
+      }
+    }
+    if (best != null && best.position.x != position.x) {
+      facingRight = best.position.x > position.x;
+    }
   }
 
   void _startMove(Move m, {double chargeFactor = 1}) {
@@ -810,9 +847,25 @@ class Fighter extends PositionComponent
       );
       return;
     }
-    final dir = Move.direction(angle, towardsRight);
+    var dir = Move.direction(angle, towardsRight);
+    // DI: holding a direction bends the launch by up to 15 degrees.
+    final ix = input.x, iy = input.up ? -1.0 : (input.down ? 1.0 : 0.0);
+    if (ix != 0 || iy != 0) {
+      final perp = ix * -dir.dy + iy * dir.dx; // input across the launch
+      final rot = perp.clamp(-1.0, 1.0) * 15 * pi / 180;
+      final c = cos(rot), sn = sin(rot);
+      dir = Offset(dir.dx * c - dir.dy * sn, dir.dx * sn + dir.dy * c);
+    }
     velocity.setValues(dir.dx * speed, dir.dy * speed);
+    _hitFlash = .14;
     if (onGround && velocity.y > 0) velocity.y = -velocity.y * .6;
+    // Weak hits on the ground: slide back instead of hopping in place, so
+    // fighters don't end up stacked trading jabs.
+    if (onGround && speed < 450) {
+      velocity.y = 0;
+      final away = dir.dx == 0 ? (towardsRight ? 1.0 : -1.0) : dir.dx.sign;
+      velocity.x = away * max(velocity.x.abs(), 230);
+    }
     hitstun = .12 + speed * .00055;
     tumbling = speed > 700;
     state = FighterState.hitstun;
@@ -1014,27 +1067,54 @@ class Fighter extends PositionComponent
       );
     }
     canvas.save();
-    // Attack pose: lean into the swing.
+    // Attack pose in three beats: wind-up, strike (stretched toward the
+    // hit) and back to rest.
     var lean = 0.0;
     var push = 0.0;
+    var pushY = 0.0;
+    var stretchX = 1.0;
+    var stretchY = 1.0;
     final m = move;
+    final fwd = facingRight ? 1.0 : -1.0;
     if (m != null && state == FighterState.attack) {
-      final p = (moveT / m.total).clamp(0.0, 1.0);
-      final swing = sin(p * pi);
-      lean = (m.name == 'up' || m.name == 'uair')
-          ? -0.0
-          : (facingRight ? 1 : -1) * .35 * swing;
-      push = (facingRight ? 1 : -1) * 6 * swing;
-      if (m.name == 'nair' || m.name == 'recovery') {
-        lean = (facingRight ? 1 : -1) * p * 2 * pi;
+      final double k; // -1 wind-up .. 1 strike .. 0 rest
+      if (moveT < m.startup) {
+        k = -moveT / m.startup * .5;
+      } else if (moveT < m.startup + m.active) {
+        k = 1;
+      } else {
+        final r = ((moveT - m.startup - m.active) / m.recovery).clamp(0.0, 1.0);
+        k = 1 - r * r * (3 - 2 * r);
+      }
+      final big = m.smash ? 1.4 : 1.0;
+      switch (m.name) {
+        case 'nair' || 'recovery':
+          lean = fwd * (moveT / m.total).clamp(0.0, 1.0) * 2 * pi;
+        case 'up' || 'uair':
+          pushY = -7 * k;
+          stretchY = 1 + .18 * k;
+          stretchX = 1 - .1 * k;
+        case 'down' || 'dair':
+          pushY = 2 * k;
+          stretchY = 1 - .15 * k;
+          stretchX = 1 + .15 * k;
+        default:
+          lean = fwd * .3 * k * big;
+          push = fwd * 8 * k * big;
+          stretchX = 1 + .14 * k.clamp(0.0, 1.0) * big;
+          stretchY = 1 - .06 * k.clamp(0.0, 1.0);
       }
     }
     if (state == FighterState.charge) {
       push = sin(_t * 60) * 1.5;
     }
-    canvas.translate(push, 0);
-    final sx = 1 + (1 - _squash) * .7;
-    canvas.scale(sx, _squash);
+    // Just hit: shake in place during the impact freeze.
+    final jitter = _hitFlash > 0 && game.hitStopping
+        ? Offset((_rnd.nextDouble() - .5) * 6, (_rnd.nextDouble() - .5) * 3)
+        : Offset.zero;
+    canvas.translate(push + jitter.dx, pushY + jitter.dy);
+    final sx = (1 + (1 - _squash) * .7) * stretchX;
+    canvas.scale(sx, _squash * stretchY);
     if (lean != 0 || _spinAngle > 0) {
       canvas.translate(0, -bodyHeight / 2);
       canvas.rotate(lean + (facingRight ? 1 : -1) * _spinAngle);
@@ -1042,15 +1122,24 @@ class Fighter extends PositionComponent
     }
     final faceRight = spin > 0 ? (_t * 20).floor().isEven : facingRight;
     Paint? paint;
-    if (state == FighterState.charge) {
+    if (_hitFlash > .06) {
+      paint = Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.mode(
+          Color(0xDDFFFFFF),
+          BlendMode.srcATop,
+        );
+    } else if (state == FighterState.charge) {
       final a = .25 + .25 * sin(_t * 30);
       paint = Paint()
+        ..filterQuality = FilterQuality.none
         ..colorFilter = ColorFilter.mode(
           Color.fromRGBO(255, 230, 120, a),
           BlendMode.srcATop,
         );
     } else if (frozen > 0) {
       paint = Paint()
+        ..filterQuality = FilterQuality.none
         ..colorFilter = const ColorFilter.mode(
           Color(0x8840C4FF),
           BlendMode.srcATop,
@@ -1058,16 +1147,35 @@ class Fighter extends PositionComponent
     } else if (armor > 0 || turbo > 0 || deal > 0) {
       final hue = (_t * 540) % 360;
       paint = Paint()
+        ..filterQuality = FilterQuality.none
         ..colorFilter = ColorFilter.mode(
           HSVColor.fromAHSV(.25, hue, .6, 1).toColor(),
           BlendMode.srcATop,
         );
     } else if (invincible > 0 && deal <= 0 && (_t * 14).floor().isEven) {
       paint = Paint()
+        ..filterQuality = FilterQuality.none
         ..colorFilter = const ColorFilter.mode(
           Color(0x88FFFFFF),
           BlendMode.srcATop,
         );
+    }
+    // Motion trail on strong strikes.
+    final mv = move;
+    if (mv != null &&
+        hitbox != null &&
+        (mv.smash || mv.lunge > 0 || mv.name == 'fair')) {
+      for (final (dx, a) in [(-14.0, .18), (-7.0, .32)]) {
+        _sheet.draw(
+          canvas,
+          _frame,
+          Offset(-30 + dx * fwd, -58),
+          flip: !faceRight,
+          paint: Paint()
+            ..filterQuality = FilterQuality.none
+            ..color = Color.fromRGBO(255, 255, 255, a),
+        );
+      }
     }
     _sheet.draw(
       canvas,

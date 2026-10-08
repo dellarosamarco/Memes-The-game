@@ -35,20 +35,26 @@ class CountdownOverlay extends StatelessWidget {
             text = 'VIA!';
             size = 80;
           }
-          return Center(
-            child: TweenAnimationBuilder<double>(
-              key: ValueKey(text),
-              tween: Tween(begin: 1.8, end: 1),
-              duration: const Duration(milliseconds: 260),
-              curve: Curves.easeOutBack,
-              builder: (context, s, child) =>
-                  Transform.scale(scale: s, child: child),
-              child: PixelText(
-                text,
-                size: size,
-                color: c > 0
-                    ? const Color(0xFFFFE07A)
-                    : const Color(0xFFFF82B4),
+          // Up in the sky (not where the fighters meet); "VIA!" fades out.
+          final fade = c > 0 ? 1.0 : (1 + c / .7).clamp(0.0, 1.0);
+          return Align(
+            alignment: const Alignment(0, -.45),
+            child: Opacity(
+              opacity: fade,
+              child: TweenAnimationBuilder<double>(
+                key: ValueKey(text),
+                tween: Tween(begin: 1.8, end: 1),
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutBack,
+                builder: (context, s, child) =>
+                    Transform.scale(scale: s, child: child),
+                child: PixelText(
+                  text,
+                  size: size,
+                  color: c > 0
+                      ? const Color(0xFFFFE07A)
+                      : const Color(0xFFFF82B4),
+                ),
               ),
             ),
           );

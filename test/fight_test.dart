@@ -235,9 +235,19 @@ void main() {
           difficulty: Difficulty.values[i % 3],
         ),
       );
+      // Every special runs at least once (recovery-only ones, like flight
+      // or the balloon, may otherwise never be needed in a short brawl).
+      for (var i = 0; i < 4 * 60; i++) {
+        game.update(1 / 60);
+      }
+      game.player.useSpecial();
+      game.cpu.useSpecial();
       await brawl(tester, game, maxSecs: 45);
       expect(game.elapsed, greaterThan(0));
-      expect(game.player.specialsUsed + game.cpu.specialsUsed, greaterThan(0));
+      expect(
+        game.player.specialsUsed + game.cpu.specialsUsed,
+        greaterThanOrEqualTo(2),
+      );
       for (final f in game.fighters) {
         expect(f.percent.isFinite, isTrue);
         expect(f.position.x.isFinite && f.position.y.isFinite, isTrue);

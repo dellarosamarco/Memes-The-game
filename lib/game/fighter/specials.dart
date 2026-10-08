@@ -45,6 +45,7 @@ extension FighterSpecials on Fighter {
   void useSpecial() {
     if (!specialReady || !alive || stunned) return;
     specialTimer = character.specialCooldown;
+    if (input.x.abs() < .3) _faceNearest(320);
     specialsUsed++;
     Sound.play('special', volume: .6);
     _shout();

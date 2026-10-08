@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flame/components.dart';
@@ -16,6 +17,7 @@ import 'components/effects.dart';
 import 'components/fight_items.dart';
 import 'components/stage_render.dart';
 import 'cpu.dart';
+import 'debug/debug_bridge.dart';
 import 'fighter/fighter.dart';
 import 'level.dart';
 import 'stages.dart';
@@ -91,6 +93,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   /// Dev only (store screenshots, attract mode): the CPU plays for you too.
   static const demo = bool.fromEnvironment('MEMES_DEMO');
+
+  /// Dev only: publish the state for automated play-tests.
+  static const debugBridge = bool.fromEnvironment('MEMES_DEBUG');
+  int _frames = 0;
+  double _fpsT = 0;
+  double fps = 0;
+  double _worstDt = 0;
   CpuBrain? _autopilot;
   final List<Fighter> fighters = [];
   final List<MovingPlatform> platforms = [];
@@ -193,6 +202,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       overlays.add(overlayTutorial);
     }
     Sound.music(stage.music);
+    if (debugBridge) publishDebugState(_debugState);
     if (LocalStore.ready) {
       LocalStore.instance.markPlayedWith(config.player.id);
       Achievements.checkStats();
@@ -203,6 +213,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   @override
   void update(double dt) {
+    if (debugBridge) {
+      _frames++;
+      _fpsT += dt;
+      _worstDt = max(_worstDt, dt);
+      if (_fpsT >= 1) {
+        fps = _frames / _fpsT;
+        _frames = 0;
+        _fpsT = 0;
+      }
+    }
     dt = min(dt, 1 / 30);
     if (_hitStop > 0) {
       _hitStop -= dt;
@@ -283,6 +303,46 @@ class MemesGame extends FlameGame with KeyboardEvents {
       world.add(Sparkles(position: Vector2(x, at.y + 40)));
       return;
     }
+  }
+
+  String _debugState() {
+    Map<String, Object?> f(Fighter x) => {
+      'x': x.position.x,
+      'y': x.position.y,
+      'vx': x.velocity.x,
+      'vy': x.velocity.y,
+      'pct': x.percent,
+      'stocks': x.stocks,
+      'state': x.state.name,
+      'ground': x.onGround,
+      'right': x.facingRight,
+      'alive': x.alive,
+      'jumps': x.airJumps,
+      'rec': x.usedRecovery,
+      'special': x.specialReady,
+      'stun': x.stunned,
+      'hitstun': x.hitstun,
+    };
+    final worst = _worstDt;
+    _worstDt = 0;
+    return jsonEncode({
+      'fps': fps,
+      'worstDt': worst,
+      'elapsed': elapsed,
+      'countdown': countdown,
+      'over': matchOver,
+      'paused': isPaused,
+      'won': winner == null ? null : winner == player,
+      'left': stage.left * kTile,
+      'right': (stage.right + 1) * kTile,
+      'top': stage.mainTop * kTile,
+      'p': f(player),
+      'c': f(cpu),
+      'items': [
+        for (final i in items)
+          {'kind': i.kind.name, 'x': i.position.x, 'y': i.position.y},
+      ],
+    });
   }
 
   void _resolveHits() {
@@ -433,12 +493,17 @@ class MemesGame extends FlameGame with KeyboardEvents {
     maxX = min(maxX, zone.right);
     minY = max(minY, zone.top);
     maxY = min(maxY, zone.bottom);
-    final fit = min(size.x / (maxX - minX), size.y / (maxY - minY));
+    // Frame the action in the band between the HUD cards (top) and the
+    // touch controls (bottom), so the floor isn't hidden under the thumbs.
+    final padTop = size.y * .1, padBottom = size.y * .2;
+    final band = size.y - padTop - padBottom;
+    final fit = min(size.x / (maxX - minX), band / (maxY - minY));
     final zoom = fit.clamp(_wideZoom, _closeZoom);
     final vf = camera.viewfinder;
     final k = min(1.0, dt * 4);
     vf.zoom += (zoom - vf.zoom) * k;
-    final target = Vector2((minX + maxX) / 2, (minY + maxY) / 2);
+    final shift = (size.y / 2 - (padTop + band / 2)) / vf.zoom;
+    final target = Vector2((minX + maxX) / 2, (minY + maxY) / 2 + shift);
     vf.position = vf.position + (target - vf.position) * min(1.0, dt * 5);
   }
 
@@ -514,6 +579,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
       _shakeAmp = intensity;
     }
   }
+
+  bool get hitStopping => _hitStop > 0;
 
   /// Freezes the action for a few frames to sell an impact.
   void hitStop(double seconds) => _hitStop = max(_hitStop, seconds);

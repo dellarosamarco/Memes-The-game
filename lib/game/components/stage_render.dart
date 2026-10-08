@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,10 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
   LevelMap() : super(priority: 1);
 
   late final Strip _tiles;
-  double _t = 0;
+
+  /// The whole arena pre-rendered once: it never changes during a fight,
+  /// so each frame is a single image draw instead of hundreds of tiles.
+  ui.Image? _baked;
 
   // Tile order in the tileset (see tool/pixel_world.py + pixel_details.py).
   static const _groundTop = 0;
@@ -46,10 +50,22 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
       kTile,
       kTile,
     );
+    final level = game.level;
+    final recorder = ui.PictureRecorder();
+    _paintTiles(Canvas(recorder));
+    final picture = recorder.endRecording();
+    _baked = await picture.toImage(
+      (level.cols * kTile).ceil(),
+      (level.rows * kTile).ceil(),
+    );
+    picture.dispose();
   }
 
   @override
-  void update(double dt) => _t += dt;
+  void onRemove() {
+    _baked?.dispose();
+    super.onRemove();
+  }
 
   static int _hash(int c, int r) => ((c * 73856093) ^ (r * 19349663)) & 0xffff;
 
@@ -74,10 +90,14 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
 
   @override
   void render(Canvas canvas) {
+    final baked = _baked;
+    if (baked != null) canvas.drawImage(baked, Offset.zero, pixelPaint);
+  }
+
+  void _paintTiles(Canvas canvas) {
     final level = game.level;
-    final cam = game.camera.visibleWorldRect;
-    final c0 = max(0, (cam.left / kTile).floor() - 1);
-    final c1 = min(level.cols - 1, (cam.right / kTile).ceil() + 1);
+    const c0 = 0;
+    final c1 = level.cols - 1;
     final under = Paint()..color = const Color(0xFF3A2440);
     final shade = Paint()..color = const Color(0x333A2440);
     for (var r = 0; r < level.rows; r++) {
@@ -95,7 +115,7 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
         };
         if (idx < 0) continue;
         final at = Offset(c * kTile, r * kTile);
-        _tiles.draw(canvas, idx, at, bleed: 0.6);
+        _tiles.draw(canvas, idx, at);
         if (level.tileAt(c, r) != '#') continue;
         // Deeper dirt gets gradually darker, for a sense of depth.
         var depth = 0;
@@ -104,18 +124,18 @@ class LevelMap extends Component with HasGameReference<MemesGame> {
         }
         if (depth >= 2) {
           canvas.drawRect(
-            Rect.fromLTWH(at.dx, at.dy, kTile + 0.6, kTile + 0.6),
+            Rect.fromLTWH(at.dx, at.dy, kTile, kTile),
             Paint()..color = Color.fromRGBO(58, 36, 64, (depth - 1) * 0.07),
           );
         }
         // Floating island: outlined underside with a soft shadow band.
         if (!_isGround(c, r + 1)) {
           canvas.drawRect(
-            Rect.fromLTWH(at.dx, at.dy + kTile - 6, kTile + 0.6, 4),
+            Rect.fromLTWH(at.dx, at.dy + kTile - 6, kTile, 4),
             shade,
           );
           canvas.drawRect(
-            Rect.fromLTWH(at.dx, at.dy + kTile - 2, kTile + 0.6, 2.6),
+            Rect.fromLTWH(at.dx, at.dy + kTile - 2, kTile, 2),
             under,
           );
         }
