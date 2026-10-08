@@ -187,6 +187,11 @@ class Fighter extends PositionComponent
   double _spinAngle = 0;
   bool _wasOnGround = true;
   double _hitFlash = 0;
+  final List<String> _recentMoves = [];
+
+  /// Hits taken in the current combo (resets once you're free again).
+  int _comboHits = 0;
+  double _freeFor = 0;
   double _lastWiggle = 0;
   double _mashShake = 0;
   static final _rnd = Random();
@@ -376,6 +381,7 @@ class Fighter extends PositionComponent
     if (dizzy > 0) dizzy -= dt;
     if (_hitFlash > 0) _hitFlash -= dt;
     if (_mashShake > 0) _mashShake -= dt;
+    _freeFor = state == FighterState.hitstun ? 0 : _freeFor + dt;
     if (stonks > 0) stonks -= dt;
     if (coffee > 0) coffee -= dt;
     if (deal > 0) deal -= dt;
@@ -578,7 +584,9 @@ class Fighter extends PositionComponent
       if (!level.isSolid(c, r) || level.isSolid(c, r - 1)) continue;
       if (level.isSolid(c, r - 2)) continue;
       final top = r * kTile.toDouble();
-      if (position.y - top > 20) continue;
+      if (position.y - top > 20 || position.y - top < 3) continue;
+      // Only when heading back to it, not when stepping off on purpose.
+      if (input.x * side < 0 || velocity.x * side < -20) continue;
       position.y = top;
       position.x = side > 0 ? c * kTile + 10.0 : (c + 1) * kTile - 10.0;
       velocity.setZero();
@@ -755,7 +763,13 @@ class Fighter extends PositionComponent
     final m = move;
     if (m == null || _hitThisMove.contains(target)) return;
     _hitThisMove.add(target);
-    var dmg = m.damage * charge * (stonks > 0 ? 1.5 : 1);
+    // Stale moves (as in Smash): the same move landed over and over in a
+    // row loses up to 40% of its power, so spamming one button is weak.
+    final repeats = _recentMoves.where((n) => n == m.name).length;
+    _recentMoves.add(m.name);
+    if (_recentMoves.length > 6) _recentMoves.removeAt(0);
+    final fresh = 1 - .07 * repeats;
+    var dmg = m.damage * charge * (stonks > 0 ? 1.5 : 1) * fresh;
     var base = m.baseKb;
     var growth = m.kbGrowth;
     if (m.smash && character.passive == Passive.bossBrawler) growth *= 1.25;
@@ -898,7 +912,11 @@ class Fighter extends PositionComponent
       final away = dir.dx == 0 ? (towardsRight ? 1.0 : -1.0) : dir.dx.sign;
       velocity.x = away * max(velocity.x.abs(), 230);
     }
-    hitstun = .12 + speed * .00055;
+    // Combo protection: every extra hit of a combo stuns a bit less, so a
+    // fast jab can't keep someone locked forever.
+    final caught = state == FighterState.hitstun || _freeFor < .25;
+    _comboHits = caught ? _comboHits + 1 : 1;
+    hitstun = (.12 + speed * .00055) / (1 + .3 * (_comboHits - 1));
     tumbling = speed > 700;
     state = FighterState.hitstun;
     move = null;

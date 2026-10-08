@@ -26,6 +26,12 @@ class CpuBrain {
   double _wanderDir = 0;
   bool _gapJump = false;
 
+  /// How much the opponent has been swinging lately (decays): a CPU that
+  /// sees the same attack coming again and again blocks and punishes it.
+  double _threat = 0;
+  bool _targetWasAttacking = false;
+  bool _wasInHitstun = false;
+
   double get _reaction => switch (difficulty) {
     Difficulty.easy => .42,
     Difficulty.normal => .2,
@@ -52,10 +58,71 @@ class CpuBrain {
 
   MemesGame get _game => me.game;
 
+  double get _adaptiveShield => min(
+    .8,
+    _shieldChance + _threat * (difficulty == Difficulty.easy ? .03 : .12),
+  );
+
+  /// The opponent is stuck in the end lag of a move, right next to us.
+  bool get _punishable {
+    final m = target.move;
+    if (m == null || !target.attacking) return false;
+    if (target.moveT < m.startup + m.active) return false;
+    final dx = target.position.x - me.position.x;
+    final dy = target.mid.y - me.mid.y;
+    return dx.abs() < 56 && dy.abs() < 34;
+  }
+
   void think(double dt) {
     final i = me.input;
     if (!me.alive) {
       i.clear();
+      return;
+    }
+    // Just got free from hitstun with the opponent on top of us: react at
+    // once (jump away, block or swing back), like a player escaping a
+    // string of hits.
+    final inHitstun = me.state == FighterState.hitstun;
+    if (_wasInHitstun &&
+        !inHitstun &&
+        difficulty != Difficulty.easy &&
+        me.onGround &&
+        target.position.distanceTo(me.position) < 95) {
+      _wasInHitstun = false;
+      final away = (me.position.x - target.position.x).sign;
+      final r = _rnd.nextDouble();
+      if (r < .3) {
+        i.x = away == 0 ? 1 : away;
+        i.pressJump();
+      } else if (r < .3 + _adaptiveShield) {
+        i.shield = true;
+        _shieldHold = .25;
+      } else {
+        final dx = target.position.x - me.position.x;
+        me.facingRight = dx > 0;
+        i.x = 0;
+        i.pressAttack();
+        _attackHold = .02;
+      }
+      _tick = _reaction * .5;
+      return;
+    }
+    _wasInHitstun = inHitstun;
+    if (target.attacking && !_targetWasAttacking) _threat += 1;
+    _targetWasAttacking = target.attacking;
+    _threat *= pow(.5, dt).toDouble();
+    // Punish end lag right away (no waiting for the next decision tick).
+    if (difficulty != Difficulty.easy &&
+        me.onGround &&
+        !me.stunned &&
+        me.state == FighterState.normal &&
+        _punishable &&
+        _rnd.nextDouble() < _aggression * dt * 12) {
+      final dx = target.position.x - me.position.x;
+      me.facingRight = dx > 0;
+      i.shield = false;
+      _shieldHold = 0;
+      _attack(dx, target.mid.y - me.mid.y);
       return;
     }
     // Held buttons keep being held between decisions.
@@ -238,7 +305,7 @@ class CpuBrain {
     }
 
     // Defence: the player is swinging at us.
-    if (target.attacking && dist < 80 && _rnd.nextDouble() < _shieldChance) {
+    if (target.attacking && dist < 80 && _rnd.nextDouble() < _adaptiveShield) {
       if (me.onGround) {
         if (_rnd.nextDouble() < .35) {
           i.shield = true;
@@ -252,6 +319,28 @@ class CpuBrain {
       }
     }
 
+    // Anti-air: someone dropping on us from above gets an up attack (or
+    // the shield), instead of free aerials.
+    if (me.onGround &&
+        !target.onGround &&
+        dy < -15 &&
+        dy > -110 &&
+        dx.abs() < 70 &&
+        difficulty != Difficulty.easy) {
+      final r = _rnd.nextDouble();
+      if (r < _aggression * .7) {
+        i.up = true;
+        i.pressAttack();
+        _attackHold = .02;
+        return;
+      }
+      if (r < _aggression * .7 + _shieldChance) {
+        i.shield = true;
+        _shieldHold = .25;
+        return;
+      }
+    }
+
     // Items: run from bombs, go for the goodies.
     if (_items(dist)) return;
 
@@ -261,7 +350,7 @@ class CpuBrain {
     }
 
     // In range: attack.
-    final inRange = dx.abs() < 54 && dy.abs() < 50;
+    final inRange = dx.abs() < 54 && dy.abs() < 34;
     if (inRange && _rnd.nextDouble() < _aggression) {
       _attack(dx, dy);
       return;
@@ -269,11 +358,15 @@ class CpuBrain {
 
     // Approach.
     if (dx.abs() > 40) i.x = toward * (.6 + .4 * _aggression);
+    // Target right below us (we're on a block or a ledge): step off.
+    if (me.onGround && dy > 34 && dx.abs() <= 40) {
+      i.x = dx.abs() > 4 ? toward : (me.facingRight ? 1 : -1);
+    }
     if (me.onGround && me.hitWall) {
       // Something in the way: hop over it.
       i.jumpPressed = true;
       i.jump = true;
-    } else if (me.onGround && dy < -60 && dx.abs() < 160) {
+    } else if (me.onGround && dy < -40 && dx.abs() < 160) {
       i.jumpPressed = true;
       i.jump = true;
     } else if (!me.onGround &&

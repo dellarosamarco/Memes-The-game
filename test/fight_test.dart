@@ -133,6 +133,7 @@ void main() {
       game.update(1 / 60); // countdown
     }
     final p = game.player, c = game.cpu;
+    game.cpuOff = true;
     p.percent = 50;
     p.useItem(ItemKind.pizza);
     expect(p.percent, 30);
@@ -171,7 +172,8 @@ void main() {
     }
     final boosted = jab();
     expect(normal, greaterThan(0));
-    expect(boosted, closeTo(normal * 1.5, .01));
+    // (The second jab is a repeat: stale moves take 7% off.)
+    expect(boosted, closeTo(normal * 1.5 * .93, .01));
 
     // A bomb dropped between the two.
     final before = p.percent + c.percent;

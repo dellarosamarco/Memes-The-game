@@ -252,7 +252,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
     if (!frozenFighters) {
       if (config.items) _spawnItems(dt);
-      if (!_cpuOff) brain.think(dt);
+      if (!cpuOff) brain.think(dt);
       _autopilot?.think(dt);
     }
     super.update(dt);
@@ -306,15 +306,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
   }
 
-  bool _cpuOff = false;
+  /// The CPU stops thinking (dev tools and tests).
+  bool cpuOff = false;
 
   void _debugCommand(String name) {
     switch (name) {
       case 'cpuOff':
-        _cpuOff = true;
+        cpuOff = true;
         cpu.input.clear();
       case 'cpuOn':
-        _cpuOff = false;
+        cpuOff = false;
       case 'reset':
         for (final f in fighters) {
           f.percent = 0;
