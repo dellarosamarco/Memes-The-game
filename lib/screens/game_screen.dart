@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../game/arcade.dart';
 import '../game/memes_game.dart';
+import '../game/overlays/how_to_play.dart';
 import '../game/overlays/hud.dart';
 import '../game/overlays/match_overlays.dart';
 import '../game/overlays/pause_overlay.dart';
@@ -100,6 +101,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             MemesGame.overlayHud: (_, g) => Hud(game: g),
             MemesGame.overlayPause: (_, g) => PauseOverlay(game: g),
             MemesGame.overlayCountdown: (_, g) => CountdownOverlay(game: g),
+            MemesGame.overlayTutorial: (_, g) => TutorialOverlay(game: g),
             MemesGame.overlayResults: (_, g) {
               final won = g.winner == g.player;
               final round = _round;

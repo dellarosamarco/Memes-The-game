@@ -27,6 +27,7 @@ void main() {
               MemesGame.overlayPause,
               MemesGame.overlayResults,
               MemesGame.overlayCountdown,
+              MemesGame.overlayTutorial,
             ])
               o: (_, _) => const SizedBox(),
           },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
+import 'how_to_play.dart';
 
 class PauseOverlay extends StatelessWidget {
   const PauseOverlay({super.key, required this.game});
@@ -44,6 +45,19 @@ class PauseOverlay extends StatelessWidget {
                     icon: 'play',
                     color: PixelColor.mint,
                     onPressed: game.togglePause,
+                  ),
+                  PixelButton(
+                    label: 'Comandi',
+                    icon: 'gear',
+                    color: PixelColor.blue,
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (ctx) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.zero,
+                        child: HowToPlay(onClose: () => Navigator.pop(ctx)),
+                      ),
+                    ),
                   ),
                   PixelButton(
                     label: 'Esci',

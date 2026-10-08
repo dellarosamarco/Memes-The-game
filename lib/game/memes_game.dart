@@ -79,6 +79,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   static const overlayPause = 'pause';
   static const overlayResults = 'results';
   static const overlayCountdown = 'countdown';
+  static const overlayTutorial = 'tutorial';
 
   final MatchConfig config;
   final Stage stage;
@@ -123,6 +124,12 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   bool get frozenFighters => countdown > 0 || matchOver;
   bool get isPaused => overlays.isActive(overlayPause);
+
+  /// Closes the tutorial card (and remembers it was seen).
+  void closeTutorial() {
+    overlays.remove(overlayTutorial);
+    if (LocalStore.ready) LocalStore.instance.setTutorialSeen();
+  }
 
   @override
   Color backgroundColor() => const Color(0xFF000000);
@@ -181,6 +188,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
     camera.viewfinder.position = Vector2((l + r) / 2, top - kTile * 2);
     camera.viewfinder.zoom = _closeZoom;
     overlays.add(overlayCountdown);
+    // First fight ever: explain the controls before the countdown.
+    if (LocalStore.ready && !LocalStore.instance.tutorialSeen && !demo) {
+      overlays.add(overlayTutorial);
+    }
     Sound.music(stage.music);
     if (LocalStore.ready) {
       LocalStore.instance.markPlayedWith(config.player.id);
@@ -203,6 +214,11 @@ class MemesGame extends FlameGame with KeyboardEvents {
       dt *= .3;
     }
     elapsed += dt;
+    // The tutorial card holds the countdown.
+    if (overlays.isActive(overlayTutorial)) {
+      _updateShake(dt);
+      return;
+    }
     if (countdown > -1) {
       final before = countdown.ceil();
       countdown -= dt;
