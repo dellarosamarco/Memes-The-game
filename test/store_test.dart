@@ -34,9 +34,9 @@ void main() {
     expect(s.trophies, {'first_win'});
     expect(Achievements.toasts.value.length, 1);
 
-    await s.addStat('stomps', 100);
+    await s.addStat('kos', 100);
     Achievements.checkStats();
-    expect(s.trophies, contains('stomp100'));
+    expect(s.trophies, contains('kos100'));
   });
 
   test('every hat has a unique id and sheet frame', () {
@@ -49,10 +49,13 @@ void main() {
     await s.addToWallet(300);
     await s.buyHat('party', 30);
     await s.setPlayerName('Marco');
+    await s.recordArcade('stare_cat', 3);
+    await s.markWonWith('stare_cat');
     await s.clearAll();
     expect(s.wallet, 0);
     expect(s.ownedHats, isEmpty);
     expect(s.playerName, startsWith('Anon'));
-    expect(s.unlockedLevels, 1);
+    expect(s.arcadeBest('stare_cat'), 0);
+    expect(s.wonWith, isEmpty);
   });
 }

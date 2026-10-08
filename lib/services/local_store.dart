@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Local persistence: player name, unlocked levels, bests and stars.
+/// Local persistence: player name, settings, likes, hats, stats, trophies.
 class LocalStore {
   LocalStore._(this._prefs);
   static LocalStore? _instance;
@@ -28,11 +28,8 @@ class LocalStore {
   Future<void> setPlayerName(String name) =>
       _prefs.setString('playerName', name);
 
-  /// Number of levels the player can choose (at least the first).
-  int get unlockedLevels => _unlockAll ? 500 : _prefs.getInt('unlocked') ?? 1;
-
-  /// Dev aid: `--dart-define=MEMES_UNLOCK_ALL=true`.
-  static const _unlockAll = bool.fromEnvironment('MEMES_UNLOCK_ALL');
+  /// Dev aid: `--dart-define=MEMES_UNLOCK_ALL=true` (every arena open).
+  static const unlockAll = bool.fromEnvironment('MEMES_UNLOCK_ALL');
 
   bool get musicOn => _prefs.getBool('music') ?? true;
   bool get sfxOn => _prefs.getBool('sfx') ?? true;
@@ -79,30 +76,24 @@ class LocalStore {
   Future<void> markPlayedWith(String characterId) =>
       _prefs.setStringList('playedWith', {...playedWith, characterId}.toList());
 
-  int bestScore(String levelId) => _prefs.getInt('best_$levelId') ?? 0;
+  /// Memes you've won at least one fight with.
+  Set<String> get wonWith => (_prefs.getStringList('wonWith') ?? []).toSet();
+  Future<void> markWonWith(String characterId) =>
+      _prefs.setStringList('wonWith', {...wonWith, characterId}.toList());
 
-  /// Sum of the stars of every level.
-  int get totalStars => _prefs
-      .getKeys()
-      .where((k) => k.startsWith('stars_'))
-      .fold(0, (s, k) => s + (_prefs.getInt(k) ?? 0));
-  int stars(String levelId) => _prefs.getInt('stars_$levelId') ?? 0;
-
-  /// Saves a completed level. Returns true when [score] is a new best.
-  Future<bool> recordLevel({
-    required int levelIndex,
-    required String levelId,
-    required int score,
-    required int stars,
-  }) async {
-    if (levelIndex + 2 > unlockedLevels) {
-      await _prefs.setInt('unlocked', levelIndex + 2);
+  /// Best Arcade result per meme: rounds won (8 = champion).
+  int arcadeBest(String characterId) =>
+      _prefs.getInt('arcade_$characterId') ?? 0;
+  Future<void> recordArcade(String characterId, int rounds) async {
+    if (rounds > arcadeBest(characterId)) {
+      await _prefs.setInt('arcade_$characterId', rounds);
     }
-    if (stars > this.stars(levelId)) {
-      await _prefs.setInt('stars_$levelId', stars);
-    }
-    if (score <= bestScore(levelId)) return false;
-    await _prefs.setInt('best_$levelId', score);
-    return true;
   }
+
+  /// Arcade champion titles across all memes.
+  int get arcadeTitles => _prefs
+      .getKeys()
+      .where((k) => k.startsWith('arcade_'))
+      .where((k) => (_prefs.getInt(k) ?? 0) >= 8)
+      .length;
 }

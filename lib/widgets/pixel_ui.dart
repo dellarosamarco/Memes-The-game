@@ -108,6 +108,8 @@ class PixelIcon extends StatelessWidget {
     'gear': (12, 12),
     'vibrate': (12, 7),
     'dice': (12, 10),
+    'fist': (11, 9),
+    'shield': (10, 10),
   };
 
   @override

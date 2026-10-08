@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'screens/home_screen.dart';
-import 'services/firebase_service.dart';
 import 'services/local_store.dart';
 import 'services/sound.dart';
 import 'widgets/pixel_ui.dart';
@@ -12,7 +11,7 @@ import 'widgets/trophy_toasts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // A side-scrolling platformer is played in landscape.
+  // Fights are played in landscape.
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
@@ -21,7 +20,6 @@ Future<void> main() async {
   await PixelAssets.preload();
   await LocalStore.init();
   await Sound.init();
-  await FirebaseService.instance.init();
   runApp(const MemesApp());
 }
 

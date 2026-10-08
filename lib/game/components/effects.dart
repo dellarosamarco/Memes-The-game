@@ -303,3 +303,80 @@ class MusicNote extends PositionComponent {
     px(2, -9, 5, 2, 0xFFFFD86A);
   }
 }
+
+/// The star-shaped flash where a hit lands.
+class HitSpark extends PositionComponent {
+  HitSpark({required super.position, this.big = false}) : super(priority: 45);
+
+  final bool big;
+  double _t = 0;
+  static const _d = .18;
+  final double _rot = Random().nextDouble() * pi;
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    if (_t >= _d) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final p = _t / _d;
+    final r = (big ? 26.0 : 16.0) * (0.6 + p * .6);
+    final paint = Paint()..color = (big ? const Color(0xFFFFE07A) : Colors.white)
+        .withValues(alpha: 1 - p);
+    final ink = Paint()..color = const Color(0xFF3A2440).withValues(alpha: 1 - p);
+    canvas.save();
+    canvas.rotate(_rot);
+    for (final (pp, k) in [(ink, 1.25), (paint, 1.0)]) {
+      final path = Path();
+      for (var i = 0; i < 10; i++) {
+        final a = i * pi / 5;
+        final rr = (i.isEven ? r : r * .42) * k;
+        final o = Offset(cos(a) * rr, sin(a) * rr);
+        i == 0 ? path.moveTo(o.dx, o.dy) : path.lineTo(o.dx, o.dy);
+      }
+      path.close();
+      canvas.drawPath(path, pp);
+    }
+    canvas.restore();
+  }
+}
+
+/// KO! A colourful blast shooting in from the edge where a fighter flew out.
+class KoBlast extends PositionComponent {
+  KoBlast({
+    required super.position,
+    required this.direction,
+    required this.color,
+  }) : super(priority: 50);
+
+  /// Points back into the arena.
+  final Offset direction;
+  final Color color;
+  double _t = 0;
+  static const _d = .9;
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    if (_t >= _d) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final p = _t / _d;
+    final len = 420.0 * min(1.0, p * 3);
+    final w = 70 * (1 - p);
+    final a = atan2(direction.dy, direction.dx);
+    canvas.save();
+    canvas.rotate(a);
+    final rect = Rect.fromLTWH(0, -w / 2, len, w);
+    canvas.drawRect(rect, Paint()..color = color.withValues(alpha: (1 - p) * .9));
+    canvas.drawRect(
+      rect.deflate(w * .3),
+      Paint()..color = Colors.white.withValues(alpha: (1 - p)),
+    );
+    canvas.restore();
+  }
+}

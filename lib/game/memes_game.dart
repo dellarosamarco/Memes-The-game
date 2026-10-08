@@ -13,217 +13,169 @@ import '../services/local_store.dart';
 import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
-import 'components/enemy.dart';
-import 'components/items.dart';
-import 'components/player.dart';
+import 'components/stage_render.dart';
+import 'cpu.dart';
+import 'fighter/fighter.dart';
 import 'level.dart';
-import 'level_gen.dart';
+import 'stages.dart';
 
-/// Tiles visible vertically (sets the zoom).
-const double kTilesVisible = 9.5;
+enum Difficulty {
+  easy('Facile'),
+  normal('Normale'),
+  hard('Difficile');
 
-/// World units of extra ground drawn under the level.
-const kGroundBelow = kTile * 2;
-
-/// Dev aid: `--dart-define=MEMES_START_COL=120` drops the player at that
-/// column to test the end of a level.
-const _debugStartCol = int.fromEnvironment('MEMES_START_COL');
-
-/// Buttons currently held, fed by the keyboard and the touch controls.
-class GameInput {
-  bool left = false;
-  bool right = false;
-  bool jump = false;
-
-  /// A recent jump press, consumed by the player (makes jumps forgiving).
-  double jumpBuffer = 0;
-  bool specialQueued = false;
-
-  void pressJump() {
-    jump = true;
-    jumpBuffer = 0.14;
-  }
-
-  void clear() {
-    left = right = jump = specialQueued = false;
-    jumpBuffer = 0;
-  }
+  const Difficulty(this.label);
+  final String label;
 }
 
-/// "Memes: the game" — a 2D platformer starring real memes.
+/// Everything that defines a match.
+class MatchConfig {
+  const MatchConfig({
+    required this.player,
+    required this.cpu,
+    required this.stage,
+    this.difficulty = Difficulty.normal,
+    this.stocks = 3,
+    this.arcadeRound,
+  });
+
+  final MemeCharacter player;
+  final MemeCharacter cpu;
+  final int stage;
+  final Difficulty difficulty;
+  final int stocks;
+
+  /// 1-based round when playing Arcade, null in free fights.
+  final int? arcadeRound;
+
+  MatchConfig copyWith({
+    MemeCharacter? cpu,
+    int? stage,
+    Difficulty? difficulty,
+    int? arcadeRound,
+  }) => MatchConfig(
+    player: player,
+    cpu: cpu ?? this.cpu,
+    stage: stage ?? this.stage,
+    difficulty: difficulty ?? this.difficulty,
+    stocks: stocks,
+    arcadeRound: arcadeRound ?? this.arcadeRound,
+  );
+}
+
+/// "Memes: the game" — a Smash-style brawl between memes.
 class MemesGame extends FlameGame with KeyboardEvents {
-  MemesGame({required this.character, required this.levelIndex})
-    : level = levelAt(levelIndex).copy();
+  MemesGame({required this.config})
+    : stage = Stage.all[config.stage],
+      level = Stage.all[config.stage].build(config.stage);
 
   static const overlayHud = 'hud';
   static const overlayPause = 'pause';
-  static const overlayComplete = 'complete';
-  static const overlayGameOver = 'gameOver';
-  static const overlayIntro = 'intro';
-  static const overlayBoss = 'boss';
+  static const overlayResults = 'results';
+  static const overlayCountdown = 'countdown';
 
-  final MemeCharacter character;
-  final int levelIndex;
+  final MatchConfig config;
+  final Stage stage;
   final LevelData level;
-  final input = GameInput();
 
-  late final Player player;
+  late final Fighter player;
+  late final Fighter cpu;
+  late final CpuBrain brain;
+  final List<Fighter> fighters = [];
+  final List<MovingPlatform> platforms = [];
 
-  /// Hat equipped in the shop (cosmetic).
+  /// Hat equipped in the shop (worn by the player).
   final Hat? hat = LocalStore.ready
       ? Hat.byId(LocalStore.instance.equippedHat)
       : null;
-  final List<Enemy> enemies = [];
-  final List<MovingPlatform> platforms = [];
 
-  /// When each spring tile was last used (for its animation).
-  final Map<int, double> springTimes = {};
-
-  // Run state.
   double elapsed = 0;
-  int likes = 0;
 
-  /// Seconds of slow motion for enemies (Chihuahua Relax's holidays).
-  double slowMo = 0;
-  double get enemyTimeScale => slowMo > 0 ? 0.3 : 1;
-  int likeScore = 0;
-  int kills = 0;
-  int enemyScore = 0;
-  bool finished = false;
+  /// Seconds left in the 3-2-1 countdown (fighters can't act meanwhile).
+  double countdown = 3.2;
+  bool matchOver = false;
+  Fighter? winner;
+  double _resultsIn = 0;
+  double _slowMo = 0;
+  int likesEarned = 0;
 
-  /// True once the player has lost a heart in this run.
-  bool damageTaken = false;
+  /// Called once when the match is decided (true = the player won).
+  void Function(bool won)? onMatchEnd;
+  final hudTick = ValueNotifier<int>(0);
+  double _hudAcc = 0;
 
-  bool _bossIntroDone = false;
-
-  /// Countdown to the "level complete" screen after touching the flag.
-  double? _completeIn;
-  bool isOver = false;
-  bool _bossAlive = false;
-  late Vector2 _checkpoint;
   double _shake = 0;
   double _shakeDur = 1;
   double _shakeAmp = 0;
   double _hitStop = 0;
   final _rnd = Random();
 
-  /// Bumped ~10 times a second so Flutter overlays can rebuild.
-  final hudTick = ValueNotifier<int>(0);
-  double _hudAcc = 0;
-
-  /// Counted before any block is opened.
-  late final int totalLikes;
-  int get timeBonus => max(0, level.parTime - elapsed.floor()) * 5;
-  int get score =>
-      likeScore + enemyScore + (finished ? timeBonus + player.hearts * 100 : 0);
-
-  /// 1 star for finishing, 2 with half the likes, 3 with 90% of them.
-  int get stars {
-    if (!finished) return 0;
-    final ratio = totalLikes == 0 ? 1 : likes / totalLikes;
-    return ratio >= .9 ? 3 : (ratio >= .5 ? 2 : 1);
-  }
+  bool get frozenFighters => countdown > 0 || matchOver;
+  bool get isPaused => overlays.isActive(overlayPause);
 
   @override
   Color backgroundColor() => const Color(0xFF000000);
 
   @override
   Future<void> onLoad() async {
-    totalLikes = level.totalLikes;
+    final theme = level.theme.name;
     await images.loadAll([
-      character.spriteSheet,
-      ?character.afterSpecialSheet,
-      for (final k in EnemyKind.values) k.spritePath,
-      'sprites/tiles_${level.theme.name}.png',
-      'sprites/moving_${level.theme.name}.png',
-      'sprites/props_${level.theme.name}.png',
-      'sprites/bg_${level.theme.name}_mid.png',
+      config.player.spriteSheet,
+      config.cpu.spriteSheet,
+      ?config.player.afterSpecialSheet,
+      ?config.cpu.afterSpecialSheet,
+      'sprites/tiles_$theme.png',
+      'sprites/moving_$theme.png',
+      'sprites/props_$theme.png',
+      'sprites/bg_${theme}_far.png',
+      'sprites/bg_${theme}_mid.png',
+      'sprites/bg_${theme}_clouds.png',
       'sprites/dust.png',
-      'sprites/powerups.png',
-      'sprites/sunglasses.png',
-      Hat.sheet,
       'sprites/sparkle.png',
-      'sprites/bg_${level.theme.name}_far.png',
-      'sprites/bg_${level.theme.name}_clouds.png',
-      'sprites/like.png',
-      'sprites/flag.png',
-      'sprites/checkpoint.png',
-      'sprites/ratio.png',
+      Hat.sheet,
     ]);
-
+    camera.viewfinder.anchor = Anchor.center;
     camera.backdrop.add(Backdrop());
     world.add(LevelMap());
     world.add(Props());
-
-    Vector2? start;
-    for (final s in level.spawns) {
-      final kind = EnemyKind.fromCode(s.code);
-      if (kind != null) {
-        world.add(Enemy(kind: kind, position: s.feet));
-        if (kind.isBoss) _bossAlive = true;
-        continue;
-      }
-      switch (s.code) {
-        case 'P':
-          start = s.feet;
-        case 'o':
-          world.add(Like(position: s.feet - Vector2(0, kTile / 2)));
-        case 'K':
-          world.add(Checkpoint(position: s.feet));
-        case 'F':
-          world.add(FinishFlag(position: s.feet));
-        case 'M':
-          world.add(MovingPlatform(spawn: s));
-      }
+    for (final s in level.spawns.where((s) => s.code == 'M')) {
+      world.add(MovingPlatform(spawn: s));
     }
-    _checkpoint = start ?? Vector2(kTile * 2, kTile * 10);
-    if (_debugStartCol > 0) {
-      _checkpoint = Vector2((_debugStartCol + .5) * kTile, kTile * 2);
-    }
-    player = Player(character: character, position: _checkpoint.clone());
-    world.add(player);
 
-    // Follow a point a bit below the feet, so the player sits above the
-    // touch controls.
-    final target = _CameraTarget(player);
-    world.add(target);
-    camera.follow(target);
-    Sound.music('level');
-    overlays.add(overlayIntro);
+    final top = stage.mainTop * kTile;
+    final l = stage.left * kTile, r = (stage.right + 1) * kTile;
+    final w = r - l;
+    player = Fighter(
+      character: config.player,
+      slot: 0,
+      isCpu: false,
+      stocks: config.stocks,
+      position: Vector2(l + w * .27, top),
+    );
+    cpu = Fighter(
+      character: config.cpu,
+      slot: 1,
+      isCpu: true,
+      stocks: config.stocks,
+      position: Vector2(l + w * .73, top),
+    );
+    fighters.addAll([player, cpu]);
+    world.addAll(fighters);
+    brain = CpuBrain(cpu, player, config.difficulty);
+    for (final f in fighters) {
+      f.respawnAt = Vector2((l + r) / 2, top - kTile * 4);
+    }
+    camera.viewfinder.position = Vector2((l + r) / 2, top - kTile * 2);
+    camera.viewfinder.zoom = _closeZoom;
+    overlays.add(overlayCountdown);
+    Sound.music(stage.music);
     if (LocalStore.ready) {
-      LocalStore.instance.markPlayedWith(character.id);
+      LocalStore.instance.markPlayedWith(config.player.id);
       Achievements.checkStats();
     }
   }
 
-  /// Keeps the view inside the level (Flame's viewport-aware bounds ignore
-  /// the zoom). The extra ground below the level lifts the action above the
-  /// touch controls at the bottom of the screen.
-  /// Open sky the camera may show above the level, so high jumps don't end
-  /// up under the HUD.
-  static const _skyAbove = kTile * 2.5;
-
-  void _clampCamera() {
-    final vf = camera.viewfinder;
-    final half = size / vf.zoom / 2;
-    final maxY = level.height + kGroundBelow;
-    vf.position = Vector2(
-      half.x * 2 >= level.width
-          ? level.width / 2
-          : vf.position.x.clamp(half.x, level.width - half.x),
-      half.y * 2 >= maxY + _skyAbove
-          ? (maxY - _skyAbove) / 2
-          : vf.position.y.clamp(half.y - _skyAbove, maxY - half.y),
-    );
-  }
-
-  @override
-  void onGameResize(Vector2 size) {
-    super.onGameResize(size);
-    // Show ~9.5 tiles vertically, whatever the screen: big enough to read
-    // the memes on a phone, with plenty of room ahead in landscape.
-    camera.viewfinder.zoom = size.y / (kTile * kTilesVisible);
-  }
+  // ----------------------------------------------------------------- update
 
   @override
   void update(double dt) {
@@ -233,41 +185,182 @@ class MemesGame extends FlameGame with KeyboardEvents {
       _updateShake(dt);
       return;
     }
-    if (slowMo > 0) slowMo -= dt;
-    if (!finished && !isOver) elapsed += dt;
-    if (input.jumpBuffer > 0) input.jumpBuffer -= dt;
-    final overIn = _gameOverIn;
-    if (overIn != null) {
-      _gameOverIn = overIn - dt;
-      if (_gameOverIn! <= 0) {
-        _gameOverIn = null;
-        overlays.add(overlayGameOver);
-        pauseEngine();
-      }
+    if (_slowMo > 0) {
+      _slowMo -= dt;
+      dt *= .3;
     }
-    final completeIn = _completeIn;
-    if (completeIn != null) {
-      _completeIn = completeIn - dt;
-      if (_completeIn! <= 0) {
-        _completeIn = null;
-        overlays.remove(overlayHud);
-        overlays.add(overlayComplete);
+    elapsed += dt;
+    if (countdown > -1) {
+      final before = countdown.ceil();
+      countdown -= dt;
+      if (countdown.ceil() != before && countdown > 0) {
+        Sound.play('click', volume: .8);
       }
+      if (before > 0 && countdown <= 0) Sound.play('checkpoint');
+      // "VIA!" stays on screen for a moment.
+      if (countdown <= -.7) overlays.remove(overlayCountdown);
     }
+    if (!frozenFighters) brain.think(dt);
     super.update(dt);
     if (isLoaded) {
-      _clampCamera();
-      _checkBossIntro();
+      _resolveHits();
+      _checkBlastZones();
+      for (final f in fighters) {
+        f.input.endFrame();
+      }
+      _updateCamera(dt);
+    }
+    if (matchOver && _resultsIn > 0) {
+      _resultsIn -= dt;
+      if (_resultsIn <= 0) {
+        overlays.remove(overlayHud);
+        overlays.add(overlayResults);
+      }
     }
     _updateShake(dt);
     _hudAcc += dt;
-    if (_hudAcc > 0.1) {
+    if (_hudAcc > .08) {
       _hudAcc = 0;
       hudTick.value++;
     }
   }
 
-  // ----------------------------------------------------------------- input
+  void _resolveHits() {
+    for (final a in fighters) {
+      final box = a.hitbox;
+      if (box == null || !a.alive) continue;
+      for (final b in fighters) {
+        if (b == a || !b.alive || b.intangible) continue;
+        if (box.overlaps(b.hurtbox)) a.tryHit(b);
+      }
+    }
+  }
+
+  Rect get blastZone => Rect.fromLTRB(
+    -Stage.blastSide * kTile,
+    -Stage.blastTop * kTile,
+    (Stage.cols + Stage.blastSide) * kTile,
+    (Stage.rows + Stage.blastBottom) * kTile,
+  );
+
+  void _checkBlastZones() {
+    final zone = blastZone;
+    for (final f in fighters) {
+      if (!f.alive) continue;
+      final p = f.mid;
+      if (zone.contains(p.toOffset())) continue;
+      _ko(f, p, zone);
+    }
+  }
+
+  void _ko(Fighter f, Vector2 at, Rect zone) {
+    final view = camera.visibleWorldRect;
+    final edge = Vector2(
+      at.x.clamp(view.left + 10, view.right - 10),
+      at.y.clamp(view.top + 10, view.bottom - 10),
+    );
+    final inward = (Vector2(view.center.dx, view.center.dy) - edge)..normalize();
+    world.add(
+      KoBlast(
+        position: edge,
+        direction: Offset(inward.x, inward.y),
+        color: f.slot == 0 ? const Color(0xFFFF82B4) : const Color(0xFF7CC8FF),
+      ),
+    );
+    world.add(Confetti(position: edge.clone(), count: 40));
+    shake(.5, intensity: 8);
+    hitStop(.08);
+    Sound.play('boss_roar', volume: .7);
+    Sound.haptic(strong: true);
+    f.blastOff();
+    if (f.stocks <= 0) {
+      _endMatch(winner: fighters.firstWhere((o) => o != f));
+    }
+  }
+
+  void _endMatch({required Fighter winner}) {
+    if (matchOver) return;
+    matchOver = true;
+    this.winner = winner;
+    _slowMo = 1.2;
+    _resultsIn = 2.2;
+    for (final f in fighters) {
+      f.input.clear();
+    }
+    Sound.stopMusic();
+    Sound.play(winner == player ? 'finish' : 'gameover');
+    _recordResult();
+    onMatchEnd?.call(winner == player);
+  }
+
+  /// Likes for the shop + stats + trophies.
+  void _recordResult() {
+    final won = winner == player;
+    var likes = won
+        ? 40 + player.kos * 10 + switch (config.difficulty) {
+            Difficulty.easy => 0,
+            Difficulty.normal => 20,
+            Difficulty.hard => 50,
+          }
+        : 10 + player.kos * 5;
+    var mult = 1.0;
+    if (config.player.passive == Passive.jewels) mult *= 2;
+    if (config.player.passive == Passive.hustle) mult *= 1.5;
+    if (config.player.isOfTheDay) mult *= 2;
+    likes = (likes * mult).round();
+    likesEarned = likes;
+    if (!LocalStore.ready) return;
+    final s = LocalStore.instance;
+    s.addToWallet(likes);
+    s.addStat('matches', 1);
+    s.addStat('kos', player.kos);
+    s.addStat('specials', player.specialsUsed);
+    s.addStat('damage', player.damageDealt.round());
+    if (won) {
+      s.addStat('wins', 1);
+      if (config.difficulty == Difficulty.hard) s.addStat('hard_wins', 1);
+      if (player.falls == 0) Achievements.unlock('perfect');
+      if (player.percent >= 150) Achievements.unlock('survivor');
+      s.markWonWith(config.player.id);
+    }
+    if (player.smashKos > 0) Achievements.unlock('smash_ko');
+    Achievements.checkStats();
+  }
+
+  // ----------------------------------------------------------------- camera
+
+  double get _closeZoom => size.y / (kTile * 9.5);
+  double get _wideZoom => size.y / (kTile * 17);
+
+  void _updateCamera(double dt) {
+    final pts = [
+      for (final f in fighters)
+        if (f.alive) f.mid,
+    ];
+    if (pts.isEmpty) return;
+    var minX = pts.map((p) => p.x).reduce(min) - 110;
+    var maxX = pts.map((p) => p.x).reduce(max) + 110;
+    var minY = pts.map((p) => p.y).reduce(min) - 90;
+    var maxY = pts.map((p) => p.y).reduce(max) + 80;
+    // Always keep a bit of the main island in view.
+    final top = stage.mainTop * kTile;
+    maxY = max(maxY, top + kTile * 2);
+    // Don't chase fighters deep into the blast zone.
+    final zone = blastZone.deflate(kTile * 2);
+    minX = max(minX, zone.left);
+    maxX = min(maxX, zone.right);
+    minY = max(minY, zone.top);
+    maxY = min(maxY, zone.bottom);
+    final fit = min(size.x / (maxX - minX), size.y / (maxY - minY));
+    final zoom = fit.clamp(_wideZoom, _closeZoom);
+    final vf = camera.viewfinder;
+    final k = min(1.0, dt * 4);
+    vf.zoom += (zoom - vf.zoom) * k;
+    final target = Vector2((minX + maxX) / 2, (minY + maxY) / 2);
+    vf.position = vf.position + (target - vf.position) * min(1.0, dt * 5);
+  }
+
+  // ------------------------------------------------------------------ input
 
   @override
   KeyEventResult onKeyEvent(
@@ -275,26 +368,30 @@ class MemesGame extends FlameGame with KeyboardEvents {
     Set<LogicalKeyboardKey> keysPressed,
   ) {
     bool any(List<LogicalKeyboardKey> keys) => keys.any(keysPressed.contains);
-    const jumpKeys = [
-      LogicalKeyboardKey.space,
-      LogicalKeyboardKey.arrowUp,
-      LogicalKeyboardKey.keyW,
-      LogicalKeyboardKey.keyZ,
+    final i = player.input;
+    final left = any([LogicalKeyboardKey.arrowLeft, LogicalKeyboardKey.keyA]);
+    final right = any([LogicalKeyboardKey.arrowRight, LogicalKeyboardKey.keyD]);
+    i.x = (right ? 1.0 : 0) - (left ? 1.0 : 0);
+    i.up = any([LogicalKeyboardKey.arrowUp, LogicalKeyboardKey.keyW]);
+    i.down = any([LogicalKeyboardKey.arrowDown, LogicalKeyboardKey.keyS]);
+    const jumpKeys = [LogicalKeyboardKey.space, LogicalKeyboardKey.keyZ];
+    const attackKeys = [LogicalKeyboardKey.keyX, LogicalKeyboardKey.keyJ];
+    const specialKeys = [LogicalKeyboardKey.keyC, LogicalKeyboardKey.keyK];
+    const shieldKeys = [
+      LogicalKeyboardKey.keyV,
+      LogicalKeyboardKey.keyL,
+      LogicalKeyboardKey.shiftLeft,
+      LogicalKeyboardKey.shiftRight,
     ];
-    input.left = any([LogicalKeyboardKey.arrowLeft, LogicalKeyboardKey.keyA]);
-    input.right = any([LogicalKeyboardKey.arrowRight, LogicalKeyboardKey.keyD]);
-    input.jump = any(jumpKeys);
+    i.jump = any(jumpKeys);
+    i.attack = any(attackKeys);
+    i.special = any(specialKeys);
+    i.shield = any(shieldKeys);
     if (event is KeyDownEvent) {
       final k = event.logicalKey;
-      if (jumpKeys.contains(k)) input.pressJump();
-      if (k == LogicalKeyboardKey.keyX ||
-          k == LogicalKeyboardKey.keyK ||
-          k == LogicalKeyboardKey.keyJ ||
-          k == LogicalKeyboardKey.keyC ||
-          k == LogicalKeyboardKey.shiftLeft ||
-          k == LogicalKeyboardKey.shiftRight) {
-        input.specialQueued = true;
-      }
+      if (jumpKeys.contains(k)) i.jumpPressed = true;
+      if (attackKeys.contains(k)) i.attackPressed = true;
+      if (specialKeys.contains(k)) i.specialPressed = true;
       if (k == LogicalKeyboardKey.escape || k == LogicalKeyboardKey.keyP) {
         togglePause();
       }
@@ -302,274 +399,22 @@ class MemesGame extends FlameGame with KeyboardEvents {
     return KeyEventResult.handled;
   }
 
-  // ----------------------------------------------------------- level events
-
-  // Likes picked up in quick succession play rising notes.
-  int _likeStreak = 0;
-  double _lastLike = -1;
-
-  void collectLike(Like like) {
-    likes++;
-    _likeStreak = elapsed - _lastLike < 0.6 ? _likeStreak + 1 : 0;
-    _lastLike = elapsed;
-    final value =
-        10 * multiplier * (character.passive == Passive.jewels ? 2 : 1);
-    likeScore += value;
-    Sound.play(
-      _likeStreak == 0 ? 'like' : 'like_${min(_likeStreak, 5)}',
-      volume: .45,
-    );
-    if (likes == totalLikes && totalLikes > 0) {
-      // Every like in the level: a little party.
-      Sound.play('checkpoint');
-      world.add(Confetti(position: player.position - Vector2(0, 40)));
-      world.add(
-        FloatingText(
-          position: player.position - Vector2(0, 90),
-          text: 'TUTTI I LIKE!',
-          fontSize: 16,
-          color: const Color(0xFFFF82B4),
-          duration: 1.6,
-        ),
-      );
-    }
-    world.add(Sparkles(position: like.position.clone()));
-    world.add(
-      FloatingText(
-        position: like.position - Vector2(0, 10),
-        text: '+$value',
-        fontSize: 8,
-        color: const Color(0xFFFF82B4),
-        duration: 0.6,
-      ),
-    );
-  }
-
-  void springUsed(int col, int row) {
-    springTimes[row * 10000 + col] = elapsed;
-  }
-
-  /// The player's head hit a solid tile from below.
-  void bumpBlock(int col, int row) {
-    final t = level.tileAt(col, row);
-    if (t == '!') {
-      Sound.play('block');
-      Sound.play('special', volume: .4);
-      level.setTile(col, row, 'U');
-      final kinds = PowerUpKind.values;
-      world.add(
-        PowerUpItem(
-          position: Vector2((col + .5) * kTile, row * kTile - 2),
-          kind: kinds[(col * 31 + row * 17 + level.index) % kinds.length],
-        ),
-      );
-      return;
-    }
-    if (t != '?') return;
-    Sound.play('block');
-    level.setTile(col, row, 'U');
-    world.add(
-      Like(
-        position: Vector2((col + .5) * kTile, row * kTile - 6),
-        popped: true,
-      ),
-    );
-  }
-
-  void collectPowerUp(PowerUpItem item) {
-    Sound.play('checkpoint');
-    Sound.haptic();
-    world.add(Confetti(position: item.position.clone(), count: 24));
-    world.add(
-      FloatingText(
-        position: player.position - Vector2(0, 74),
-        text: item.kind.shout,
-        fontSize: 14,
-        color: const Color(0xFFFFD86A),
-        duration: 1.4,
-      ),
-    );
-    player.applyPowerUp(item.kind);
-    if (item.kind == PowerUpKind.sunglasses) Achievements.unlock('deal');
-    if (item.kind == PowerUpKind.stonks) Achievements.unlock('stonks');
-  }
-
-  /// Points multiplier while the Stonks power-up is active.
-  int get multiplier => player.power == PowerUpKind.stonks ? 2 : 1;
-
-  void reachCheckpoint(Checkpoint cp) {
-    _checkpoint = cp.position.clone();
-    player.onCheckpoint();
-    Sound.play('checkpoint');
-    world.add(Confetti(position: cp.position - Vector2(0, 30), count: 30));
-    world.add(
-      FloatingText(position: cp.position - Vector2(0, 52), text: 'SALVATO!'),
-    );
-  }
-
-  void onEnemyKilled(Enemy e) {
-    kills++;
-    final drip = character.passive == Passive.drip ? 3 : 1;
-    enemyScore += e.kind.score * multiplier * drip;
-    world.add(
-      FloatingText(
-        position: e.position - Vector2(0, 34),
-        text: '+${e.kind.score * multiplier * drip}',
-        fontSize: 9,
-        color: const Color(0xFFFFD86A),
-        duration: 0.7,
-      ),
-    );
-    if (e.kind.isBoss) {
-      _bossAlive = false;
-      _openGates();
-      shake(0.6);
-      camera.viewport.add(ScreenFlash(color: const Color(0x662ECC71)));
-      world.add(
-        FloatingText(
-          position: e.position - Vector2(0, 70),
-          text: 'ALGORITMO SCONFITTO!',
-          fontSize: 14,
-          color: const Color(0xFFFFD54F),
-          duration: 2.2,
-        ),
-      );
-    }
-  }
-
-  /// When the player gets close to L'Algoritmo: roar, banner, boss music.
-  void _checkBossIntro() {
-    if (_bossIntroDone || !_bossAlive) return;
-    for (final e in enemies) {
-      if (e.kind.isBoss && (e.position.x - player.position.x).abs() < 380) {
-        _bossIntroDone = true;
-        Sound.music('boss');
-        Sound.play('boss_roar');
-        shake(0.6);
-        overlays.add(overlayBoss);
-        return;
-      }
-    }
-  }
-
-  void spawnMinion(Vector2 at) {
-    if (!_bossAlive) return;
-    final kind = _rnd.nextBool() ? EnemyKind.normie : EnemyKind.cringe;
-    world.add(Enemy(kind: kind, position: at - Vector2(0, 30)));
-  }
-
-  void _openGates() {
-    for (var r = 0; r < level.rows; r++) {
-      for (var c = 0; c < level.cols; c++) {
-        if (level.tileAt(c, r) == 'G') level.setTile(c, r, ' ');
-      }
-    }
-  }
-
-  void fellInPit() {
-    if (finished || isOver) return;
-    if (character.passive == Passive.respawnCheat) {
-      // GTA rules: you just wake up at the hospital (the checkpoint).
-      Sound.play('hurt');
-      player.respawn(_checkpoint.clone());
-      camera.viewfinder.position = _checkpoint + Vector2(20, 12);
-      world.add(
-        FloatingText(
-          position: _checkpoint - Vector2(0, 70),
-          text: 'WASTED',
-          fontSize: 20,
-          color: const Color(0xFFFF4D5E),
-          duration: 1.6,
-        ),
-      );
-      return;
-    }
-    player.hearts--;
-    damageTaken = true;
-    Sound.play('hurt');
-    shake(0.3);
-    if (player.hearts <= 0) {
-      gameOver();
-      return;
-    }
-    player.respawn(_checkpoint.clone());
-    camera.viewfinder.position = _checkpoint + Vector2(20, 12);
-  }
-
-  void finish() {
-    if (finished) return;
-    finished = true;
-    input.clear();
-    Sound.stopMusic();
-    Sound.play('finish');
-    Sound.haptic(strong: true);
-    world.add(Confetti(position: player.position - Vector2(0, 40), count: 80));
-    world.add(
-      FloatingText(
-        position: player.position - Vector2(0, 80),
-        text: 'VIRALE!',
-        fontSize: 18,
-        color: const Color(0xFFFFD54F),
-        duration: 2,
-      ),
-    );
-    _completeIn = 1.4;
-  }
-
-  void gameOver() {
-    if (isOver) return;
-    isOver = true;
-    input.clear();
-    recordRunStats();
-    Sound.stopMusic();
-    Sound.play('gameover');
-    Sound.haptic(strong: true);
-    hudTick.value++;
-    overlays.remove(overlayHud);
-    // The meme does a sad little hop off the screen before the panel.
-    player.die();
-    shake(0.3, intensity: 5);
-    _gameOverIn = 1.5;
-  }
-
-  double? _gameOverIn;
-
-  /// Likes this run adds to the shop wallet (hen hustle, meme of the day).
-  int get walletGain =>
-      (likes *
-              (character.passive == Passive.hustle ? 1.5 : 1) *
-              (character.isOfTheDay ? 2 : 1))
-          .round();
-
-  /// Saves likes (to the shop wallet) and stomps from this run.
-  void recordRunStats() {
-    if (!LocalStore.ready || _statsRecorded) return;
-    _statsRecorded = true;
-    final s = LocalStore.instance;
-    s.addToWallet(walletGain);
-    s.addStat('likes', likes);
-    s.addStat('stomps', kills);
-    Achievements.checkStats();
-  }
-
-  bool _statsRecorded = false;
-
-  bool get isPaused => overlays.isActive(overlayPause);
+  // ------------------------------------------------------------------ pause
 
   /// Pauses (never resumes): used when the app goes to the background.
   void pauseIfPlaying() {
-    if (!isPaused && !isOver && !finished && isLoaded) togglePause();
+    if (!isPaused && !matchOver && isLoaded) togglePause();
   }
 
   void togglePause() {
-    if (isOver || finished) return;
-    if (overlays.isActive(overlayPause)) {
+    if (matchOver) return;
+    if (isPaused) {
       overlays.remove(overlayPause);
       resumeEngine();
       Sound.held = false;
       Sound.resumeMusic();
     } else {
-      input.clear();
+      player.input.clear();
       overlays.add(overlayPause);
       pauseEngine();
       Sound.pauseMusic();
@@ -577,7 +422,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
   }
 
-  // ----------------------------------------------------------- camera shake
+  // ------------------------------------------------------------------ juice
 
   /// Screen shake that fades out; [intensity] is the max offset in pixels.
   void shake(double seconds, {double intensity = 4}) {
@@ -609,42 +454,5 @@ class MemesGame extends FlameGame with KeyboardEvents {
     Sound.held = false;
     hudTick.dispose();
     super.onRemove();
-  }
-}
-
-/// Where the camera looks: a smoothed point that leads the player in the
-/// direction they run (so you see what's coming) and dips when falling.
-class _CameraTarget extends PositionComponent {
-  _CameraTarget(this.player);
-
-  final Player player;
-  double _ahead = 20;
-  bool _placed = false;
-
-  @override
-  void update(double dt) {
-    final p = player.position;
-    final speed = player.velocity.x;
-    final wantAhead = speed.abs() > 40
-        ? speed.sign * 70
-        : (player.facingRight ? 30.0 : -30.0);
-    _ahead += (wantAhead - _ahead) * min(1.0, dt * 2.2);
-    final fall = player.velocity.y > 300 ? 36.0 : 0.0;
-    final wantX = p.x + _ahead;
-    final wantY = p.y + 12 + fall;
-    if (!_placed ||
-        (position.x - wantX).abs() > 400 ||
-        (position.y - wantY).abs() > 300) {
-      // First frame or respawn: jump straight there.
-      _placed = true;
-      position.setValues(wantX, wantY);
-      return;
-    }
-    position.x += (wantX - position.x) * min(1.0, dt * 9);
-    // Vertical: a touch lazier going up (no jitter on small hops), quick
-    // when falling; far away (big jumps, springs) it catches up fast.
-    final gap = (wantY - position.y).abs();
-    final ky = (wantY > position.y ? 9.0 : 6.0) + (gap > 90 ? 6 : 0);
-    position.y += (wantY - position.y) * min(1.0, dt * ky);
   }
 }

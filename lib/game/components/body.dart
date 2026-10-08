@@ -15,6 +15,9 @@ mixin TileBody on PositionComponent, HasGameReference<MemesGame>
   bool onGround = false;
   bool hitWall = false;
 
+  /// While true, one-way platforms are ignored (dropping through them).
+  bool dropThrough = false;
+
   /// Moving platform / frozen enemy we are standing on, if any.
   Surface? standingOn;
 
@@ -53,7 +56,14 @@ mixin TileBody on PositionComponent, HasGameReference<MemesGame>
       ..y = position.y
       ..vx = velocity.x
       ..vy = velocity.y;
-    stepBox(game.level, b, dt, extra: extraPlatforms, onCeiling: onCeiling);
+    stepBox(
+      game.level,
+      b,
+      dt,
+      extra: extraPlatforms,
+      onCeiling: onCeiling,
+      ignoreOneWay: dropThrough,
+    );
     position.setValues(b.x, b.y);
     velocity.setValues(b.vx, b.vy);
     onGround = b.onGround;

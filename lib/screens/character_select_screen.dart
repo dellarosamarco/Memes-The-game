@@ -4,13 +4,21 @@ import 'dart:ui' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../game/fighter/fighter.dart';
 import '../models/meme_character.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
-import 'world_map_screen.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
-  const CharacterSelectScreen({super.key});
+  const CharacterSelectScreen({
+    super.key,
+    required this.onChosen,
+    this.title = 'Scegli il tuo meme',
+  });
+
+  /// What happens once the player picks a meme (opens the next screen).
+  final void Function(BuildContext context, MemeCharacter character) onChosen;
+  final String title;
 
   @override
   State<CharacterSelectScreen> createState() => _CharacterSelectScreenState();
@@ -71,8 +79,8 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      const Expanded(
-                        child: PixelText('Scegli il tuo meme', size: 24),
+                      Expanded(
+                        child: PixelText(widget.title, size: 24),
                       ),
                       const SizedBox(width: 56),
                     ],
@@ -137,7 +145,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                               separatorBuilder: (_, _) =>
                                   const SizedBox(width: 6),
                               itemBuilder: (_, i) => Center(
-                                child: _Thumb(
+                                child: MemeThumb(
                                   character: chars[i],
                                   selected: i == _index,
                                   onTap: () => setState(() => _index = i),
@@ -161,11 +169,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                         label: 'Scegli',
                         icon: 'play',
                         color: PixelColor.pink,
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => WorldMapScreen(character: c),
-                          ),
-                        ),
+                        onPressed: () => widget.onChosen(context, c),
                       ),
                     ],
                   ),
@@ -249,20 +253,12 @@ class _Info extends StatelessWidget {
           const SizedBox(height: 6),
           Text(c.lore, style: body),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 14,
             children: [
-              for (var i = 0; i < c.hearts; i++)
-                const Padding(
-                  padding: EdgeInsets.only(right: 3),
-                  child: PixelIcon('heart', scale: 1.6),
-                ),
-              const SizedBox(width: 10),
-              PixelText(
-                'Velocità ${c.runSpeed.round()}',
-                size: 13,
-                color: kPlum,
-                outline: false,
-              ),
+              _Stat('Velocità', Fighter.speedRating(c)),
+              _Stat('Salto', Fighter.jumpRating(c)),
+              _Stat('Peso', Fighter.weightRating(c)),
             ],
           ),
           const SizedBox(height: 8),
@@ -338,16 +334,20 @@ class _Ability extends StatelessWidget {
   }
 }
 
-class _Thumb extends StatelessWidget {
-  const _Thumb({
+/// Small portrait tile, highlighted when [selected].
+class MemeThumb extends StatelessWidget {
+  const MemeThumb({
+    super.key,
     required this.character,
     required this.selected,
     required this.onTap,
+    this.size = 54,
   });
 
   final MemeCharacter character;
   final bool selected;
   final VoidCallback onTap;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -355,8 +355,8 @@ class _Thumb extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        width: selected ? 64 : 54,
-        height: selected ? 64 : 54,
+        width: selected ? size + 10 : size,
+        height: selected ? size + 10 : size,
         padding: const EdgeInsets.all(6),
         decoration: pixelFrame(
           selected
@@ -384,6 +384,40 @@ class _Thumb extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// A tiny 5-segment stat bar.
+class _Stat extends StatelessWidget {
+  const _Stat(this.label, this.value);
+
+  final String label;
+
+  /// 0..1
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
+    final filled = (value.clamp(0.0, 1.0) * 4).round() + 1;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PixelText(label, size: 12, color: kPlum, outline: false),
+        const SizedBox(width: 5),
+        for (var i = 0; i < 5; i++)
+          Container(
+            width: 9,
+            height: 10,
+            margin: const EdgeInsets.only(right: 2),
+            decoration: BoxDecoration(
+              color: i < filled
+                  ? const Color(0xFFFF82B4)
+                  : const Color(0x333A2440),
+              border: Border.all(color: kPlum, width: 1.5),
+            ),
+          ),
+      ],
     );
   }
 }

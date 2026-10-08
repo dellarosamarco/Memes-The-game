@@ -55,6 +55,7 @@ void stepBox(
   double dt, {
   Iterable<Surface> extra = const [],
   void Function(int col, int row)? onCeiling,
+  bool ignoreOneWay = false,
 }) {
   b.hitWall = false;
   b.landCol = null;
@@ -98,7 +99,8 @@ void stepBox(
     final rowTop = r * kTile;
     for (var c = c0; c <= c1; c++) {
       final solid = level.isSolid(c, r);
-      final oneWay = level.isOneWay(c, r) && prevBottom <= rowTop + 0.5;
+      final oneWay =
+          !ignoreOneWay && level.isOneWay(c, r) && prevBottom <= rowTop + 0.5;
       if (solid || oneWay) {
         b.y = rowTop;
         b.vy = 0;
@@ -109,7 +111,7 @@ void stepBox(
         if (level.tileAt(c, r) == 'S') break;
       }
     }
-    if (!b.onGround) {
+    if (!b.onGround && !ignoreOneWay) {
       for (final p in extra) {
         if (b.right > p.left &&
             b.left < p.right &&

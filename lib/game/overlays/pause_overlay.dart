@@ -10,7 +10,7 @@ class PauseOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = game.character;
+    final c = game.config.player;
     const body = TextStyle(
       fontFamily: kPixelFont,
       fontSize: 13,
@@ -28,7 +28,7 @@ class PauseOverlay extends StatelessWidget {
             children: [
               const PixelText('Pausa', size: 34, color: Color(0xFFFF82B4)),
               PixelText(
-                'Livello ${game.level.name} · ${game.level.subtitle}',
+                '${c.name} vs ${game.config.cpu.name} · ${game.stage.name}',
                 size: 14,
                 color: kPlum,
                 outline: false,
@@ -64,7 +64,9 @@ class PauseOverlay extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Frecce/A-D muoviti · SPAZIO salta · X speciale · ESC pausa',
+                'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
+                'C/K speciale · V/L/SHIFT scudo · ESC pausa\n'
+                'Su + speciale: recupero · tieni premuto attacco: smash',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: kPixelFont,

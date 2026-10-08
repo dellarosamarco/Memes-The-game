@@ -1,6 +1,6 @@
-import '../models/meme_character.dart';
-
 import 'package:flutter/foundation.dart';
+
+import '../models/meme_character.dart';
 
 import 'local_store.dart';
 import 'sound.dart';
@@ -17,23 +17,22 @@ class Achievements {
   Achievements._();
 
   static const all = [
-    Trophy('first_win', 'Primo post', 'Completa il tuo primo livello.'),
-    Trophy('three_stars', 'Perfezionista', 'Finisci un livello con 3 stelle.'),
-    Trophy('no_damage', 'Intoccabile', 'Finisci un livello senza farti male.'),
-    Trophy('speedrun', 'Speedrunner', 'Finisci un livello in meno di 30 s.'),
-    Trophy('boss', 'Anti-algoritmo', "Sconfiggi L'Algoritmo."),
-    Trophy('combo3', 'Triple kill', 'Schiaccia 3 nemici senza toccare terra.'),
-    Trophy('combo6', 'MONSTER KILL', 'Schiaccia 6 nemici senza toccare terra.'),
-    Trophy('stomp100', 'Calpestatore', 'Schiaccia 100 nemici in totale.'),
-    Trophy('likes1000', 'Influencer', 'Raccogli 1000 like in totale.'),
-    Trophy('deal', 'Deal with it', 'Indossa gli occhiali da sole.'),
-    Trophy('stonks', 'Stonks', 'Prendi il power-up Stonks.'),
-    Trophy('nap', 'Pisolino', 'Lascia dormire il tuo meme.'),
-    Trophy('respects', 'F', 'Rendi omaggio 10 volte.'),
+    Trophy('first_win', 'Primo sangue', 'Vinci il tuo primo incontro.'),
+    Trophy('perfect', 'Intoccabile', 'Vinci senza perdere nemmeno una vita.'),
+    Trophy('survivor', 'Duro a morire', 'Vinci con il 150% di danni o più.'),
+    Trophy('smash_ko', 'SMASH!', "Manda KO l'avversario con uno smash."),
+    Trophy('hard_win', 'Pro player', 'Vinci un incontro a Difficile.'),
+    Trophy('wins10', 'Campione del feed', 'Vinci 10 incontri.'),
+    Trophy('wins50', 'Leggenda di internet', 'Vinci 50 incontri.'),
+    Trophy('kos100', 'Ratio', 'Manda KO 100 avversari in totale.'),
+    Trophy('specials100', 'Spammone', 'Usa 100 mosse speciali.'),
+    Trophy('damage5000', 'Danni collaterali', 'Infliggi 5000% di danni in totale.'),
+    Trophy('arcade', 'Re dell\'Arcade', 'Completa la modalità Arcade.'),
+    Trophy('arcade_hard', "Boss finale", 'Completa l\'Arcade a Difficile.'),
     Trophy('shopper', 'Fashion meme', 'Compra un cappellino.'),
+    Trophy('respects', 'F', 'Rendi omaggio 10 volte.'),
     Trophy('all_memes', 'Collezionista', 'Gioca con tutti i meme.'),
-    Trophy('world5', 'A metà strada', 'Sblocca il mondo 5.'),
-    Trophy('world10', 'Il Server', 'Sblocca il mondo 10.'),
+    Trophy('all_wins', 'Tuttofare', 'Vinci almeno una volta con ogni meme.'),
   ];
 
   /// Trophies waiting to be shown as toasts.
@@ -57,13 +56,18 @@ class Achievements {
   static void checkStats() {
     if (!LocalStore.ready) return;
     final s = LocalStore.instance;
-    if (s.stat('stomps') >= 100) unlock('stomp100');
-    if (s.stat('likes') >= 1000) unlock('likes1000');
+    if (s.stat('wins') >= 1) unlock('first_win');
+    if (s.stat('wins') >= 10) unlock('wins10');
+    if (s.stat('wins') >= 50) unlock('wins50');
+    if (s.stat('hard_wins') >= 1) unlock('hard_win');
+    if (s.stat('kos') >= 100) unlock('kos100');
+    if (s.stat('specials') >= 100) unlock('specials100');
+    if (s.stat('damage') >= 5000) unlock('damage5000');
     if (s.stat('respects') >= 10) unlock('respects');
+    if (s.arcadeTitles >= 1) unlock('arcade');
     if (s.playedWith.length >= MemeCharacter.all.length) {
       unlock('all_memes');
     }
-    if (s.unlockedLevels > 200) unlock('world5');
-    if (s.unlockedLevels > 450) unlock('world10');
+    if (s.wonWith.length >= MemeCharacter.all.length) unlock('all_wins');
   }
 }

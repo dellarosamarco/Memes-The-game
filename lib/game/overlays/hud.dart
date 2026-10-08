@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../../services/sound.dart';
 import '../../widgets/pixel_ui.dart';
+import '../fighter/fighter.dart';
 import '../memes_game.dart';
 
+/// In-fight HUD: both fighters' cards on top, touch controls at the bottom.
 class Hud extends StatelessWidget {
   const Hud({super.key, required this.game});
 
@@ -16,7 +20,25 @@ class Hud extends StatelessWidget {
         children: [
           ValueListenableBuilder<int>(
             valueListenable: game.hudTick,
-            builder: (context, _, _) => _TopBar(game: game),
+            builder: (context, _, _) => Padding(
+              padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FighterCard(fighter: game.player),
+                  const Spacer(),
+                  PixelButton(
+                    icon: 'pause',
+                    color: PixelColor.grey,
+                    height: 46,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    onPressed: game.togglePause,
+                  ),
+                  const Spacer(),
+                  FighterCard(fighter: game.cpu),
+                ],
+              ),
+            ),
           ),
           _TouchControls(game: game),
         ],
@@ -25,122 +47,148 @@ class Hud extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.game});
+/// Portrait, damage % (white → yellow → red) and remaining lives.
+class FighterCard extends StatelessWidget {
+  const FighterCard({super.key, required this.fighter});
 
-  final MemesGame game;
+  final Fighter fighter;
+
+  static Color percentColor(double p) {
+    if (p < 50) return Colors.white;
+    if (p < 100) {
+      return Color.lerp(Colors.white, const Color(0xFFFFD23F), (p - 50) / 50)!;
+    }
+    if (p < 160) {
+      return Color.lerp(
+        const Color(0xFFFFD23F),
+        const Color(0xFFFF4D5E),
+        (p - 100) / 60,
+      )!;
+    }
+    return Color.lerp(
+      const Color(0xFFFF4D5E),
+      const Color(0xFF9B1B30),
+      min(1.0, (p - 160) / 100),
+    )!;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final p = game.player;
-    final t = game.elapsed;
-    final time = '${t ~/ 60}:${(t % 60).floor().toString().padLeft(2, '0')}';
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+    final f = fighter;
+    final tag = f.slot == 0 ? const Color(0xFFFF4F8E) : const Color(0xFF4FA8FF);
+    final ko = !f.alive;
+    return PixelPanel(
+      px: 1.5,
+      padding: const EdgeInsets.fromLTRB(8, 6, 12, 9),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          PixelPanel(
-            px: 1.5,
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 11),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _Bump(
-                  value: p.hearts,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (var i = 0; i < game.character.hearts; i++)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 3),
-                          child: _Heart(
-                            full: i < p.hearts,
-                            // The last heart left beats: you're in danger.
-                            beating: p.hearts == 1 && i == 0,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                _Bump(
-                  value: game.likes,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const PixelIcon('like', scale: 1.8),
-                      const SizedBox(width: 4),
-                      PixelText(
-                        '${game.likes}/${game.totalLikes}',
-                        size: 17,
-                        color: kPlum,
-                        outline: false,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: tag.withValues(alpha: .25),
+              border: Border.all(color: tag, width: 2),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Opacity(
+              opacity: ko ? .35 : 1,
+              child: Image.asset(
+                f.character.portraitAsset,
+                filterQuality: FilterQuality.none,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
-          if (p.power != null) ...[
-            const SizedBox(width: 8),
-            PixelPanel(
-              px: 1.5,
-              padding: const EdgeInsets.fromLTRB(10, 6, 12, 9),
-              child: Row(
+          const SizedBox(width: 8),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _Shake(
+                value: f.percent.floor(),
+                child: PixelText(
+                  ko ? '--' : '${f.percent.floor()}%',
+                  size: 22,
+                  color: percentColor(f.percent),
+                ),
+              ),
+              Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SheetIcon(
-                    asset: 'assets/images/sprites/powerups.png',
-                    index: p.power!.index,
-                    frames: 4,
-                    size: 16,
-                    scale: 1.6,
-                  ),
-                  const SizedBox(width: 6),
+                  for (var i = 0; i < max(f.stocks, 0); i++)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: Container(
+                        width: 9,
+                        height: 9,
+                        decoration: BoxDecoration(
+                          color: tag,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: kPlum, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(width: 4),
                   PixelText(
-                    '${p.powerTime.ceil()}s',
-                    size: 14,
+                    f.isCpu ? 'CPU' : 'TU',
+                    size: 10,
                     color: kPlum,
                     outline: false,
                   ),
                 ],
               ),
-            ),
-          ],
-          const Spacer(),
-          PixelPanel(
-            px: 1.5,
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 11),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                PixelText(
-                  game.level.name,
-                  size: 17,
-                  color: const Color(0xFFFF82B4),
-                  outline: false,
-                ),
-                const SizedBox(width: 12),
-                const PixelIcon('clock', scale: 1.8),
-                const SizedBox(width: 4),
-                PixelText(time, size: 17, color: kPlum, outline: false),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          PixelButton(
-            icon: 'pause',
-            color: PixelColor.grey,
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            onPressed: game.togglePause,
+            ],
           ),
         ],
       ),
     );
   }
+}
+
+/// Shakes its child when [value] jumps (a hit landed).
+class _Shake extends StatefulWidget {
+  const _Shake({required this.value, required this.child});
+
+  final int value;
+  final Widget child;
+
+  @override
+  State<_Shake> createState() => _ShakeState();
+}
+
+class _ShakeState extends State<_Shake> with SingleTickerProviderStateMixin {
+  late final _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 280),
+  );
+
+  @override
+  void didUpdateWidget(_Shake old) {
+    super.didUpdateWidget(old);
+    if (widget.value > old.value) _ctrl.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _ctrl,
+    builder: (context, child) {
+      final v = _ctrl.isAnimating ? _ctrl.value : 1.0;
+      final dx = sin(v * pi * 8) * 4 * (1 - v);
+      final s = 1 + .35 * (1 - v);
+      return Transform.translate(
+        offset: Offset(dx, 0),
+        child: Transform.scale(scale: s, alignment: Alignment.centerLeft, child: child),
+      );
+    },
+    child: widget.child,
+  );
 }
 
 class _TouchControls extends StatelessWidget {
@@ -150,32 +198,80 @@ class _TouchControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final input = game.input;
+    final input = game.player.input;
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _DPad(input: input),
+            _Joystick(input: input),
             const Spacer(),
-            ValueListenableBuilder<int>(
-              valueListenable: game.hudTick,
-              builder: (context, _, _) => _SpecialButton(game: game),
-            ),
-            const SizedBox(width: 12),
-            _HoldButton(
-              icon: 'up',
-              size: 86,
-              color: 'pink',
-              onChanged: (v) {
-                if (v) {
-                  input.pressJump();
-                } else {
-                  input.jump = false;
-                }
-              },
+            SizedBox(
+              width: 190,
+              height: 150,
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 0,
+                    bottom: 6,
+                    child: _HoldButton(
+                      icon: 'shield',
+                      label: 'Scudo',
+                      size: 54,
+                      color: 'grey',
+                      onChanged: (v) => input.shield = v,
+                    ),
+                  ),
+                  Positioned(
+                    left: 54,
+                    bottom: 66,
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: game.hudTick,
+                      builder: (_, _, _) => _HoldButton(
+                        icon: 'bolt',
+                        label: 'Speciale',
+                        size: 60,
+                        color: game.player.specialReady ? 'yellow' : 'grey',
+                        progress: game.player.specialProgress,
+                        onChanged: (v) {
+                          input.special = v;
+                          if (v) input.specialPressed = true;
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 60,
+                    bottom: 0,
+                    child: _HoldButton(
+                      icon: 'fist',
+                      label: 'Attacco',
+                      size: 66,
+                      color: 'pink',
+                      onChanged: (v) {
+                        input.attack = v;
+                        if (v) input.attackPressed = true;
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 26,
+                    child: _HoldButton(
+                      icon: 'up',
+                      label: 'Salto',
+                      size: 64,
+                      color: 'blue',
+                      onChanged: (v) {
+                        input.jump = v;
+                        if (v) input.jumpPressed = true;
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -184,104 +280,111 @@ class _TouchControls extends StatelessWidget {
   }
 }
 
-/// Left/right pad: one touch zone you can slide your thumb across to change
-/// direction without lifting it (much better than two separate buttons).
-class _DPad extends StatefulWidget {
-  const _DPad({required this.input});
+/// Virtual stick: drag anywhere on it; left/right move, up/down aim
+/// attacks (and drop through platforms / fast fall).
+class _Joystick extends StatefulWidget {
+  const _Joystick({required this.input});
 
-  final GameInput input;
+  final FighterInput input;
 
   @override
-  State<_DPad> createState() => _DPadState();
+  State<_Joystick> createState() => _JoystickState();
 }
 
-class _DPadState extends State<_DPad> {
-  static const _size = 78.0;
-  static const _gap = 8.0;
-  static const _width = _size * 2 + _gap;
+class _JoystickState extends State<_Joystick> {
+  static const _size = 132.0;
+  static const _knob = 52.0;
+  Offset _offset = Offset.zero;
+  int? _pointer;
 
-  /// Horizontal position of each finger on the pad.
-  final Map<int, double> _fingers = {};
-
-  void _update() {
-    var left = false;
-    var right = false;
-    for (final x in _fingers.values) {
-      if (x < _width / 2) {
-        left = true;
-      } else {
-        right = true;
-      }
-    }
-    if (left != widget.input.left || right != widget.input.right) {
-      if (left || right) Sound.haptic();
-      widget.input
-        ..left = left
-        ..right = right;
-      setState(() {});
-    }
+  void _set(Offset local) {
+    const c = Offset(_size / 2, _size / 2);
+    var d = local - c;
+    const maxR = _size / 2 - _knob / 4;
+    if (d.distance > maxR) d = d / d.distance * maxR;
+    final nx = d.dx / maxR, ny = d.dy / maxR;
+    final i = widget.input;
+    final wasX = i.x.abs() > .5;
+    i.x = nx.abs() < .25 ? 0 : nx.clamp(-1.0, 1.0);
+    i.up = ny < -.5;
+    i.down = ny > .5;
+    if (!wasX && i.x.abs() > .5) Sound.haptic();
+    setState(() => _offset = d);
   }
 
-  void _set(PointerEvent e) {
-    _fingers[e.pointer] = e.localPosition.dx;
-    _update();
+  void _release() {
+    final i = widget.input;
+    i.x = 0;
+    i.up = false;
+    i.down = false;
+    _pointer = null;
+    setState(() => _offset = Offset.zero);
   }
-
-  void _lift(PointerEvent e) {
-    _fingers.remove(e.pointer);
-    _update();
-  }
-
-  Widget _half(String icon, bool down) => Container(
-    width: _size,
-    height: _size,
-    padding: EdgeInsets.only(top: down ? 6 : 0, bottom: down ? 0 : 6),
-    decoration: pixelFrame(
-      'assets/images/ui/button_blue${down ? '_down' : ''}.png',
-    ),
-    child: Center(child: PixelIcon(icon, scale: 3)),
-  );
 
   @override
   Widget build(BuildContext context) {
     return Listener(
       behavior: HitTestBehavior.opaque,
-      onPointerDown: _set,
-      onPointerMove: _set,
-      onPointerUp: _lift,
-      onPointerCancel: _lift,
-      child: Opacity(
-        opacity: 0.85,
-        child: Padding(
-          // Generous invisible margin: thumbs are not precise.
-          padding: const EdgeInsets.only(top: 24, right: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _half('left', widget.input.left),
-              const SizedBox(width: _gap),
-              _half('right', widget.input.right),
-            ],
-          ),
+      onPointerDown: (e) {
+        _pointer = e.pointer;
+        _set(e.localPosition);
+      },
+      onPointerMove: (e) {
+        if (e.pointer == _pointer) _set(e.localPosition);
+      },
+      onPointerUp: (e) {
+        if (e.pointer == _pointer) _release();
+      },
+      onPointerCancel: (e) {
+        if (e.pointer == _pointer) _release();
+      },
+      child: SizedBox(
+        width: _size,
+        height: _size,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: _size - 8,
+              height: _size - 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0x553A2440),
+                border: Border.all(color: const Color(0xAA3A2440), width: 3),
+              ),
+            ),
+            Transform.translate(
+              offset: _offset,
+              child: Container(
+                width: _knob,
+                height: _knob,
+                decoration: pixelFrame('assets/images/ui/button_blue.png', px: 2),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// A pixel button that reports press/release, with multi-touch support.
+/// Round-ish pixel button reporting press/release (multi-touch friendly).
 class _HoldButton extends StatefulWidget {
   const _HoldButton({
     required this.icon,
+    required this.label,
     required this.onChanged,
-    this.size = 72,
+    this.size = 64,
     this.color = 'blue',
+    this.progress = 1,
   });
 
   final String icon;
+  final String label;
   final ValueChanged<bool> onChanged;
   final double size;
   final String color;
+  final double progress;
 
   @override
   State<_HoldButton> createState() => _HoldButtonState();
@@ -304,160 +407,40 @@ class _HoldButtonState extends State<_HoldButton> {
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
       child: Opacity(
-        opacity: 0.85,
-        child: Container(
-          width: widget.size,
-          height: widget.size,
-          padding: EdgeInsets.only(top: _down ? 6 : 0, bottom: _down ? 0 : 6),
-          decoration: pixelFrame(
-            'assets/images/ui/button_${widget.color}'
-            '${_down ? '_down' : ''}.png',
-          ),
-          child: Center(child: PixelIcon(widget.icon, scale: 3)),
-        ),
-      ),
-    );
-  }
-}
-
-class _SpecialButton extends StatelessWidget {
-  const _SpecialButton({required this.game});
-
-  final MemesGame game;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = game.player;
-    final ready = p.specialReady;
-    return Listener(
-      onPointerDown: (_) => game.input.specialQueued = true,
-      child: Opacity(
-        opacity: 0.9,
+        opacity: .88,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 74,
-              height: 74,
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 12),
+              width: widget.size,
+              height: widget.size,
+              padding: EdgeInsets.only(top: _down ? 5 : 0, bottom: _down ? 0 : 5),
               decoration: pixelFrame(
-                ready
-                    ? 'assets/images/ui/button_yellow.png'
-                    : 'assets/images/ui/button_grey_down.png',
+                'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
               ),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Opacity(
-                    opacity: ready ? 1 : .4,
-                    child: Image.asset(
-                      game.character.portraitAsset,
-                      filterQuality: FilterQuality.none,
+                  if (widget.progress < 1)
+                    Positioned.fill(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: CircularProgressIndicator(
+                          value: widget.progress,
+                          strokeWidth: 3,
+                          color: const Color(0xFFFFD86A),
+                          backgroundColor: const Color(0x333A2440),
+                        ),
+                      ),
                     ),
-                  ),
-                  if (!ready)
-                    PixelText('${p.specialTimer.ceil()}', size: 22)
-                  else
-                    const Align(
-                      alignment: Alignment.topRight,
-                      child: PixelIcon('bolt', scale: 1.5),
-                    ),
+                  PixelIcon(widget.icon, scale: widget.size / 24),
                 ],
               ),
             ),
-            PixelText(game.character.specialName, size: 10),
+            PixelText(widget.label, size: 9, color: Colors.white),
           ],
         ),
       ),
     );
   }
-}
-
-/// Gives its child a quick bounce whenever [value] changes.
-class _Bump extends StatefulWidget {
-  const _Bump({required this.value, required this.child});
-
-  final int value;
-  final Widget child;
-
-  @override
-  State<_Bump> createState() => _BumpState();
-}
-
-class _BumpState extends State<_Bump> with SingleTickerProviderStateMixin {
-  late final _ctrl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 260),
-  );
-
-  @override
-  void didUpdateWidget(_Bump old) {
-    super.didUpdateWidget(old);
-    if (old.value != widget.value) _ctrl.forward(from: 0);
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _ctrl,
-    builder: (context, child) {
-      final v = _ctrl.value;
-      final s = 1 + 0.25 * (v < .4 ? v / .4 : (1 - v) / .6);
-      return Transform.scale(scale: _ctrl.isAnimating ? s : 1, child: child);
-    },
-    child: widget.child,
-  );
-}
-
-class _Heart extends StatefulWidget {
-  const _Heart({required this.full, required this.beating});
-
-  final bool full;
-  final bool beating;
-
-  @override
-  State<_Heart> createState() => _HeartState();
-}
-
-class _HeartState extends State<_Heart> with SingleTickerProviderStateMixin {
-  late final _ctrl = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 700),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.beating) _ctrl.repeat();
-  }
-
-  @override
-  void didUpdateWidget(_Heart old) {
-    super.didUpdateWidget(old);
-    if (widget.beating && !_ctrl.isAnimating) _ctrl.repeat();
-    if (!widget.beating && _ctrl.isAnimating) _ctrl.reset();
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _ctrl,
-    builder: (context, child) {
-      final v = _ctrl.value;
-      // Two quick beats, then a pause.
-      final beat = v < .15 ? v / .15 : (v < .3 ? (.3 - v) / .15 : 0.0);
-      return Transform.scale(scale: 1 + 0.22 * beat, child: child);
-    },
-    child: PixelIcon(widget.full ? 'heart' : 'heart_empty', scale: 2.4),
-  );
 }

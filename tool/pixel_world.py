@@ -785,6 +785,29 @@ ICONS = {
         ".kyk....",
         ".kk.....",
     ],
+    'fist': [
+        "..kkkkkkk..",
+        ".kwkwkwkwk.",
+        ".kwkwkwkwkk",
+        "kkwkwkwkwwk",
+        "kwkkkkkkwwk",
+        "kwwwwwwwwwk",
+        "kwwwwwwwwk.",
+        ".kwwwwwwk..",
+        "..kkkkkk...",
+    ],
+    'shield': [
+        "kkkkkkkkkk",
+        "kbbbbbbwwk",
+        "kbbbbbbbwk",
+        "kbbbbbbbbk",
+        "kbbbbbbbbk",
+        ".kbbbbbbk.",
+        ".kbbbbbbk.",
+        "..kbbbbk..",
+        "...kbbk...",
+        "....kk....",
+    ],
 }
 
 

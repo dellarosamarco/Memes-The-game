@@ -1,5 +1,5 @@
 name: memes_the_game
-description: "Memes: the game — platform 2D con i meme più iconici."
+description: "Memes: the game — picchiaduro alla Smash con i meme più iconici."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,9 +35,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flame: ^1.38.2
-  firebase_core: ^4.15.0
-  firebase_auth: ^6.7.0
-  cloud_firestore: ^6.10.0
   shared_preferences: ^2.5.5
   flame_audio: ^2.12.2
 

@@ -47,6 +47,7 @@ class LevelData {
     required this.parTime,
     required this.map,
     this.bossHp = 5,
+    this.walls = true,
   }) {
     final lines = map.split('\n');
     if (lines.isNotEmpty && lines.first.isEmpty) lines.removeAt(0);
@@ -76,6 +77,10 @@ class LevelData {
   final LevelTheme theme;
   final String map;
   final int bossHp;
+
+  /// Whether the left/right edges of the map act as walls (arenas: no, you
+  /// can fly off the sides).
+  final bool walls;
 
   /// Seconds under which the player earns a time bonus.
   final int parTime;
@@ -111,7 +116,7 @@ class LevelData {
 
   /// Fully solid tiles. The level's left/right edges act as walls.
   bool isSolid(int c, int r) {
-    if (c < 0 || c >= cols) return true;
+    if (c < 0 || c >= cols) return walls;
     return const {'#', 'B', '?', 'U', 'G', 'S', '!'}.contains(tileAt(c, r));
   }
 
@@ -126,5 +131,6 @@ class LevelData {
     parTime: parTime,
     map: map,
     bossHp: bossHp,
+    walls: walls,
   );
 }

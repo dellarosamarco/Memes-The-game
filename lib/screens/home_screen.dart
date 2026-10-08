@@ -3,14 +3,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../models/meme_character.dart';
-import '../services/firebase_service.dart';
 import '../services/local_store.dart';
 import '../services/name_filter.dart';
 import '../services/sound.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
+import 'arcade_screen.dart';
 import 'character_select_screen.dart';
-import 'leaderboard_screen.dart';
+import 'fight_setup_screen.dart';
 import 'shop_screen.dart';
 import 'trophies_screen.dart';
 
@@ -102,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen>
     final trimmed = name?.trim() ?? '';
     if (trimmed.isEmpty || !mounted) return;
     if (!NameFilter.isClean(trimmed)) {
-      // The name is shown on the public leaderboard.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Questo nome non è consentito, scegline un altro.'),
@@ -112,6 +111,22 @@ class _HomeScreenState extends State<HomeScreen>
     }
     await LocalStore.instance.setPlayerName(trimmed);
     setState(() {});
+  }
+
+  /// Character select, then [next] (fight setup or Arcade ladder).
+  void _pick(String title, Widget Function(MemeCharacter) next) {
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (_) => CharacterSelectScreen(
+              title: title,
+              onChosen: (ctx, c) => Navigator.of(
+                ctx,
+              ).push(MaterialPageRoute(builder: (_) => next(c))),
+            ),
+          ),
+        )
+        .then((_) => setState(() {}));
   }
 
   @override
@@ -170,26 +185,22 @@ class _HomeScreenState extends State<HomeScreen>
                   alignment: WrapAlignment.center,
                   children: [
                     PixelButton(
-                      label: 'Gioca',
+                      label: 'Lotta libera',
                       icon: 'play',
                       width: 220,
-                      onPressed: () => Navigator.of(context)
-                          .push(
-                            MaterialPageRoute(
-                              builder: (_) => const CharacterSelectScreen(),
-                            ),
-                          )
-                          .then((_) => setState(() {})),
+                      onPressed: () => _pick(
+                        'Lotta libera: scegli il tuo meme',
+                        (c) => FightSetupScreen(player: c),
+                      ),
                     ),
                     PixelButton(
-                      label: 'Classifica',
+                      label: 'Arcade',
                       icon: 'trophy',
                       width: 220,
                       color: PixelColor.purple,
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const LeaderboardScreen(),
-                        ),
+                      onPressed: () => _pick(
+                        'Arcade: scegli il tuo meme',
+                        (c) => ArcadeScreen(player: c),
                       ),
                     ),
                   ],
@@ -282,23 +293,21 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const PixelIcon('star', scale: 1.5),
+                      const PixelIcon('like', scale: 1.5),
                       const SizedBox(width: 6),
                       PixelText(
-                        '${store.totalStars} / 1500',
+                        '${store.wallet}',
                         size: 14,
                         color: kPlum,
                         outline: false,
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 12),
+                      const PixelIcon('trophy', scale: 1.5),
+                      const SizedBox(width: 6),
                       PixelText(
-                        FirebaseService.instance.available
-                            ? 'online'
-                            : 'offline',
-                        size: 12,
-                        color: FirebaseService.instance.available
-                            ? const Color(0xFF3FAF7A)
-                            : const Color(0xFF9A8FB0),
+                        '${store.stat('wins')} vittorie',
+                        size: 14,
+                        color: kPlum,
                         outline: false,
                       ),
                     ],
