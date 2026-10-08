@@ -3,52 +3,53 @@
 **Nome app** (max 30): Memes: the game
 
 **Sottotitolo / descrizione breve** (max 80):
-Platform in pixel art con i meme più iconici: 24 personaggi e 500 livelli!
+Picchiaduro alla Smash con i meme più iconici: 24 lottatori in pixel art!
 
-**Categoria:** Giochi › Arcade (alternativa: Platform / Azione)
-**Classificazione:** PEGI 7 / ESRB Everyone 10+ (violenza cartoon lieve: si saltano in testa i nemici)
+**Categoria:** Giochi › Azione (alternativa: Arcade / Picchiaduro)
+**Classificazione:** PEGI 7 / ESRB Everyone 10+ (violenza cartoon lieve: i meme si scaraventano fuori dall'arena)
 
 ## Descrizione completa
 
 Il chihuahua con la parrucca, il gatto che ti fissa, Pietro il piccione con le
-Converse, il maiale con la catena d'oro... e altri 20 meme iconici diventano eroi
-di un platform 2D in pixel art cute!
+Converse, il maiale con la catena d'oro... e altri 20 meme iconici si sfidano in
+un picchiaduro in pixel art cute, alla Super Smash Bros!
 
-**24 MEME GIOCABILI**
-Ogni meme ha un'abilità passiva e una mossa speciale fedele alla sua identità:
-"Voglio parlare col manager!", lo sguardo che congela i nemici, la volante della
-POLIS che investe tutto, la chiamata di Pietro, l'uovo bomba, HESOYAM e molte altre.
+**PIÙ DANNI, PIÙ VOLI LONTANO**
+Colpisci l'avversario per far salire la sua percentuale, poi scaraventalo fuori
+dall'arena con uno smash caricato. Attacchi a terra e in aria, scudo, schivate,
+doppio salto e recupero: comandi semplici, tanta profondità.
 
-**500 LIVELLI IN 10 MONDI**
-Il Feed, la Sezione Commenti, la Spiaggia dei Reel, il Deserto dei Like, il
-Ghiacciaio Cringe, la Città dei Trend, la Foresta dei Meme, il Vulcano dei Flame,
-le Nuvole Virali e il Server. Molle, piattaforme mobili, spine, blocchi a sorpresa
-e power-up (occhiali "Deal with it", caffè, Stonks, pizza). Ogni livello è
-verificato: si può sempre finire.
+**24 MEME, 24 STILI**
+Ogni meme ha una passiva e una mossa speciale fedele alla sua identità:
+"Voglio parlare col manager!", lo sguardo che paralizza, la volante della POLIS,
+la chiamata di Pietro, l'uovo bomba, la borsettata, HESOYAM e molte altre.
 
-**NEMICI E BOSS**
-Normie, Cringe, Hater che lanciano RATIO e Boomer da schiacciare, e alla fine di
-ogni mondo L'Algoritmo in persona.
+**LOTTA LIBERA E ARCADE**
+Scegli avversario, arena e difficoltà della CPU (Facile, Normale, Difficile),
+oppure affronta l'Arcade: 8 avversari di fila, sempre più forti.
+
+**10 ARENE**
+Campo del Feed, Sezione Commenti, Spiaggia Finale, Duna dei Like, Iceberg Cringe,
+Torta dei Trend, Radura dei Meme, Cratere Flame, Nuvole Virali e Data Center.
 
 **TANTO DA SBLOCCARE**
-- 16 cappelli da comprare con i like raccolti
-- 17 trofei
+- 16 cappelli da comprare con i like guadagnati lottando
+- 16 trofei
 - Meme del giorno con like doppi
-- Classifica online per ogni livello
+- Record Arcade per ogni meme
 
 **FATTO PER IL TELEFONO**
-Comandi touch grandi con croce direzionale a scorrimento, vibrazione, camera che
-guarda avanti e un game feel curato in ogni salto. Si gioca anche offline.
+Joystick e pulsanti grandi, vibrazione, camera dinamica, impatti con hit-stop e
+tremolio dello schermo. Si gioca completamente offline.
 
-Nessuna pubblicità. Nessun acquisto in-app.
+Nessuna pubblicità. Nessun acquisto in-app. Nessun dato raccolto.
 
 *Memes: the game è un gioco parodistico: non è affiliato né approvato dagli autori
 delle immagini o dai titolari dei personaggi citati.*
 
 ## Parole chiave (App Store, max 100 caratteri)
-meme,platform,pixel,arcade,retro,salto,cane,gatto,chihuahua,piccione,divertente,8bit
+meme,picchiaduro,smash,pixel,arcade,lotta,cane,gatto,chihuahua,piccione,divertente,8bit
 
 ## Note per la revisione
-Il gioco non richiede login: il nome in classifica è scelto dal giocatore (filtrato
-contro parolacce) e legato a un account anonimo. I dati si cancellano da
-Impostazioni › Info › Cancella i miei dati.
+Il gioco non richiede login e funziona offline: non invia dati. I progressi locali
+si cancellano da Impostazioni › Info › Cancella i miei dati.

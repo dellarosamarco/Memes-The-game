@@ -197,8 +197,8 @@ class Fighter extends PositionComponent
       ((c.runSpeed * (c.passive == Passive.sprint ? 1.1 : 1) +
                   (c.passive == Passive.momentum ? 25 : 0) +
                   (c.passive == Passive.sneakers ? 12 : 0)) -
-              135) /
-          60;
+              125) /
+          70;
 
   static double jumpRating(MemeCharacter c) =>
       (c.jumpSpeed * (c.passive == Passive.highJump ? 1.06 : 1) - 495) / 80 +

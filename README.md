@@ -1,121 +1,109 @@
 # Memes: the game
 
-Platform 2D a scorrimento laterale in **pixel art cute**, fatto con **Flutter + Flame + Firebase**.
-Scegli un meme, attraversa 500 livelli in 10 mondi saltando sulla testa di **Normie,
-Cringe, Hater e Boomer**, raccogli i like (anche dai blocchi), arriva alla bandiera e
-sconfiggi **L'Algoritmo** alla fine di ogni mondo. Punteggi nella classifica globale per livello.
+Picchiaduro **alla Super Smash Bros** in **pixel art cute**, fatto con **Flutter + Flame**.
+Scegli uno dei 24 meme più iconici di internet e affronta la CPU su 10 arene sospese:
+accumula danni sull'avversario e scaraventalo fuori dallo schermo.
 
-## I personaggi
+## I lottatori
 
 Gli sprite in pixel art sono ricavati **direttamente dalle foto originali dei meme**:
 la figura viene scontornata, ridotta a pixel con una palette limitata e contornata;
-vengono aggiunte solo le zampette animate.
+vengono aggiunte solo le zampette animate. Tutti condividono lo stesso set di mosse;
+a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto, peso).
 
 | Meme | Passiva | Speciale |
 |---|---|---|
-| **Wig Dog**: il chihuahua con la parrucca | *Parrucca-Paracadute*: tieni premuto salto per planare | *Voglio il Manager!*: urlo che spazza via i nemici vicini |
-| **Stare Cat**: il gatto che ti fissa | *Riflessi Felini*: doppio salto | *Il Fissatore*: congela i nemici, che diventano piattaforme |
-| **Robber Chihuahua**: passamontagna e coltello | *Fuga Rapida*: il più veloce | *La Rapina*: scatto invulnerabile che trafigge i nemici |
-| **Smile Dog**: il cane che sorride (troppo) | *Pelle Dura*: 4 cuori, schiaccia i Boomer al primo colpo | *Sorriso Maledetto*: i nemici scappano terrorizzati e muoiono al contatto |
-| **Puffer Pinscher**: treccine, piumino e scarpe di vernice | *Piumino Imbottito*: il primo colpo del livello lo assorbe il piumino | *Frullatore di Treccine*: giravolta che frusta i nemici vicini |
-| **Lady Terrier**: caschetto, perle e maglioncino | *Like di Lusso*: ogni like vale doppio | *Borsettata*: colpo di borsetta a chi sta davanti |
-| **Ka-Chow Bassotto**: completo nero e crocs di Saetta McQueen | *Crocs Corazzate*: immune alle spine | *Ka-Chow!*: turbo di 3 secondi che travolge i nemici |
-| **Bassotto Criceto**: le guance piene | *Guance Capienti*: risucchia i like vicini | *Gonfia Guance*: vola in alto come un palloncino |
-| **Bebè Pupazzo**: bambolotto col pupazzo di neve | *Pancino Gommoso*: rimbalzi altissimi sui nemici | *Ninna Nanna*: +1 cuore e nemici vicini addormentati |
-| **Scimmietta Rosa**: cappellino rosa e peluche | *Agilità da Scimmia*: salto triplo | *Lancio del Peluche*: il peluche fa da boomerang |
-| **Baby Orco**: caschetto a scodella e cravatta | *Strati di Cipolla*: +1 cuore a ogni checkpoint | *Esci dalla mia Palude!*: schianto a terra con onda d'urto |
-| **Orecchione**: orecchie e denti umani | *Orecchie a Molla*: salta più in alto di tutti | *Dentiera Smagliante*: un sorriso che stende tutti i nemici sullo schermo |
-| **Maiale Drip**: sfumatura, AirPods e catena d'oro | *Catena d'Oro*: nemici sconfitti valgono il triplo | *Cancellazione del Rumore*: 4 secondi intoccabile |
-| **Pulcino Caschetto**: il caschetto a scodella | *Pulcino Leggero*: gravità ridotta | *Cip Cip!*: tre pulcini che travolgono i nemici |
-| **Piccione Casco**: il "casco" in testa | *Casco Protettivo*: i RATIO gli rimbalzano addosso | *Volo Urbano*: vola per 2,5 secondi |
-| **Pietro**: is calling... con le Converse | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: i nemici sullo schermo rispondono al telefono |
-| **Cane in Bici**: zaino e POLIS | *Pedalata*: accelera fino a +50% | *POLIS!*: la macchina della polizia investe i nemici |
-| **Gallina Hypebeast**: sulle Dunk panda coi dollari | *Hustler*: like ×1,5 nel portafoglio | *Uovo Bomba*: un uovo che esplode |
-| **Mr. San Andreas**: Mr. Bean in GTA | *Respawn all'Ospedale*: i burroni non tolgono cuori | *HESOYAM*: cuori pieni e 250 punti |
-| **Masha Baffuta**: Masha col faccione da uomo | *Mani Pesanti*: 4 cuori, doppio danno al boss | *Salto di Masha*: salto altissimo con onda d'urto |
-| **Patrick Roccia**: elmo di roccia e alghe | *Testa di Roccia*: rompe i mattoni di testa | *Roccia Rotolante*: rotola travolgendo i nemici |
-| **Patrick Boccione**: la testa nel boccione | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: getto che stende i nemici davanti |
-| **Scimmia col Sasso**: cappuccino col sasso alzato | *Presa Salda*: niente contraccolpo quando lo colpiscono | *Tiro del Sasso*: sasso lanciato a parabola |
-| **Chihuahua Relax**: zampe dietro la testa | *Relax Totale*: +1 cuore dopo 4 secondi fermo | *Modalità Ferie*: nemici al rallentatore per 5 secondi |
+| **Wig Dog** | *Parrucca-Paracadute*: plana tenendo premuto salto | *Voglio il Manager!*: onda d'urto (11%) |
+| **Stare Cat** | *Riflessi Felini*: due salti in aria | *Il Fissatore*: paralizza l'avversario vicino |
+| **Robber Chihuahua** | *Fuga Rapida*: il più veloce | *La Rapina*: scatto invulnerabile (10%) |
+| **Smile Dog** | *Pelle Dura*: pesante, difficile da scagliare | *Sorriso Maledetto*: l'avversario scappa terrorizzato |
+| **Puffer Pinscher** | *Piumino Imbottito*: il primo colpo di ogni vita è assorbito | *Frullatore di Treccine*: trottola (9%) |
+| **Lady Terrier** | *Like di Lusso*: like di fine lotta doppi | *Borsettata*: colpo potentissimo (13%) |
+| **Ka-Chow Bassotto** | *Crocs Corazzate*: -15% di danni subiti | *Ka-Chow!*: turbo che investe (8%) |
+| **Bassotto Criceto** | *Guance Capienti*: ogni colpo a segno cura 1% | *Gonfia Guance*: risale fluttuando |
+| **Bebè Pupazzo** | *Pancino Gommoso*: rimbalza sulla testa dell'avversario (6%) | *Ninna Nanna*: si cura e addormenta |
+| **Scimmietta Rosa** | *Agilità da Scimmia*: tre salti in aria | *Lancio del Peluche*: proiettile (7%) |
+| **Baby Orco** | *Strati di Cipolla*: si rigenera se non colpito | *Esci dalla mia Palude!*: schianto (13%) |
+| **Orecchione** | *Orecchie a Molla*: salto più alto | *Dentiera Smagliante*: acceca e blocca (5%) |
+| **Maiale Drip** | *Catena d'Oro*: speciali +20% danni | *Cancellazione del Rumore*: 4 s senza contraccolpo |
+| **Pulcino Caschetto** | *Pulcino Leggero*: salti lunghi, ma vola via facilmente | *Cip Cip!*: tre pulcini (5% l'uno) |
+| **Piccione Casco** | *Casco Protettivo*: immune ai proiettili | *Volo Urbano*: vola per 2,5 secondi |
+| **Pietro** | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: l'avversario si ferma a rispondere |
+| **Cane in Bici** | *Pedalata*: accelera pedalando | *POLIS!*: la volante investe (14%) |
+| **Gallina Hypebeast** | *Hustler*: like ×1,5 | *Uovo Bomba*: esplosione (12%) |
+| **Mr. San Andreas** | *Respawn all'Ospedale*: 4 s di invincibilità dopo ogni KO | *HESOYAM*: -25% di danni |
+| **Masha Baffuta** | *Mani Pesanti*: smash +25% di spinta | *Salto di Masha*: salto enorme (8%) |
+| **Patrick Roccia** | *Testa di Roccia*: attacco in alto doppio | *Roccia Rotolante*: rotola travolgendo (11%) |
+| **Patrick Boccione** | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: spinge via |
+| **Scimmia col Sasso** | *Presa Salda*: i colpi deboli non lo smuovono | *Tiro del Sasso*: sasso a parabola (10%) |
+| **Chihuahua Relax** | *Relax Totale*: fermo recupera 1% al secondo | *Modalità Ferie*: avversario al rallentatore |
 
-## 500 livelli, 10 mondi
+## Come si combatte
 
-| Mondo | Tema | Mondo | Tema |
-|---|---|---|---|
-| 1 | Il Feed | 6 | Città dei Trend |
-| 2 | Sezione Commenti | 7 | Foresta dei Meme |
-| 3 | Spiaggia dei Reel | 8 | Vulcano dei Flame |
-| 4 | Deserto dei Like | 9 | Nuvole Virali |
-| 5 | Ghiacciaio Cringe | 10 | Il Server |
+- **Percentuale di danno**: ogni colpo aggiunge %, e più è alta più voli lontano.
+  Si va KO uscendo dalle **zone di esplosione** ai lati, in alto o in basso. 3 vite a testa.
+- **Attacchi** (un tasto + direzione): jab, laterale, in alto, in basso, in corsa;
+  **smash caricato** tenendo premuto attacco; aerei neutro, avanti, su e giù
+  (quello in giù schiaccia verso il basso).
+- **Scudo** (si consuma e può rompersi), **schivata rotolando** (scudo + direzione) e
+  **schivata in aria**.
+- **Recupero**: su + speciale in aria ti rilancia verso l'arena (una volta per salto,
+  ritorna quando vieni colpito o tocchi terra). Doppio salto per tutti.
+- Piattaforme attraversabili dal basso, giù per scendere; giù in aria per cadere veloce.
 
-Ogni mondo ha 50 livelli; il 50° è lo scontro con **L'Algoritmo** (più resistente a ogni
-mondo), e il cancello verso la bandiera si apre solo dopo averlo battuto.
+### Modalità
 
-I livelli sono **generati proceduralmente** da un seed fisso (`lib/game/level_gen.dart`),
-quindi sono uguali per tutti i giocatori. La difficoltà cresce gradualmente: i primi
-livelli fanno da tutorial, poi arrivano buche, piattaforme sospese, spine, **molle**,
-**piattaforme mobili**, tunnel e gruppi di nemici (con una curva morbida, così i mondi
-centrali restano divertenti). C'è un checkpoint ogni ~65 colonne, quindi fino a tre nei
-livelli lunghi. Ogni livello viene verificato da
-`lib/game/level_solver.dart`: simula il personaggio più lento, senza doppio salto né
-mosse speciali e con la stessa fisica del gioco, e dimostra che il livello si può finire
-(se un layout fallisce, viene rigenerato). Il test `test/levels_test.dart` controlla tutti
-e 500 i livelli.
+- **Lotta libera**: scegli il tuo meme, l'avversario (o casuale), l'arena (o casuale) e la
+  difficoltà della CPU (Facile, Normale, Difficile).
+- **Arcade**: 8 avversari di fila, sempre più forti, e l'ultimo è una sorpresa. Il record
+  di round vinti viene salvato per ogni meme.
 
-Stelle: 1 per finire il livello, 2 con metà dei like, 3 con il 90%.
-Il punteggio somma like, nemici, bonus tempo e cuori rimasti.
+### La CPU
 
-## Elementi divertenti
+Si avvicina, sceglie l'attacco in base alla posizione, carica lo smash quando sei ad alta
+percentuale, para e rotola, usa la propria speciale con criterio (i proiettili da lontano,
+gli scatti in linea, il volo per tornare) e recupera verso l'arena. Le tre difficoltà
+cambiano tempi di reazione, aggressività e uso di scudo e speciali.
 
-- **Power-up** dai blocchi arcobaleno `!`:
-  - occhiali **Deal With It** (invincibile per 8 s, i nemici volano via con un "BONK!");
-  - **Stonks** (punti doppi per 12 s);
-  - **Pizza** (+1 cuore);
-  - **Caffè** (più veloce e salti più alti, con scia).
-- **Combo**: schiaccia più nemici senza toccare terra per "Double kill!", "Triple kill!"...
-  fino a "M-M-M-MONSTER KILL!" (con punti bonus).
-- I nemici **parlano**: "Buongiornissimo! Kaffè?", "L + ratio", "uwu", "Ma è un meme?"...
-- Se resti fermo troppo a lungo il tuo meme **si addormenta** (zZz).
-- Al traguardo il personaggio **saltella di gioia**.
-- Al game over puoi **premere F per rendere omaggio**.
+### 10 arene
 
-## Negozio e trofei
-
-- I like raccolti finiscono in un **portafoglio**: nel **Negozio** li spendi in 10 cappellini
-  pixel (festa, fiocco, berretto, fiori, elica, chef, cowboy, strega, aureola, corona) che i
-  tuoi meme indossano in gioco e nei menu.
-- **17 trofei** da sbloccare (primo livello, 3 stelle, senza danni, speedrun, boss, combo,
-  100 nemici, 1000 like, Deal with it, Stonks, pisolino, F, collezionista...), con una
-  notifica pixel che compare su qualsiasi schermata.
-
-## Comandi
-
-- **Mobile** (orizzontale): croce direzionale a sinistra (fai scorrere il pollice da una
-  freccia all'altra senza staccarlo), salto e mossa speciale a destra, con vibrazione.
-- **Tastiera**: `←/→` o `A/D` per muoverti, `SPAZIO`/`↑`/`W` per saltare,
-  `X`/`K`/`J`/`C`/`Shift` per la speciale, `ESC`/`P` per la pausa.
+Campo del Feed, Sezione Commenti, Spiaggia Finale, Duna dei Like, Iceberg Cringe,
+Torta dei Trend, Radura dei Meme, Cratere Flame, Nuvole Virali e Data Center (con una
+piattaforma mobile): isole sospese con piattaforme, ognuna con il suo tema e le sue
+decorazioni animate.
 
 ### Game feel
 
-- Salto tenuto più a lungo = più alto, con un attimo di "galleggiamento" in cima all'arco;
-  coyote time e salto "prenotato" se premi poco prima di atterrare.
-- Se sbatti la testa sullo spigolo di un blocco scivoli di lato invece di fermarti.
-- Inversioni di marcia scattanti con sgommata e polvere; il personaggio si inclina quando
-  corre e fa una capriola nel doppio salto.
-- Camera fluida che guarda avanti nella direzione di corsa e un po' in basso quando cadi.
-- Impatti con micro-pausa (hit-stop), tremolio dello schermo che si smorza, flash rosso
-  quando vieni colpito, atterraggi pesanti che fanno tremare il terreno.
-- I like raccolti in fila suonano note sempre più alte; raccoglierli tutti fa festa.
+Micro-pausa sugli impatti (hit-stop), tremolio dello schermo, scintille, rallentatore
+sul KO decisivo, esplosione colorata dal bordo dello schermo a ogni KO, camera dinamica
+che inquadra entrambi i lottatori, percentuali che tremano e cambiano colore, frasi
+buffe dei meme quando incassano un colpo forte.
+
+## Negozio e trofei
+
+- Ogni lotta fa guadagnare **like** (di più vincendo, con i KO e a difficoltà alta; il
+  meme del giorno li raddoppia): nel **Negozio** li spendi in 16 cappellini pixel che il
+  tuo meme indossa in lotta e nei menu.
+- **16 trofei** (prima vittoria, vittoria senza perdere vite, KO con uno smash, Arcade,
+  100 KO, tutti i meme...), con una notifica pixel su qualsiasi schermata. Dopo una
+  sconfitta puoi **premere F per rendere omaggio**.
+
+## Comandi
+
+- **Mobile** (orizzontale): joystick a sinistra; **Salto**, **Attacco**, **Speciale**
+  (con l'indicatore di ricarica) e **Scudo** a destra, con vibrazione.
+- **Tastiera**: frecce o `WASD` per muoverti e mirare, `Z`/`SPAZIO` salto, `X`/`J`
+  attacco (tieni premuto per lo smash), `C`/`K` speciale, `V`/`L`/`Shift` scudo,
+  `ESC`/`P` pausa.
 
 ## Pubblicazione
 
 Il gioco è pronto per Play Store, App Store e web: icona, schermata di avvio, solo
 orizzontale, firma Android, pausa automatica in background, info e crediti,
-cancellazione dei dati, filtro dei nomi in classifica e materiale per gli store
-(`store/`: testi IT/EN, icona 512, grafica 1024×500, screenshot per telefono Android,
-iPhone e iPad). Passi e checklist in **[PUBLISHING.md](PUBLISHING.md)**, informativa
-in **[PRIVACY.md](PRIVACY.md)**. La CI su GitHub esegue analisi, test e build web a
-ogni push.
+cancellazione dei dati e materiale per gli store (`store/`). Funziona **completamente
+offline** e non raccoglie dati. Passi e checklist in **[PUBLISHING.md](PUBLISHING.md)**,
+informativa in **[PRIVACY.md](PRIVACY.md)**. La CI su GitHub esegue analisi, test e
+build web a ogni push.
 
 ## Avvio
 
@@ -124,35 +112,15 @@ flutter pub get
 flutter run
 ```
 
-Senza Firebase il gioco funziona **offline** (record e livelli sbloccati salvati in locale).
-
 Opzioni utili durante lo sviluppo:
 
 ```bash
-flutter run --dart-define=MEMES_UNLOCK_ALL=true --dart-define=MEMES_START_COL=40 \
-  --dart-define=MEMES_RICH=true   # +2000 like da spendere nel negozio
+flutter run --dart-define=MEMES_RICH=true   # +2000 like da spendere nel negozio
+flutter run --dart-define=MEMES_STOCKS=1    # lotte libere a una vita
 ```
 
-Test: `flutter test` (risolve tutti i 500 livelli e avvia il gioco vero su alcuni livelli
-con un pilota automatico).
-
-## Configurare Firebase (classifica online)
-
-1. Crea un progetto su [Firebase console](https://console.firebase.google.com) e abilita
-   **Authentication → Anonymous** e **Cloud Firestore**.
-2. Genera `lib/firebase_options.dart` (sostituisce il placeholder):
-   ```bash
-   dart pub global activate flutterfire_cli
-   flutterfire configure
-   ```
-3. Pubblica regole e indici di Firestore:
-   ```bash
-   firebase deploy --only firestore
-   ```
-
-I punteggi stanno nella collezione `scores` (`uid`, `name`, `levelId`, `characterId`,
-`score`, `likes`, `kills`, `seconds`, `createdAt`). Chiunque può leggerli; ogni giocatore
-(anonimo) può solo aggiungere i propri.
+Test: `flutter test` (modello del knockback, arene, Arcade, salvataggi e partite vere
+CPU contro CPU con tutti i 24 meme, per scovare errori e controllare che le lotte finiscano).
 
 ## Grafica
 
@@ -160,17 +128,15 @@ Tutta la grafica è pixel art in palette pastello con contorno color prugna, gen
 
 - `tool/generate_sprites.py`: personaggi dalle foto in `tool/sprite_sources/` (scontornate con
   [rembg](https://github.com/danielgatis/rembg), modello `birefnet-general`), più tutto il resto.
-- `tool/pixel_world.py`: nemici, 10 temi (tile, piattaforme mobili, sfondi parallax con colline
+- `tool/pixel_world.py`: 10 temi (tile, piattaforme mobili, sfondi parallax con colline
   e nuvole con le faccine), oggetti e il kit dell'interfaccia (icone, pannelli e pulsanti
   9-slice in `assets/images/ui/`).
-- `tool/pixel_details.py`: bordi arrotondati del terreno (auto-tiling) e varianti, liquidi
-  animati nelle buche (acqua, lava, sciroppo...), 8 decorazioni animate per ogni mondo
-  (fiori, funghi, cespugli con la faccina, pinguini, granchi, cupcake...), un livello di
-  parallasse intermedio e la polvere.
+- `tool/pixel_details.py`: bordi arrotondati del terreno (auto-tiling) e varianti,
+  8 decorazioni animate per ogni arena (fiori, funghi, cespugli con la faccina, pinguini,
+  granchi, cupcake...), un livello di parallasse intermedio, la polvere e i cappellini.
 
-In gioco ci sono anche: sole/luna sorridente, particelle d'ambiente per ogni mondo (petali,
-neve, foglie, braci, bit...), ombre, squash & stretch del personaggio, polvere, coriandoli
-a checkpoint e traguardo, schizzi quando si cade in una buca e punteggi fluttuanti.
+In gioco ci sono anche: sole/luna sorridente, particelle d'ambiente per ogni arena (petali,
+neve, foglie, braci, bit...), ombre, squash & stretch, polvere, scintille e coriandoli.
 - Font: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) (licenza OFL, in `assets/fonts/`).
 
 Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy`).
@@ -179,8 +145,8 @@ Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy
 
 Effetti sonori e musiche chiptune sono **sintetizzati da zero** da `tool/generate_audio.py`
 (onde quadre/triangolari + rumore, nessun file di terzi) in `assets/audio/`: salto, like,
-schiacciata, danno, molla, mossa speciale, checkpoint, traguardo, game over, boss, e tre
-musiche in loop (menu, livello, boss). Si riproducono con `flame_audio`; musica, effetti
+colpo, colpo forte, mossa speciale, parata, KO, vittoria, sconfitta e tre musiche in loop
+(menu, lotta, lotta finale). Si riproducono con `flame_audio`; musica, effetti
 e vibrazione si attivano/disattivano dalle impostazioni (ingranaggio nella home o pausa).
 
 **Aggiungere un meme:** scontorna la foto con rembg, salvala in `tool/sprite_sources/<id>.png`,
@@ -191,29 +157,30 @@ poi rilancia lo script.
 
 ```
 lib/
-  main.dart                   bootstrap (orizzontale, LocalStore, Firebase)
-  models/meme_character.dart  i personaggi e la loro identità
-  services/                   Firebase (auth anonima + classifica) e salvataggi locali
-  screens/                    home, personaggi, mappa dei mondi + griglia livelli, partita, classifica
+  main.dart                   bootstrap (orizzontale, salvataggi, audio)
+  models/                     i meme e i cappellini
+  services/                   salvataggi locali, trofei, audio
+  screens/                    home, scelta del meme, lotta libera, Arcade, lotta, negozio, trofei
   widgets/                    kit UI pixel (testo, icone, pannelli, pulsanti), anteprima sprite
   game/
-    memes_game.dart           FlameGame: input, eventi del livello, camera
-    level.dart                formato ASCII dei livelli e temi dei mondi
-    level_gen.dart            generatore procedurale dei 500 livelli
-    level_solver.dart         risolutore che verifica che ogni livello sia finibile
-    physics.dart              fisica a tile condivisa da gioco e risolutore
-    components/               player, nemici, oggetti, piattaforme mobili, sfondo, effetti
-    overlays/                 HUD con comandi touch, pausa, fine livello, game over
-tool/                         generatori della grafica
+    memes_game.dart           FlameGame: regole della lotta, KO, camera, input
+    fighter/                  il lottatore: mosse, knockback, scudo, speciali e passive
+    cpu.dart                  l'avversario controllato dal computer
+    arcade.dart               la scala degli 8 avversari
+    stages.dart               le 10 arene
+    physics.dart              fisica a tile
+    components/               arena, proiettili, sfondo, effetti
+    overlays/                 HUD con comandi touch, conto alla rovescia, pausa, risultati
+tool/                         generatori della grafica e dell'audio
 ```
 
 ## Crediti
 
-- Decorazioni extra dei livelli (girasoli, grano, pini, pupazzi di neve, cartelli,
+- Decorazioni delle arene (girasoli, grano, pini, pupazzi di neve, cartelli,
   ciambelle, gelati, sirene...) dai pacchetti **Pixel Platformer** di
   [Kenney](https://kenney.nl) (base, Farm, Food e Industrial expansion), licenza
   **CC0**. I file usati sono in `tool/kenney/`, ricolorati col contorno prugna del gioco.
   Lo stile dei tile (contorno spesso, puntini 2x2) è ispirato agli stessi pacchetti.
 - Font **Pixelify Sans** (licenza OFL).
-- Tutto il resto (sprite dei meme dalle foto, tile, nemici, UI, musica ed effetti) è
+- Tutto il resto (sprite dei meme dalle foto, tile, UI, musica ed effetti) è
   generato dagli script in `tool/`.

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../models/meme_character.dart';
+import '../../services/achievements.dart';
+import '../../services/local_store.dart';
+import '../../services/sound.dart';
 import '../../widgets/pixel_ui.dart';
 import '../../widgets/sprite_view.dart';
 import '../fighter/fighter.dart';
@@ -178,6 +181,7 @@ class ResultsOverlay extends StatelessWidget {
                           fontSize: 15,
                           onPressed: onBack,
                         ),
+                      if (!won) const _PayRespects(),
                       PixelButton(
                         label: 'Menu',
                         icon: 'home',
@@ -241,4 +245,35 @@ class _StatsTable extends StatelessWidget {
       ],
     );
   }
+}
+
+/// "Press F to pay respects" after a defeat.
+class _PayRespects extends StatefulWidget {
+  const _PayRespects();
+
+  @override
+  State<_PayRespects> createState() => _PayRespectsState();
+}
+
+class _PayRespectsState extends State<_PayRespects> {
+  bool _paid = false;
+
+  void _pay() {
+    if (_paid) return;
+    setState(() => _paid = true);
+    Sound.play('click');
+    if (!LocalStore.ready) return;
+    LocalStore.instance.addStat('respects', 1).then((_) {
+      Achievements.checkStats();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => PixelButton(
+    label: _paid ? 'F' : 'Premi F',
+    color: _paid ? PixelColor.grey : PixelColor.yellow,
+    height: 46,
+    fontSize: 15,
+    onPressed: _pay,
+  );
 }

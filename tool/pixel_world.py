@@ -859,14 +859,9 @@ def _button(col, down):
 
 def write_all(out: str):
     files = {}
-    for kind in ['normie', 'cringe', 'hater', 'boomer']:
-        files[f'enemy_{kind}'] = enemy_strip(kind)
-    files['enemy_algorithm'] = boss_strip()
     import pixel_details
     files['dust'] = pixel_details.dust()
-    files['powerups'] = pixel_details.powerups()
     files['hats'] = pixel_details.hats_sheet()
-    files['sunglasses'] = pixel_details.sunglasses_overlay()
     for theme in THEMES:
         files[f'tiles_{theme}'] = tileset(theme)
         files[f'props_{theme}'] = pixel_details.props_sheet(theme)

@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Online leaderboard (Firebase). -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Haptic feedback on the touch controls. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:label="Memes: the game"

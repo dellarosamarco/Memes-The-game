@@ -321,6 +321,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
             Difficulty.hard => 50,
           }
         : 10 + player.kos * 5;
+    // Beating the whole Arcade ladder.
+    if (won && config.arcadeRound == 8) likes += 150;
     var mult = 1.0;
     if (config.player.passive == Passive.jewels) mult *= 2;
     if (config.player.passive == Passive.hustle) mult *= 1.5;

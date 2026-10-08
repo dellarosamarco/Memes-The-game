@@ -405,19 +405,34 @@ class _Stat extends StatelessWidget {
       children: [
         PixelText(label, size: 12, color: kPlum, outline: false),
         const SizedBox(width: 5),
-        for (var i = 0; i < 5; i++)
-          Container(
-            width: 9,
-            height: 10,
-            margin: const EdgeInsets.only(right: 2),
-            decoration: BoxDecoration(
-              color: i < filled
-                  ? const Color(0xFFFF82B4)
-                  : const Color(0x333A2440),
-              border: Border.all(color: kPlum, width: 1.5),
-            ),
-          ),
+        CustomPaint(size: const Size(55, 11), painter: _BarPainter(filled)),
       ],
     );
   }
+}
+
+class _BarPainter extends CustomPainter {
+  _BarPainter(this.filled);
+
+  final int filled;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const n = 5;
+    final w = size.width / n;
+    final on = Paint()..color = const Color(0xFFFF82B4);
+    final off = Paint()..color = const Color(0xFFE6DCE8);
+    final edge = Paint()
+      ..color = kPlum
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    for (var i = 0; i < n; i++) {
+      final r = Rect.fromLTWH(i * w + 1, 1, w - 3, size.height - 2);
+      canvas.drawRect(r, i < filled ? on : off);
+      canvas.drawRect(r, edge);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BarPainter old) => old.filled != filled;
 }

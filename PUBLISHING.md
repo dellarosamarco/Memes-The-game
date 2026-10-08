@@ -31,18 +31,7 @@ e nella descrizione dello store, ma non sostituisce una licenza.
 - `lib/screens/about_screen.dart`: `kAppVersion` deve combaciare con `version`
   in `pubspec.yaml` a ogni release.
 
-## 2. Classifica online (Firebase) — opzionale
-
-Senza Firebase il gioco funziona offline e mostra "Classifica offline".
-
-1. Crea un progetto su <https://console.firebase.google.com>.
-2. Attiva **Authentication › Accesso anonimo** e **Cloud Firestore**.
-3. Nella cartella del progetto: `dart pub global activate flutterfire_cli`
-   poi `flutterfire configure` (rigenera `lib/firebase_options.dart`).
-4. Carica regole e indici: `firebase deploy --only firestore`
-   (`firestore.rules`, `firestore.indexes.json`).
-
-## 3. Android (Google Play)
+## 2. Android (Google Play)
 
 1. Crea la chiave di firma (una volta sola, **conservala**: senza non puoi
    aggiornare l'app):
@@ -64,35 +53,33 @@ Senza Firebase il gioco funziona offline e mostra "Classifica offline".
    - Scheda: testi in `store/listing_it.md` / `store/listing_en.md`, icona
      `store/icon_512.png`, grafica `store/feature_graphic_1024x500.png`,
      screenshot `store/screenshots/play/`.
-   - **Sicurezza dei dati**: raccoglie "Nome" (nickname) e "Attività nell'app"
-     (punteggi) solo se Firebase è attivo; dati condivisi pubblicamente in
-     classifica; nessuna condivisione con terzi per pubblicità; cifrati in
-     transito; l'utente può chiederne la cancellazione (in app).
+   - **Sicurezza dei dati**: "Nessun dato raccolto né condiviso" (il gioco è
+     offline; tutto resta sul dispositivo).
    - **Classificazione dei contenuti**: questionario IARC → violenza cartoon
-     lieve, nessun acquisto, contenuti generati dagli utenti = solo nickname
-     filtrato. Risultato atteso PEGI 7.
-   - Pubblico target: 13+ consigliato (evita i requisiti "Famiglie" per i minori
-     di 13 anni, dato che c'è una classifica pubblica).
+     lieve (personaggi che si colpiscono e vengono sbalzati fuori dall'arena,
+     nessun sangue), nessun acquisto, nessun contenuto generato dagli utenti
+     condiviso. Risultato atteso PEGI 7.
+   - Pubblico target: 13+ consigliato (i personaggi parodiano meme e personaggi
+     di cartoni; evita i requisiti aggiuntivi del programma "Famiglie").
 
-## 4. iOS (App Store) — serve un Mac con Xcode
+## 3. iOS (App Store) — serve un Mac con Xcode
 
 1. Apri `ios/Runner.xcworkspace`, imposta il tuo Team in *Signing &
    Capabilities* (bundle ID `com.dellarosamarco.memesTheGame`).
 2. `flutter build ipa --release` e carica con Transporter o Xcode Organizer.
 3. App Store Connect: testi da `store/`, screenshot `store/screenshots/iphone/`
    (6,7", 2796×1290) e `store/screenshots/ipad/` (13", 2752×2064).
-   - Privacy "nutrition label": come per Play (nickname e punteggi, collegati a un
-     ID anonimo, non usati per il tracciamento).
-   - Il gioco dichiara `ITSAppUsesNonExemptEncryption = false` (solo HTTPS).
+   - Privacy "nutrition label": "Data Not Collected".
+   - Il gioco dichiara `ITSAppUsesNonExemptEncryption = false`.
 
-## 5. Web
+## 4. Web
 
 `flutter build web --release --no-web-resources-cdn` e pubblica `build/web` su
-qualsiasi hosting statico (Firebase Hosting, GitHub Pages, Netlify, itch.io come
+qualsiasi hosting statico (GitHub Pages, Netlify, Firebase Hosting, itch.io come
 "HTML game" zippando la cartella). Se lo pubblichi in una sottocartella, aggiungi
 `--base-href /nome-cartella/`.
 
-## 6. Prima di ogni release
+## 5. Prima di ogni release
 
 - `flutter analyze` e `flutter test` (anche la CI su GitHub li esegue).
 - Aumenta `version` in `pubspec.yaml` (es. `1.0.1+2`: il numero dopo `+` deve
