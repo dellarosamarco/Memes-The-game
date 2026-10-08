@@ -2,7 +2,7 @@
     <!-- Haptic feedback on the touch controls. -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
-        android:label="Memes: the game"
+        android:label="Memes: The fight"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

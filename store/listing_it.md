@@ -1,6 +1,6 @@
 # Scheda store — Italiano
 
-**Nome app** (max 30): Memes: the game
+**Nome app** (max 30): Memes: The fight
 
 **Sottotitolo / descrizione breve** (max 80):
 Picchiaduro alla Smash con i meme più iconici: 24 lottatori in pixel art!
@@ -44,7 +44,7 @@ tremolio dello schermo. Si gioca completamente offline.
 
 Nessuna pubblicità. Nessun acquisto in-app. Nessun dato raccolto.
 
-*Memes: the game è un gioco parodistico: non è affiliato né approvato dagli autori
+*Memes: The fight è un gioco parodistico: non è affiliato né approvato dagli autori
 delle immagini o dai titolari dei personaggi citati.*
 
 ## Parole chiave (App Store, max 100 caratteri)

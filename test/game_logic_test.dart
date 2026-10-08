@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:memes_the_game/game/arcade.dart';
-import 'package:memes_the_game/game/memes_game.dart';
-import 'package:memes_the_game/models/meme_character.dart';
+import 'package:memes_the_fight/game/arcade.dart';
+import 'package:memes_the_fight/game/memes_game.dart';
+import 'package:memes_the_fight/models/meme_character.dart';
 
 void main() {
   test('every character has a unique id, passive and special', () {

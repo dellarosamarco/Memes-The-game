@@ -63,7 +63,7 @@ class MatchConfig {
   );
 }
 
-/// "Memes: the game" — a Smash-style brawl between memes.
+/// "Memes: The fight" — a Smash-style brawl between memes.
 class MemesGame extends FlameGame with KeyboardEvents {
   MemesGame({required this.config})
     : stage = Stage.all[config.stage],

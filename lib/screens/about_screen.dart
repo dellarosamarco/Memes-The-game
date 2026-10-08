@@ -125,7 +125,7 @@ class AboutScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _section(
-                            'Memes: the game  v$kAppVersion',
+                            'Memes: The fight  v$kAppVersion',
                             'Un picchiaduro in pixel art alla Smash con i '
                                 'meme più iconici di internet: 24 lottatori, '
                                 '10 arene, lotta libera e Arcade contro la CPU.',

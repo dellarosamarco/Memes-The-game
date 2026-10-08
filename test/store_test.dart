@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:memes_the_game/models/hats.dart';
-import 'package:memes_the_game/services/achievements.dart';
-import 'package:memes_the_game/services/local_store.dart';
+import 'package:memes_the_fight/models/hats.dart';
+import 'package:memes_the_fight/services/achievements.dart';
+import 'package:memes_the_fight/services/local_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 # Store listing — English
 
-**App name** (max 30): Memes: the game
+**App name** (max 30): Memes: The fight
 
 **Subtitle / short description** (max 80):
 A Smash-style brawler starring the most iconic memes. 24 pixel-art fighters!
@@ -44,7 +44,7 @@ every big hit. Plays fully offline.
 
 No ads. No in-app purchases. No data collected.
 
-*Memes: the game is a parody game: it is not affiliated with or endorsed by the
+*Memes: The fight is a parody game: it is not affiliated with or endorsed by the
 authors of the original images or the owners of the characters referenced.*
 
 ## Keywords (App Store, max 100 characters)

@@ -771,8 +771,8 @@ def power_block() -> Image.Image:
 
 
 def powerups() -> Image.Image:
-    """16x16 items: sunglasses, stonks, pizza, coffee."""
-    sheet = Image.new('RGBA', (16 * 4, 16))
+    """16x16 fight items: sunglasses, stonks, pizza, coffee, bomb."""
+    sheet = Image.new('RGBA', (16 * 5, 16))
     # Deal-with-it pixel sunglasses.
     im = Image.new('RGBA', (16, 16))
     d = ImageDraw.Draw(im)
@@ -805,6 +805,16 @@ def powerups() -> Image.Image:
     d.point([(5, 3), (6, 2), (8, 4), (9, 3)], fill=(220, 220, 230, 255))
     d.point([(6, 11), (8, 11)], fill=PLUM)
     sheet.alpha_composite(outline(im), (48, 0))
+    # Cartoon bomb with a lit fuse.
+    im = Image.new('RGBA', (16, 16))
+    d = ImageDraw.Draw(im)
+    d.ellipse([2, 4, 13, 15], fill=(50, 44, 70, 255))
+    d.ellipse([4, 6, 7, 9], fill=(120, 110, 150, 255))
+    d.rectangle([7, 2, 9, 4], fill=(90, 80, 110, 255))
+    d.line([(9, 2), (11, 0)], fill=(200, 160, 110, 255))
+    d.point([(12, 0), (11, 1)], fill=(255, 210, 80, 255))
+    d.point([(13, 1)], fill=(255, 120, 60, 255))
+    sheet.alpha_composite(outline(im), (64, 0))
     return sheet
 
 

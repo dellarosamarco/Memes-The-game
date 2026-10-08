@@ -1,11 +1,11 @@
 {
-    "name": "Memes: the game",
+    "name": "Memes: The fight",
     "short_name": "Memes",
     "start_url": ".",
     "display": "fullscreen",
     "background_color": "#8CCBFF",
     "theme_color": "#FF82B4",
-    "description": "Platform 2D in pixel art con i meme più iconici: 24 personaggi, 500 livelli, boss, cappelli e classifica.",
+    "description": "Picchiaduro alla Smash in pixel art con i meme più iconici: 24 lottatori, 10 arene, lotta libera e Arcade.",
     "orientation": "landscape",
     "prefer_related_applications": false,
     "icons": [

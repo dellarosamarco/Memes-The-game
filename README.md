@@ -1,4 +1,4 @@
-# Memes: the game
+# Memes: The fight
 
 Picchiaduro **alla Super Smash Bros** in **pixel art cute**, fatto con **Flutter + Flame**.
 Scegli uno dei 24 meme più iconici di internet e affronta la CPU su 10 arene sospese:
@@ -181,6 +181,6 @@ tool/                         generatori della grafica e dell'audio
   [Kenney](https://kenney.nl) (base, Farm, Food e Industrial expansion), licenza
   **CC0**. I file usati sono in `tool/kenney/`, ricolorati col contorno prugna del gioco.
   Lo stile dei tile (contorno spesso, puntini 2x2) è ispirato agli stessi pacchetti.
-- Font **Pixelify Sans** (licenza OFL).
+- Font **Pixelify Sans** (licenza OFL), con le legature disattivate (la "fi" di "fight" restava illeggibile).
 - Tutto il resto (sprite dei meme dalle foto, tile, UI, musica ed effetti) è
   generato dagli script in `tool/`.

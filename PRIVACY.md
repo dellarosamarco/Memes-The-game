@@ -1,10 +1,10 @@
-# Privacy policy — Memes: the game
+# Privacy policy — Memes: The fight
 
 *Ultimo aggiornamento: 8 ottobre 2026*
 
 > Prima di pubblicare: sostituisci i campi tra parentesi quadre.
 
-Memes: the game ("il gioco") è sviluppato da **[NOME SVILUPPATORE]** ("lo sviluppatore").
+Memes: The fight ("il gioco") è sviluppato da **[NOME SVILUPPATORE]** ("lo sviluppatore").
 Questa informativa spiega quali dati usa il gioco e perché.
 
 ## In breve
@@ -38,7 +38,7 @@ Il gioco è adatto a tutti e non raccoglie dati personali, né di adulti né di 
 
 # Privacy policy (English)
 
-Memes: the game has no ads, no tracking, no accounts and works offline: it does
+Memes: The fight has no ads, no tracking, no accounts and works offline: it does
 not send any data anywhere. Progress (likes, hats, trophies, Arcade records,
 stats, your player name and settings) is stored only on your device. You can
 delete it from **Settings › Info › Delete my data** ("Cancella i miei dati") or by

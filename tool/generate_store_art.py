@@ -45,7 +45,7 @@ def feature_graphic() -> Image.Image:
     big = img.resize((w * 4, h * 4), Image.NEAREST).convert('RGBA')
     d = ImageDraw.Draw(big)
     _text(d, (512, 26), 'MEMES', 112, (255, 130, 180), stroke=10)
-    _text(d, (512, 150), 'the game', 44, (255, 224, 122), stroke=7)
+    _text(d, (512, 150), 'The fight', 44, (255, 224, 122), stroke=7)
     return big.convert('RGB')
 
 

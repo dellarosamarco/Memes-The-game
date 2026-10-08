@@ -58,7 +58,7 @@ class _MemesAppState extends State<MemesApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Memes: the game',
+      title: 'Memes: The fight',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Pixelify',

@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:memes_the_game/game/cpu.dart';
-import 'package:memes_the_game/game/fighter/fighter.dart';
-import 'package:memes_the_game/game/fighter/moves.dart';
-import 'package:memes_the_game/game/memes_game.dart';
-import 'package:memes_the_game/game/stages.dart';
-import 'package:memes_the_game/models/meme_character.dart';
+import 'package:memes_the_fight/game/cpu.dart';
+import 'package:memes_the_fight/game/fighter/fighter.dart';
+import 'package:memes_the_fight/game/fighter/moves.dart';
+import 'package:memes_the_fight/game/memes_game.dart';
+import 'package:memes_the_fight/game/stages.dart';
+import 'package:memes_the_fight/models/meme_character.dart';
 
 /// Boots the real game and lets two CPUs fight, to catch runtime errors in
 /// fighters, specials and projectiles and to check matches actually end.

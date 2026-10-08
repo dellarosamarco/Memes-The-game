@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:memes_the_game/services/name_filter.dart';
+import 'package:memes_the_fight/services/name_filter.dart';
 
 void main() {
   test('clean names pass', () {

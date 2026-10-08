@@ -1,4 +1,4 @@
-# Pubblicare Memes: the game
+# Pubblicare Memes: The fight
 
 Il gioco è pronto per Android (Play Store), iOS (App Store) e web. Questa guida
 elenca cosa fare, nell'ordine, per la prima pubblicazione.
@@ -49,7 +49,7 @@ e nella descrizione dello store, ma non sostituisce una licenza.
 3. Build: `flutter build appbundle --release`
    → `build/app/outputs/bundle/release/app-release.aab`
 4. Play Console › Crea app › carica l'AAB in un test interno, poi produzione.
-   - ID applicazione: `com.dellarosamarco.memes_the_game` (non si può cambiare dopo).
+   - ID applicazione: `com.dellarosamarco.memes_the_fight` (non si può cambiare dopo).
    - Scheda: testi in `store/listing_it.md` / `store/listing_en.md`, icona
      `store/icon_512.png`, grafica `store/feature_graphic_1024x500.png`,
      screenshot `store/screenshots/play/`.
@@ -65,7 +65,7 @@ e nella descrizione dello store, ma non sostituisce una licenza.
 ## 3. iOS (App Store) — serve un Mac con Xcode
 
 1. Apri `ios/Runner.xcworkspace`, imposta il tuo Team in *Signing &
-   Capabilities* (bundle ID `com.dellarosamarco.memesTheGame`).
+   Capabilities* (bundle ID `com.dellarosamarco.memesTheFight`).
 2. `flutter build ipa --release` e carica con Transporter o Xcode Organizer.
 3. App Store Connect: testi da `store/`, screenshot `store/screenshots/iphone/`
    (6,7", 2796×1290) e `store/screenshots/ipad/` (13", 2752×2064).
