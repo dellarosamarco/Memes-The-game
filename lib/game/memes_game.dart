@@ -132,6 +132,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     totalLikes = level.totalLikes;
     await images.loadAll([
       character.spriteSheet,
+      ?character.afterSpecialSheet,
       for (final k in EnemyKind.values) k.spritePath,
       'sprites/tiles_${level.theme.name}.png',
       'sprites/moving_${level.theme.name}.png',

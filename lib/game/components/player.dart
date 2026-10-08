@@ -29,6 +29,13 @@ class Player extends PositionComponent
   final MemeCharacter character;
   late int hearts;
   late final Strip _strip;
+  Strip? _altStrip;
+
+  /// The strip to draw now (the alternative one just after the special).
+  Strip get _sheet =>
+      _altStrip != null && specialTimer > character.specialCooldown - 0.9
+      ? _altStrip!
+      : _strip;
 
   bool facingRight = true;
   double _t = 0;
@@ -149,6 +156,8 @@ class Player extends PositionComponent
   @override
   Future<void> onLoad() async {
     _strip = Strip(game.images.fromCache(character.spriteSheet), 60, 60);
+    final alt = character.afterSpecialSheet;
+    if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
     _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
     if (character.passive == Passive.featherweight) gravity = Phys.gravity * .8;
   }
@@ -247,13 +256,7 @@ class Player extends PositionComponent
       _airpods -= dt;
       if (_t % 0.35 < dt) {
         game.world.add(
-          FloatingText(
-            position: position + Vector2(facingRight ? -16 : 16, -50),
-            text: '♪',
-            fontSize: 12,
-            color: const Color(0xFFFFD86A),
-            duration: .8,
-          ),
+          MusicNote(position: position + Vector2(facingRight ? -16 : 16, -50)),
         );
       }
     }
@@ -977,7 +980,7 @@ class Player extends PositionComponent
     for (var i = 0; i < _trail.length; i++) {
       final (pos, frame, right) = _trail[i];
       final o = pos - position;
-      _strip.draw(
+      _sheet.draw(
         canvas,
         frame,
         Offset(o.x - 30, o.y - 58),
@@ -1000,7 +1003,7 @@ class Player extends PositionComponent
       canvas.save();
       canvas.translate(0, -bodyHeight / 2);
       canvas.rotate(_t * 9);
-      _strip.draw(
+      _sheet.draw(
         canvas,
         _fallFrame,
         Offset(-30, -58 + bodyHeight / 2),
@@ -1050,7 +1053,7 @@ class Player extends PositionComponent
         );
     }
     // Frame is 60x60, feet at y=58, centered at x=30.
-    _strip.draw(
+    _sheet.draw(
       canvas,
       _frame,
       const Offset(-30, -58),

@@ -54,7 +54,9 @@ mondo), e il cancello verso la bandiera si apre solo dopo averlo battuto.
 I livelli sono **generati proceduralmente** da un seed fisso (`lib/game/level_gen.dart`),
 quindi sono uguali per tutti i giocatori. La difficoltà cresce gradualmente: i primi
 livelli fanno da tutorial, poi arrivano buche, piattaforme sospese, spine, **molle**,
-**piattaforme mobili**, tunnel e gruppi di nemici. Ogni livello viene verificato da
+**piattaforme mobili**, tunnel e gruppi di nemici (con una curva morbida, così i mondi
+centrali restano divertenti). C'è un checkpoint ogni ~65 colonne, quindi fino a tre nei
+livelli lunghi. Ogni livello viene verificato da
 `lib/game/level_solver.dart`: simula il personaggio più lento, senza doppio salto né
 mosse speciali e con la stessa fisica del gioco, e dimostra che il livello si può finire
 (se un layout fallisce, viene rigenerato). Il test `test/levels_test.dart` controlla tutti

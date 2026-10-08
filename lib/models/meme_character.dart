@@ -139,6 +139,11 @@ class MemeCharacter {
   /// Animation strip, relative to assets/images/ (Flame's image prefix).
   String get spriteSheet => 'sprites/$id.png';
 
+  /// Alternative strip shown right after the special (e.g. the capuchin's
+  /// empty hand while its rock is flying), if any.
+  String? get afterSpecialSheet =>
+      id == 'rock_monkey' ? 'sprites/rock_monkey_empty.png' : null;
+
   /// Pixel-art portrait for menus (full asset path).
   String get portraitAsset => 'assets/images/sprites/${id}_portrait.png';
 
@@ -234,7 +239,7 @@ class MemeCharacter {
         'piattaforme su cui saltare.',
     specialCooldown: 9,
     specialShout: '*TI FISSA*',
-    hurtLines: ['...', 'mrrp?!', '👁️👄👁️'],
+    hurtLines: ['...', 'mrrp?!', 'O_O'],
   );
 
   static const robberDog = MemeCharacter(

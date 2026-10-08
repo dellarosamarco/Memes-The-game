@@ -64,7 +64,7 @@ class PauseOverlay extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                '←/→ muoviti · SPAZIO salta · X speciale · ESC pausa',
+                'Frecce/A-D muoviti · SPAZIO salta · X speciale · ESC pausa',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: kPixelFont,

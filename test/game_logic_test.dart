@@ -67,4 +67,27 @@ void main() {
     }
     expect(seen.length, MemeCharacter.all.length);
   });
+
+  test('character texts only use glyphs the pixel font has', () {
+    // Pixelify Sans covers Latin-1 (+ a few dashes); arrows, music notes and
+    // emoji would show up as empty boxes.
+    bool ok(String t) =>
+        t.runes.every((r) => r < 0x250 || r == 0x2014 || r == 0x2013);
+    for (final c in MemeCharacter.all) {
+      for (final t in [
+        c.name,
+        c.memeAlias,
+        c.tagline,
+        c.lore,
+        c.passiveName,
+        c.passiveDescription,
+        c.specialName,
+        c.specialDescription,
+        c.specialShout,
+        ...c.hurtLines,
+      ]) {
+        expect(ok(t), isTrue, reason: '${c.id}: "$t"');
+      }
+    }
+  });
 }

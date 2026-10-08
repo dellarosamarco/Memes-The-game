@@ -89,6 +89,11 @@ FIGURES = {
     'rock_monkey': ((0, 0, 607, 700), 50, 1.0,
                     dict(colors=20, sat=1.2, contrast=1.15, levels=(0, 250),
                          legs=dict(color=(110, 62, 30)))),
+    # Same monkey with an empty hand (shown while the rock is flying).
+    'rock_monkey_empty': ((0, 0, 607, 700), 50, 1.0,
+                          dict(colors=20, sat=1.2, contrast=1.15,
+                               levels=(0, 250),
+                               legs=dict(color=(110, 62, 30)))),
     'chill_dog': ((0, 0, 700, 430), 37, 0.8,
                   dict(colors=18, sat=1.15, contrast=1.15, levels=(0, 250),
                        legs=dict(color=(214, 180, 140)))),

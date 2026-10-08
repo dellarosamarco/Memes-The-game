@@ -269,3 +269,37 @@ class Confetti extends PositionComponent {
     }
   }
 }
+
+/// A little pixel music note that floats up and fades (AirPods on).
+class MusicNote extends PositionComponent {
+  MusicNote({required super.position}) : super(priority: 40);
+
+  double _t = 0;
+  static const _d = 0.9;
+  static final _paint = Paint();
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    position
+      ..y -= 28 * dt
+      ..x += sin(_t * 9) * 12 * dt;
+    if (_t >= _d) removeFromParent();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final a = (1 - _t / _d).clamp(0.0, 1.0);
+    void px(double x, double y, double w, double h, int c) => canvas.drawRect(
+      Rect.fromLTWH(x, y, w, h),
+      _paint..color = Color(c).withValues(alpha: a),
+    );
+    // Outline, then the yellow eighth note.
+    px(-4, 0, 6, 5, 0xFF3A2440);
+    px(1, -9, 3, 11, 0xFF3A2440);
+    px(1, -10, 7, 4, 0xFF3A2440);
+    px(-3, 1, 4, 3, 0xFFFFD86A);
+    px(2, -8, 1, 9, 0xFFFFD86A);
+    px(2, -9, 5, 2, 0xFFFFD86A);
+  }
+}

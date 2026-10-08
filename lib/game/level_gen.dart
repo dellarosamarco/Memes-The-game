@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'level.dart';
 import 'level_solver.dart';
 
@@ -50,32 +52,39 @@ class LevelGenerator {
   late final int local = index % kLevelsPerWorld;
   late final bool boss = local == kLevelsPerWorld - 1;
 
-  /// 0 → 1 across the campaign, with a small ramp inside each world.
+  /// 0 → 1 across the campaign, with a small ramp inside each world. The
+  /// curve is eased (slow at first) so the middle worlds stay fun.
   late final double diff = forceEasy
       ? 0
-      : (index / (kLevelCount - 1) * 0.8 + local / kLevelsPerWorld * 0.2).clamp(
-          0.0,
-          1.0,
-        );
+      : (pow(index / (kLevelCount - 1), 1.35) * 0.82 +
+                local / kLevelsPerWorld * 0.18)
+            .clamp(0.0, 1.0)
+            .toDouble();
 
   final _g = List.generate(rows, (_) => List.filled(maxCols, ' '));
   int _col = 0;
 
   /// Row of the ground surface (the first solid row).
   int _h = 12;
-  bool _checkpointDone = false;
+
+  /// Columns where the next checkpoints go (one every ~65 columns).
+  final List<int> _checkpoints = [];
 
   LevelData build() {
     final length =
-        (60 + (index / 10).clamp(0, 1) * 20 + diff * 120 + rnd.nextInt(20))
+        (60 + (index / 10).clamp(0, 1) * 20 + diff * 100 + rnd.nextInt(20))
             .round();
+    final n = (length / 65).floor().clamp(1, 3);
+    for (var k = 1; k <= n; k++) {
+      _checkpoints.add(length * k ~/ (n + 1));
+    }
     _flat(6, likes: false, enemies: false);
     _put(2, _h - 1, 'P');
     while (_col < length - 14) {
-      if (!_checkpointDone && _col > length / 2) {
+      if (_checkpoints.isNotEmpty && _col > _checkpoints.first) {
+        _checkpoints.removeAt(0);
         _flat(4, likes: false, enemies: false);
         _put(_col - 2, _h - 1, 'K');
-        _checkpointDone = true;
         continue;
       }
       _chunk();
