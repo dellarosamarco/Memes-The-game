@@ -194,6 +194,39 @@ void main() {
     expect(p.percent + c.percent, greaterThan(before + 20));
   });
 
+  testWidgets('out of air jumps, jump triggers the recovery', (tester) async {
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.stareCat,
+        cpu: MemeCharacter.wigDog,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60);
+    }
+    game.cpuOff = true;
+    final p = game.player;
+    // Off the side of the stage, falling, no jumps left.
+    p.position.setValues(
+      game.stage.left * 24.0 - 60,
+      game.stage.mainTop * 24.0 + 40,
+    );
+    p.onGround = false;
+    p.velocity.setValues(0, 200);
+    p.airJumps = 0;
+    p.usedRecovery = false;
+    for (var i = 0; i < 10; i++) {
+      game.update(1 / 60); // falling for a moment
+    }
+    p.input.pressJump();
+    game.update(1 / 60);
+    expect(p.usedRecovery, isTrue);
+    expect(p.velocity.y, lessThan(-300));
+  });
+
   testWidgets('mashing buttons breaks a freeze sooner', (tester) async {
     final game = await boot(
       tester,

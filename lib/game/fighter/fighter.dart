@@ -536,6 +536,20 @@ class Fighter extends PositionComponent
         }
       }
     }
+    // Out of air jumps: the jump button triggers the recovery, so players
+    // who don't know "up + special" (or are on a touch screen) can still
+    // make it back.
+    if (_bufJump > 0 &&
+        _lag <= 0 &&
+        _coyote <= 0 &&
+        airJumps == 0 &&
+        !onGround &&
+        !usedRecovery &&
+        velocity.y > -100) {
+      _bufJump = 0;
+      _recovery();
+      return;
+    }
     if (_bufJump > 0 && _lag <= 0 && (_coyote > 0 || airJumps > 0)) {
       _bufJump = 0;
       if (_coyote > 0) {

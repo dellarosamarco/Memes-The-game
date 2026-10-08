@@ -15,6 +15,7 @@ import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
 import 'components/fight_items.dart';
+import 'components/offscreen.dart';
 import 'components/stage_render.dart';
 import 'cpu.dart';
 import 'debug/debug_bridge.dart';
@@ -189,6 +190,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     );
     fighters.addAll([player, cpu]);
     world.addAll(fighters);
+    camera.viewport.add(OffscreenMarkers());
     brain = CpuBrain(cpu, player, config.difficulty);
     if (demo) _autopilot = CpuBrain(player, cpu, Difficulty.hard);
     for (final f in fighters) {
@@ -316,6 +318,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
         cpu.input.clear();
       case 'cpuOn':
         cpuOff = false;
+      case 'cpuFar':
+        cpuOff = true;
+        // Hovering far away near the left blast line (marker check).
+        cpu.position.setValues(-Stage.blastSide * kTile + 40, -kTile * 6);
+        cpu.velocity.setZero();
+        cpu.gravity = 0;
+        cpu.frozen = 30;
       case 'reset':
         for (final f in fighters) {
           f.percent = 0;
@@ -538,6 +547,14 @@ class MemesGame extends FlameGame with KeyboardEvents {
     final shift = (size.y / 2 - (padTop + band / 2)) / vf.zoom;
     var target = Vector2((minX + maxX) / 2, (minY + maxY) / 2 + shift);
     if (punch > 0) target += (_punchAt - target) * (.6 * punch);
+    // Can't fit both? The human player always stays in the shot.
+    if (player.alive) {
+      final halfW = size.x / zoom / 2, halfH = size.y / zoom / 2;
+      final pm = player.mid;
+      final mx = 60.0 / zoom * 2, my = 70.0 / zoom * 2;
+      target.x = target.x.clamp(pm.x - halfW + mx, pm.x + halfW - mx);
+      target.y = target.y.clamp(pm.y - halfH + my, pm.y + halfH - my);
+    }
     vf.position =
         vf.position +
         (target - vf.position) * min(1.0, dt * (punch > 0 ? 12 : 5));

@@ -121,7 +121,8 @@ class HowToPlay extends StatelessWidget {
                   _row(
                     _button('up', 'blue'),
                     'Salto',
-                    'puoi saltare ancora una volta in aria.',
+                    'puoi saltare ancora in aria; finiti i salti, ti rilancia '
+                        'verso l\'arena.',
                   ),
                   _row(
                     _button('shield', 'grey'),
