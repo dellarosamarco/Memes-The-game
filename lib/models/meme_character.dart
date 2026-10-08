@@ -259,8 +259,8 @@ class MemeCharacter {
     specialType: SpecialType.heist,
     specialName: 'La Rapina',
     specialDescription:
-        'Scatto fulmineo e invulnerabile che travolge l\'avversario (10%).',
-    specialCooldown: 4,
+        'Scatto fulmineo e invulnerabile che travolge l\'avversario (9%).',
+    specialCooldown: 5,
     specialShout: 'QUESTA È UNA RAPINA!',
     hurtLines: ['Ehi!', 'Mi hai visto?', 'Non sono stato io.'],
   );
@@ -284,7 +284,7 @@ class MemeCharacter {
     specialType: SpecialType.cursedSmile,
     specialName: 'Sorriso Maledetto',
     specialDescription:
-        'Sorride: l\'avversario si spaventa e scappa per 2,5 secondi.',
+        'Sorride: l\'avversario si spaventa e scappa per 2 secondi.',
     specialCooldown: 9,
     specialShout: 'SORRIDI :)',
     hurtLines: [':)', ':))', ':)))'],
@@ -308,8 +308,8 @@ class MemeCharacter {
     passiveDescription: 'Il piumino assorbe il primo colpo di ogni vita.',
     specialType: SpecialType.braidSpin,
     specialName: 'Frullatore di Treccine',
-    specialDescription: 'Gira su se stessa frustando tutto intorno con le treccine (9%). In aria la fa risalire.',
-    specialCooldown: 4,
+    specialDescription: 'Gira su se stessa frustando tutto intorno con le treccine (8%). In aria la fa risalire.',
+    specialCooldown: 5,
     specialShout: 'TRECCINE AL VENTO!',
     hurtLines: ['Il piumino!', 'Mi hai spettinata!', 'Le treccine NO!'],
   );
@@ -332,8 +332,8 @@ class MemeCharacter {
     passiveDescription: 'I like guadagnati a fine lotta sono doppi.',
     specialType: SpecialType.purse,
     specialName: 'Borsettata',
-    specialDescription: 'Una borsettata potentissima davanti a sé (13%).',
-    specialCooldown: 3.5,
+    specialDescription: 'Una borsettata potentissima davanti a sé (11%).',
+    specialCooldown: 4.5,
     specialShout: 'MA COME SI PERMETTE?!',
     hurtLines: ['Che maleducato!', 'Le mie perle!', 'Ai miei tempi...'],
   );
@@ -356,8 +356,7 @@ class MemeCharacter {
     passiveDescription: 'Crocs corazzate: subisce il 15% di danni in meno.',
     specialType: SpecialType.kachow,
     specialName: 'Ka-Chow!',
-    specialDescription:
-        'Turbo per 3 secondi: velocissimo, chi tocca viene investito (8%).',
+    specialDescription: 'Turbo per 2,5 secondi: velocissimo, il primo che investe vola via (10%).',
     specialCooldown: 8,
     specialShout: 'KA-CHOW!',
     hurtLines: ['La cravatta!', 'Ka-ouch!', 'Le crocs no!'],
@@ -381,7 +380,8 @@ class MemeCharacter {
     passiveDescription: 'Ogni colpo a segno gli toglie l\'1% di danni.',
     specialType: SpecialType.balloon,
     specialName: 'Gonfia Guance',
-    specialDescription: 'Si gonfia e risale fluttuando: il recupero perfetto.',
+    specialDescription:
+        'Gonfia le guance: spinge via chi è vicino (7%) e risale fluttuando.',
     specialCooldown: 7,
     specialShout: '*PFFFFF*',
     hurtLines: ['Mmmf!', '*sputa un like*', 'Mmh-mmh!'],
@@ -480,8 +480,8 @@ class MemeCharacter {
     specialType: SpecialType.teethFlash,
     specialName: 'Dentiera Smagliante',
     specialDescription:
-        'Un sorriso così bianco che acceca e blocca l\'avversario (5%).',
-    specialCooldown: 10,
+        'Un sorriso così bianco che acceca e blocca l\'avversario (8%).',
+    specialCooldown: 8,
     specialShout: '*SORRISO SMAGLIANTE*',
     hurtLines: ['Ehm.', 'I miei denti!', '*sorriso tirato*'],
   );
@@ -530,7 +530,7 @@ class MemeCharacter {
         'Leggerissimo: salti lunghi e lenti, ma vola via facilmente.',
     specialType: SpecialType.chickArmy,
     specialName: 'Cip Cip!',
-    specialDescription: 'Tre pulcini corrono verso l\'avversario (5% l\'uno).',
+    specialDescription: 'Tre pulcini corrono verso l\'avversario (7% l\'uno).',
     specialCooldown: 6,
     specialShout: 'CIP CIP CIP!',
     hurtLines: ['Pio!', 'Il caschetto!', 'Cip?!'],
@@ -551,10 +551,11 @@ class MemeCharacter {
     jumpSpeed: 500,
     passive: Passive.helmet,
     passiveName: 'Casco Protettivo',
-    passiveDescription: 'Il casco lo rende immune ai proiettili.',
+    passiveDescription:
+        'Il casco lo rende immune ai proiettili e attutisce i colpi (-10%).',
     specialType: SpecialType.flight,
     specialName: 'Volo Urbano',
-    specialDescription: 'Vola per 2,5 secondi: tieni premuto SALTO per salire.',
+    specialDescription: 'Spicca il volo con un colpo d\'ala (6%) e vola per 2,5 secondi: tieni premuto SALTO per salire.',
     specialCooldown: 8,
     specialShout: 'TUBA TUBA!',
     hurtLines: ['Tru?!', 'Il casco!', 'Grrr-uu.'],
@@ -705,7 +706,7 @@ class MemeCharacter {
     specialName: 'Roccia Rotolante',
     specialDescription:
         'Si appallottola e rotola in avanti travolgendo l\'avversario (11%).',
-    specialCooldown: 6,
+    specialCooldown: 5,
     specialShout: 'SONO UNA ROCCIA!',
     hurtLines: ['Ahia la roccia!', 'Eh?', 'Dov\'è la mia roccia?'],
   );
@@ -778,7 +779,7 @@ class MemeCharacter {
         'Se resta fermo si rilassa e recupera l\'1% al secondo.',
     specialType: SpecialType.vacation,
     specialName: 'Modalità Ferie',
-    specialDescription: 'L\'avversario va al rallentatore per 3 secondi.',
+    specialDescription: 'L\'avversario va al rallentatore per 2 secondi.',
     specialCooldown: 12,
     specialShout: 'IO SONO IN FERIE',
     hurtLines: ['Che stress.', 'Mi rovini il relax.', 'Ehi, calma.'],

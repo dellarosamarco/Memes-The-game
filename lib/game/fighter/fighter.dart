@@ -15,6 +15,7 @@ import '../level.dart';
 import '../memes_game.dart';
 import '../physics.dart';
 import '../pixel.dart';
+import '../stages.dart';
 import 'moves.dart';
 
 part 'specials.dart';
@@ -210,13 +211,12 @@ class Fighter extends PositionComponent
   double get weight => weightOf(character);
 
   /// How hard a meme is to launch (1 = average).
-  static double weightOf(MemeCharacter c) =>
-      switch (c.passive) {
-        Passive.tough => 1.25,
-        Passive.featherweight => .85,
-        _ => 1.0,
-      } *
-      (c.hearts >= 4 ? 1.12 : 1);
+  static double weightOf(MemeCharacter c) => switch (c.passive) {
+    Passive.tough => 1.2,
+    Passive.featherweight => .97,
+    // Burly memes (4 hearts) are a bit heavier.
+    _ => c.hearts >= 4 ? 1.1 : 1.0,
+  };
 
   /// 0..1 ratings for the character select screen.
   static double speedRating(MemeCharacter c) =>
@@ -261,7 +261,7 @@ class Fighter extends PositionComponent
     _ => 1,
   };
 
-  double get _timeScale => slowed > 0 ? .45 : 1;
+  double get _timeScale => slowed > 0 ? .55 : 1;
 
   // ------------------------------------------------------------ loading
 
@@ -273,7 +273,7 @@ class Fighter extends PositionComponent
     final alt = character.afterSpecialSheet;
     if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
     if (character.passive == Passive.featherweight) {
-      gravity = Phys.gravity * .82;
+      gravity = Phys.gravity * .9;
     }
     respawnAt = position.clone();
     airJumps = _maxAirJumps;
@@ -802,6 +802,7 @@ class Fighter extends PositionComponent
       return;
     }
     if (character.passive == Passive.spikeProof) damage *= .85;
+    if (character.passive == Passive.helmet) damage *= .9;
     percent = min(999, percent + damage);
     if (attacker != null) {
       attacker.damageDealt += damage;

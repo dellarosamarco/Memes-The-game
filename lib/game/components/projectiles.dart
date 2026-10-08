@@ -267,7 +267,7 @@ class FightProjectile extends PositionComponent
     applyGravity(dt);
     moveAndCollide(dt);
     final o = _touching(22);
-    if (o != null) _strike(o, damage: 5, angle: 45, base: 170, growth: 4);
+    if (o != null) _strike(o, damage: 7, angle: 45, base: 200, growth: 5);
     if (_t > 2.6 || _stuck > .4) {
       game.world.add(PoofEffect(position: position - Vector2(0, 9)));
       removeFromParent();

@@ -412,7 +412,8 @@ class CpuBrain {
         go = dist < 180;
       case SpecialType.balloon:
       case SpecialType.flight:
-        go = false; // saved for recovery
+        // Mostly saved for recovery; on the ground, a point-blank shove.
+        go = me.onGround && dist < 60 && _rnd.nextDouble() < .5;
     }
     if (!go) return false;
     // Turn first (facing applies on the next frame), then fire.

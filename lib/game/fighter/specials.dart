@@ -85,7 +85,7 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0xAA000000), duration: .6),
         );
         for (final o in _near(320)) {
-          o.scared = 2.5;
+          o.scared = 2.0;
         }
 
       case SpecialType.braidSpin:
@@ -101,7 +101,7 @@ extension FighterSpecials on Fighter {
           if (d.x * dir > -6 && d.x * dir < 66 && d.y.abs() < 40) {
             _hit(
               o,
-              damage: 13,
+              damage: 11,
               angle: 35,
               base: 280,
               growth: 9,
@@ -111,11 +111,22 @@ extension FighterSpecials on Fighter {
         }
 
       case SpecialType.kachow:
-        turbo = 3;
+        turbo = 2.5;
 
       case SpecialType.balloon:
         balloon = 1.4;
         usedRecovery = true;
+        // Puffing up the cheeks shoves away whoever is too close.
+        game.world.add(
+          ShockwaveEffect(
+            position: c,
+            maxRadius: 75,
+            color: const Color(0xFFFFB3C7),
+          ),
+        );
+        for (final o in _near(75).toList()) {
+          _hit(o, damage: 7, angle: 60, base: 260, growth: 5);
+        }
 
       case SpecialType.lullaby:
         percent = max(0, percent - 12);
@@ -147,9 +158,9 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0xEEFFFFFF), duration: .5),
         );
         for (final o in opponents.toList()) {
-          o.frozen = .8;
-          _hit(o, damage: 5, base: 60, growth: 0);
-          o.frozen = .8;
+          o.frozen = 1.2;
+          _hit(o, damage: 8, base: 60, growth: 0);
+          o.frozen = 1.2;
         }
 
       case SpecialType.airpods:
@@ -163,6 +174,11 @@ extension FighterSpecials on Fighter {
       case SpecialType.flight:
         flight = 2.5;
         usedRecovery = true;
+        // Take-off: a wing gust.
+        game.world.add(PoofEffect(position: c));
+        for (final o in _near(80).toList()) {
+          _hit(o, damage: 6, angle: 40, base: 240, growth: 4);
+        }
 
       case SpecialType.phoneCall:
         game.camera.viewport.add(
@@ -220,7 +236,7 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0x5540C4FF), duration: .5),
         );
         for (final o in opponents) {
-          o.slowed = 3;
+          o.slowed = 2.2;
         }
     }
   }
@@ -246,7 +262,7 @@ extension FighterSpecials on Fighter {
       _hitThisMove.add(o);
       _hit(
         o,
-        damage: dash > 0 ? 10 : 11,
+        damage: dash > 0 ? 9 : 11,
         angle: 38,
         base: 260,
         growth: 7,
@@ -265,21 +281,23 @@ extension FighterSpecials on Fighter {
       for (final o in _near(52).toList()) {
         if (_hitThisMove.contains(o)) continue;
         _hitThisMove.add(o);
-        _hit(o, damage: 9, angle: 50, base: 240, growth: 6);
+        _hit(o, damage: 8, angle: 50, base: 240, growth: 6);
       }
     }
     if (turbo > 0 && _turboHit <= 0) {
       for (final o in opponents.toList()) {
         if (o.hurtbox.overlaps(hurtbox.inflate(4)) && velocity.x.abs() > 120) {
+          // One big ram per turbo, then the engine cools down.
           _turboHit = .5;
           _hit(
             o,
-            damage: 8,
+            damage: 10,
             angle: 40,
-            base: 230,
-            growth: 6,
+            base: 270,
+            growth: 7,
             right: velocity.x > 0,
           );
+          turbo = min(turbo, .2);
         }
       }
       if (_t % .06 < dt) {
@@ -288,13 +306,17 @@ extension FighterSpecials on Fighter {
         );
       }
     }
+    // Floating and flying stop well below the top blast line.
+    final ceiling = -Stage.blastTop * kTile + kTile * 5;
     if (balloon > 0) {
       balloon -= dt;
-      velocity.y = balloon > 0 ? -150 : min(velocity.y, 0);
+      velocity.y = balloon > 0 && position.y > ceiling
+          ? -150
+          : min(velocity.y, 0);
     }
     if (flight > 0) {
       flight -= dt;
-      velocity.y = input.jump || input.up ? -220 : 60;
+      velocity.y = (input.jump || input.up) && position.y > ceiling ? -220 : 60;
       if (_t % .2 < dt) game.world.add(PoofEffect(position: position.clone()));
     }
     if (slamming) velocity.y = 760;
@@ -327,7 +349,7 @@ extension FighterSpecials on Fighter {
     for (final o in opponents.toList()) {
       final d = o.position - position;
       if (d.x.abs() < 150 && d.y.abs() < 70) {
-        _hit(o, damage: 13, angle: 75, base: 260, growth: 7);
+        _hit(o, damage: 11, angle: 75, base: 260, growth: 7);
       }
     }
   }
