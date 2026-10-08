@@ -84,10 +84,29 @@ decorazioni animate.
 
 ### Game feel
 
-Micro-pausa sugli impatti (hit-stop), tremolio dello schermo, scintille, rallentatore
-sul KO decisivo, esplosione colorata dal bordo dello schermo a ogni KO, camera dinamica
-che inquadra entrambi i lottatori, percentuali che tremano e cambiano colore, frasi
-buffe dei meme quando incassano un colpo forte.
+- **Impatti leggibili**: micro-pausa sui colpi (hit-stop) con il colpito che lampeggia di
+  bianco e trema, scintille, tremolio dello schermo; gli attacchi hanno una posa in tre
+  tempi (caricamento, colpo "stirato" verso il bersaglio, ritorno) e una scia sui colpi forti.
+- **Colpo finale alla Smash**: quando un colpo sta per mandare fuori l'avversario, il gioco
+  lo capisce in anticipo: pausa più lunga, zoom della telecamera sull'impatto e flash.
+- **Comandi reattivi**: i tasti premuti un attimo troppo presto (durante un attacco o un
+  atterraggio) vengono ricordati per 150 ms; con lo stick al centro attacchi e speciali si
+  girano da soli verso l'avversario vicino; su/giù del joystick contano solo se prevalgono
+  sulla direzione orizzontale.
+- **DI**: tenendo una direzione mentre vieni scagliato devii la traiettoria fino a 15°.
+- **Liberati**: congelato, addormentato o stordito? Premi i tasti a raffica.
+- **Bordi amichevoli**: se cadi appena oltre lo spigolo di un'isola ci risali sopra.
+- **Telecamera** che inquadra entrambi i lottatori nella fascia tra l'HUD e i comandi touch,
+  senza rimpicciolirli troppo; rallentatore sul KO decisivo.
+- I colpi deboli spingono indietro, così i lottatori non restano uno dentro l'altro.
+
+### Bilanciamento
+
+Tarato con simulazioni CPU contro CPU (test temporanei, non nel repo): ogni arena produce
+lotte da 1-3 minuti, i KO arrivano di solito tra il 90% e il 160%, e un torneo di 96 lotte
+tiene tutti i 24 meme in una forbice di vittorie compatibile con il caso. Con
+`--dart-define=MEMES_DEBUG=true` la build web espone `window.memesState()` e
+`window.memesCmd()` per i play-test automatici (in `MEMES_DEMO` giocano due CPU).
 
 ## Negozio e trofei
 
