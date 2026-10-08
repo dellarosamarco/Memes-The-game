@@ -95,7 +95,14 @@ decorazioni animate.
   sulla direzione orizzontale.
 - **DI**: tenendo una direzione mentre vieni scagliato devii la traiettoria fino a 15°.
 - **Liberati**: congelato, addormentato o stordito? Premi i tasti a raffica.
-- **Bordi amichevoli**: se cadi appena oltre lo spigolo di un'isola ci risali sopra.
+- **Bordi amichevoli**: se cadi appena oltre lo spigolo di un'isola ci risali sopra; finiti i
+  salti in aria, il tasto Salto fa partire il recupero (non serve conoscere "su + speciale").
+- **Bolle a bordo schermo** per chi è fuori inquadratura, e la telecamera non perde mai il
+  giocatore.
+- **Niente spam**: la stessa mossa ripetuta perde potenza (fino al 40%) e ogni colpo in più di
+  una combo stordisce meno, quindi niente "jab infiniti"; la CPU para chi ripete sempre lo stesso
+  attacco, punisce le mosse a vuoto e si libera dalle raffiche.
+- **Animazioni procedurali**: respiro da fermi, corsa saltellante, allungamento nei salti.
 - **Telecamera** che inquadra entrambi i lottatori nella fascia tra l'HUD e i comandi touch,
   senza rimpicciolirli troppo; rallentatore sul KO decisivo.
 - I colpi deboli spingono indietro, così i lottatori non restano uno dentro l'altro.
