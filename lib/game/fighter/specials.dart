@@ -279,10 +279,11 @@ extension FighterSpecials on Fighter {
           );
         }
       }
-      if (_t % .06 < dt)
+      if (_t % .06 < dt) {
         game.world.add(
           Dust(position: position.clone(), dx: -velocity.x.sign * 20),
         );
+      }
     }
     if (balloon > 0) {
       balloon -= dt;

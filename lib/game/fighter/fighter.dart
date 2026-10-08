@@ -255,8 +255,9 @@ class Fighter extends PositionComponent
     _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
     final alt = character.afterSpecialSheet;
     if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
-    if (character.passive == Passive.featherweight)
+    if (character.passive == Passive.featherweight) {
       gravity = Phys.gravity * .82;
+    }
     respawnAt = position.clone();
     airJumps = _maxAirJumps;
   }
