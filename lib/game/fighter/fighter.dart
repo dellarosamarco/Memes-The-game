@@ -162,6 +162,7 @@ class Fighter extends PositionComponent
   double _squash = 1;
   double _spinAngle = 0;
   bool _wasOnGround = true;
+  static final _rnd = Random();
 
   bool get alive => state != FighterState.ko && stocks > 0;
   bool get stunned => frozen > 0 || asleep > 0 || dizzy > 0;
@@ -309,7 +310,9 @@ class Fighter extends PositionComponent
   }
 
   void _timers(double dt) {
-    if (frozen > 0) frozen -= dt;
+    // Stuns wear off faster in the air, so they can't force a fall.
+    final stunDecay = onGround ? dt : dt * 3;
+    if (frozen > 0) frozen -= stunDecay;
     if (_dodgeT > 0) {
       _dodgeT -= dt;
       // The dodge itself doesn't leave you helpless.
@@ -319,7 +322,7 @@ class Fighter extends PositionComponent
     }
     if (hitstun > 0) hitstun -= dt;
     if (invincible > 0) invincible -= dt;
-    if (asleep > 0) asleep -= dt;
+    if (asleep > 0) asleep -= stunDecay;
     if (scared > 0) scared -= dt;
     if (slowed > 0) slowed -= dt;
     if (armor > 0) armor -= dt;
@@ -377,10 +380,13 @@ class Fighter extends PositionComponent
 
   void _move(double dt, {double airControl = 1}) {
     var x = input.x;
-    if (scared > 0) {
-      // Run away from the scary smile.
+    if (scared > 0 && onGround) {
+      // Run away from the scary smile... but not off a cliff.
       final o = opponents.firstOrNull;
       if (o != null) x = (position.x - o.position.x).sign;
+      final ahead = ((position.x + x * 20) / kTile).floor();
+      final row = (position.y / kTile).floor();
+      if (!game.level.isStandable(ahead, row)) x = 0;
     }
     if (character.passive == Passive.momentum) {
       final dir = x.abs() > .3 ? x.sign.toInt() : 0;
@@ -599,7 +605,7 @@ class Fighter extends PositionComponent
     if (input.x.abs() > .5) facingRight = input.x > 0;
     _airPhysics(dt, control: false);
     if (_t % .1 < dt) {
-      game.world.add(Sparkles(position: mid + Vector2((Random().nextDouble() - .5) * 30, -10)));
+      game.world.add(Sparkles(position: mid + Vector2((_rnd.nextDouble() - .5) * 30, -10)));
     }
     if (!input.attack || charge >= 1.2 || !onGround) {
       _startMove(Moves.smash, chargeFactor: 1 + .5 * min(1.0, charge));
@@ -719,6 +725,16 @@ class Fighter extends PositionComponent
     if (heavy) game.shake(.18, intensity: 3 + damage / 4);
     Sound.play(heavy ? 'boss_hit' : 'stomp', volume: heavy ? .7 : .5);
     game.world.add(HitSpark(position: mid.clone(), big: heavy));
+    if (heavy && character.hurtLines.isNotEmpty && _rnd.nextDouble() < .4) {
+      game.world.add(
+        FloatingText(
+          position: mid - Vector2(0, 46),
+          text: character.hurtLines[_rnd.nextInt(character.hurtLines.length)],
+          fontSize: 9,
+          duration: 1,
+        ),
+      );
+    }
     if (armored) {
       game.world.add(
         FloatingText(position: mid - Vector2(0, 30), text: 'ARMOR', fontSize: 8),
@@ -831,7 +847,7 @@ class Fighter extends PositionComponent
     if (input.x.abs() > .3) facingRight = input.x > 0;
     _startMove(Moves.recovery);
     velocity.y = -780;
-    velocity.x = input.x * 160;
+    velocity.x = input.x * 240;
     _spinAngle = 2 * pi;
     Sound.play('spring', volume: .5);
     game.world.add(ShockwaveEffect(

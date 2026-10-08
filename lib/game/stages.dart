@@ -36,7 +36,7 @@ class Stage {
   /// World coordinates of the arena (in tiles) are 0..cols x 0..rows;
   /// fighters are KO'd beyond these margins.
   static const blastSide = 7.0;
-  static const blastTop = 9.0;
+  static const blastTop = 13.0;
   static const blastBottom = 5.0;
 
   int get mainTop => islands.map((i) => i.$1).reduce((a, b) => a < b ? a : b);

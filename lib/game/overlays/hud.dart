@@ -209,8 +209,8 @@ class _TouchControls extends StatelessWidget {
             _Joystick(input: input),
             const Spacer(),
             SizedBox(
-              width: 190,
-              height: 150,
+              width: 196,
+              height: 170,
               child: Stack(
                 children: [
                   Positioned(
@@ -225,8 +225,8 @@ class _TouchControls extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    left: 54,
-                    bottom: 66,
+                    left: 64,
+                    bottom: 84,
                     child: ValueListenableBuilder<int>(
                       valueListenable: game.hudTick,
                       builder: (_, _, _) => _HoldButton(
@@ -437,7 +437,7 @@ class _HoldButtonState extends State<_HoldButton> {
                 ],
               ),
             ),
-            PixelText(widget.label, size: 9, color: Colors.white),
+            PixelText(widget.label, size: 10, color: Colors.white),
           ],
         ),
       ),

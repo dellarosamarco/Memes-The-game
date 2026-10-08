@@ -104,22 +104,30 @@ class CpuBrain {
     i.attack = false;
     i.shield = false;
     if (me.state == FighterState.hitstun) return;
-    final below = me.position.y > _stageTop - 30;
+    final y = me.position.y;
     final falling = me.velocity.y > -60;
-    if (below && falling) {
-      final t = me.character.specialType;
-      if ((t == SpecialType.balloon || t == SpecialType.flight) &&
-          me.specialReady) {
-        i.specialPressed = true;
-      } else if (me.airJumps > 0) {
-        i.jumpPressed = true;
-        i.jump = true;
-      } else if (!me.usedRecovery) {
-        i.up = true;
-        i.specialPressed = true;
-      }
+    // Horizontal gap to the nearest edge of the main island.
+    final gap = me.position.x < _stageLeft
+        ? _stageLeft - me.position.x
+        : me.position.x - _stageRight;
+    final t = me.character.specialType;
+    if ((t == SpecialType.balloon || t == SpecialType.flight) &&
+        me.specialReady &&
+        falling &&
+        y > _stageTop - 80) {
+      i.specialPressed = true;
+    } else if (me.airJumps > 0 && falling && y > _stageTop - 110) {
+      // Jump early, while there is still height to spare.
+      i.jumpPressed = true;
+      i.jump = true;
+    } else if (!me.usedRecovery &&
+        falling &&
+        me.airJumps == 0 &&
+        (y > _stageTop - 20 || gap > 150)) {
+      i.up = true;
+      i.specialPressed = true;
     }
-    if (me.flight > 0) i.jump = me.position.y > _stageTop - 60;
+    if (me.flight > 0) i.jump = y > _stageTop - 60;
   }
 
   /// Don't walk off the stage by accident.
@@ -194,7 +202,11 @@ class CpuBrain {
 
     // Approach.
     if (dx.abs() > 40) i.x = toward * (.6 + .4 * _aggression);
-    if (me.onGround && dy < -60 && dx.abs() < 160) {
+    if (me.onGround && me.hitWall) {
+      // Something in the way: hop over it.
+      i.jumpPressed = true;
+      i.jump = true;
+    } else if (me.onGround && dy < -60 && dx.abs() < 160) {
       i.jumpPressed = true;
       i.jump = true;
     } else if (!me.onGround && dy < -40 && me.airJumps > 0 &&

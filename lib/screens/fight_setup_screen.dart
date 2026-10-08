@@ -28,6 +28,9 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
 
   final _rnd = Random();
 
+  /// Lives per fighter (a dev define shortens matches for testing).
+  static const _stocks = int.fromEnvironment('MEMES_STOCKS', defaultValue: 3);
+
   /// null = random opponent.
   late MemeCharacter? _opponent = _lastOpponent == null
       ? null
@@ -54,6 +57,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
             cpu: cpu,
             stage: stage,
             difficulty: _difficulty,
+            stocks: _stocks,
           ),
         ),
       ),

@@ -204,6 +204,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     super.update(dt);
     if (isLoaded) {
       _resolveHits();
+      _separate(dt);
       _checkBlastZones();
       for (final f in fighters) {
         f.input.endFrame();
@@ -233,6 +234,23 @@ class MemesGame extends FlameGame with KeyboardEvents {
         if (b == a || !b.alive || b.intangible) continue;
         if (box.overlaps(b.hurtbox)) a.tryHit(b);
       }
+    }
+  }
+
+  /// Fighters standing on each other slowly slide apart (never off a
+  /// ledge), so they don't end up stacked inside one another.
+  void _separate(double dt) {
+    final a = player, b = cpu;
+    if (!a.alive || !b.alive || !a.onGround || !b.onGround) return;
+    final dx = b.position.x - a.position.x;
+    if (dx.abs() >= 22 || (b.position.y - a.position.y).abs() > 10) return;
+    final dir = dx == 0 ? (a.facingRight ? -1.0 : 1.0) : dx.sign;
+    final push = min(22 - dx.abs(), 160 * dt) / 2;
+    for (final (f, d) in [(a, -dir), (b, dir)]) {
+      final x = f.position.x + d * push;
+      final col = (x / kTile).floor();
+      final row = (f.position.y / kTile).floor();
+      if (level.isStandable(col, row)) f.position.x = x;
     }
   }
 
@@ -329,8 +347,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   // ----------------------------------------------------------------- camera
 
-  double get _closeZoom => size.y / (kTile * 9.5);
-  double get _wideZoom => size.y / (kTile * 17);
+  double get _closeZoom => size.y / (kTile * 11);
+  double get _wideZoom => size.y / (kTile * 18);
 
   void _updateCamera(double dt) {
     final pts = [
