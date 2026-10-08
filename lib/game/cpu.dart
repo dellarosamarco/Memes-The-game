@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../models/meme_character.dart';
+import 'components/fight_items.dart';
 import 'fighter/fighter.dart';
 import 'level.dart';
 import 'memes_game.dart';
@@ -251,6 +252,9 @@ class CpuBrain {
       }
     }
 
+    // Items: run from bombs, go for the goodies.
+    if (_items(dist)) return;
+
     // Specials.
     if (me.specialReady && _rnd.nextDouble() < _specialChance) {
       if (_trySpecial(dx, dy, dist)) return;
@@ -286,6 +290,44 @@ class CpuBrain {
       _downHold = .2; // drop through the platform
       i.down = true;
     }
+  }
+
+  bool _items(double targetDist) {
+    final i = me.input;
+    FightItem? best;
+    var bestD = double.infinity;
+    for (final it in _game.items) {
+      final d = it.position.distanceTo(me.position);
+      if (it.kind == ItemKind.bomb) {
+        if (d < 120 && (it.ticking || it.onGround)) {
+          i.x = (me.position.x - it.position.x).sign;
+          if (i.x == 0) i.x = 1;
+          return true;
+        }
+        continue;
+      }
+      if (!it.onGround) continue;
+      if (d < bestD) {
+        bestD = d;
+        best = it;
+      }
+    }
+    // Easy CPUs rarely notice items; harder ones grab them when they're
+    // closer than the fight.
+    final keen = switch (difficulty) {
+      Difficulty.easy => .2,
+      Difficulty.normal => .6,
+      Difficulty.hard => .9,
+    };
+    if (best == null || bestD > 280 || _rnd.nextDouble() > keen) return false;
+    if (bestD > targetDist && targetDist < 90) return false;
+    final dx = best.position.x - me.position.x;
+    i.x = dx.abs() < 6 ? 0 : dx.sign;
+    if (me.onGround && best.position.y < me.position.y - 30) {
+      i.jumpPressed = true;
+      i.jump = true;
+    }
+    return true;
   }
 
   void _attack(double dx, double dy) {

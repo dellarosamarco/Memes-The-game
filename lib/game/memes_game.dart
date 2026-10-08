@@ -13,6 +13,7 @@ import '../services/local_store.dart';
 import '../services/sound.dart';
 import 'components/backdrop.dart';
 import 'components/effects.dart';
+import 'components/fight_items.dart';
 import 'components/stage_render.dart';
 import 'cpu.dart';
 import 'fighter/fighter.dart';
@@ -37,6 +38,7 @@ class MatchConfig {
     this.difficulty = Difficulty.normal,
     this.stocks = 3,
     this.arcadeRound,
+    this.items = true,
   });
 
   final MemeCharacter player;
@@ -47,6 +49,9 @@ class MatchConfig {
 
   /// 1-based round when playing Arcade, null in free fights.
   final int? arcadeRound;
+
+  /// Items drop on the arena during the fight.
+  final bool items;
 
   MatchConfig copyWith({
     MemeCharacter? cpu,
@@ -60,6 +65,7 @@ class MatchConfig {
     difficulty: difficulty ?? this.difficulty,
     stocks: stocks,
     arcadeRound: arcadeRound ?? this.arcadeRound,
+    items: items,
   );
 }
 
@@ -101,6 +107,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   Fighter? winner;
   double _resultsIn = 0;
   double _slowMo = 0;
+  double _nextItem = 9;
   int likesEarned = 0;
 
   /// Called once when the match is decided (true = the player won).
@@ -137,6 +144,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       'sprites/dust.png',
       'sprites/sparkle.png',
       Hat.sheet,
+      FightItem.sheet,
     ]);
     camera.viewfinder.anchor = Anchor.center;
     camera.backdrop.add(Backdrop());
@@ -206,6 +214,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       if (countdown <= -.7) overlays.remove(overlayCountdown);
     }
     if (!frozenFighters) {
+      if (config.items) _spawnItems(dt);
       brain.think(dt);
       _autopilot?.think(dt);
     }
@@ -231,6 +240,32 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (_hudAcc > .08) {
       _hudAcc = 0;
       hudTick.value++;
+    }
+  }
+
+  /// Items currently on the arena.
+  Iterable<FightItem> get items => world.children.whereType<FightItem>();
+
+  void _spawnItems(double dt) {
+    _nextItem -= dt;
+    if (_nextItem > 0) return;
+    _nextItem = 8 + _rnd.nextDouble() * 7;
+    if (items.length >= 2) return;
+    final kinds = ItemKind.values;
+    // Bombs are rarer than the goodies.
+    final kind = _rnd.nextDouble() < .18
+        ? ItemKind.bomb
+        : kinds[_rnd.nextInt(kinds.length - 1)];
+    // Somewhere above solid ground, not right on top of a fighter.
+    for (var tries = 0; tries < 12; tries++) {
+      final c = stage.left + 1 + _rnd.nextInt(stage.right - stage.left - 1);
+      if (!level.isStandable(c, stage.mainTop)) continue;
+      final x = c * kTile + kTile / 2;
+      if (fighters.any((f) => (f.position.x - x).abs() < 40)) continue;
+      final at = Vector2(x, camera.visibleWorldRect.top - 20);
+      world.add(FightItem(kind, position: at));
+      world.add(Sparkles(position: Vector2(x, at.y + 40)));
+      return;
     }
   }
 

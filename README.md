@@ -58,6 +58,15 @@ a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto,
 - **Arcade**: 8 avversari di fila, sempre più forti, e l'ultimo è una sorpresa. Il record
   di round vinti viene salvato per ogni meme.
 
+### Oggetti
+
+Ogni tanto piove un oggetto sull'arena (si possono disattivare in Lotta libera):
+gli **occhiali Deal With It** rendono invincibili per 6 secondi, **Stonks** fa fare il
+50% di danni in più per 10 secondi, la **pizza** cura il 20%, il **caffè** fa correre
+e saltare di più. Attenti alla **bomba**: quando tocca terra parte la miccia e poi
+esplode scagliando chiunque sia vicino. Anche la CPU va a prendere gli oggetti e scappa
+dalle bombe.
+
 ### La CPU
 
 Si avvicina, sceglie l'attacco in base alla posizione, carica lo smash quando sei ad alta

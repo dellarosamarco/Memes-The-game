@@ -22,7 +22,9 @@ extension FighterSpecials on Fighter {
     );
   }
 
-  double get _specialPower => character.passive == Passive.drip ? 1.2 : 1.0;
+  double get _specialPower =>
+      (character.passive == Passive.drip ? 1.2 : 1.0) *
+      (stonks > 0 ? 1.5 : 1.0);
 
   Iterable<Fighter> _near(double radius) =>
       opponents.where((o) => o.mid.distanceTo(mid) < radius);

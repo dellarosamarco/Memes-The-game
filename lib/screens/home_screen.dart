@@ -172,7 +172,11 @@ class _HomeScreenState extends State<HomeScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       BouncyText('MEMES', size: 64, color: Color(0xFFFF82B4)),
-                      PixelText('The fight', size: 26, color: Color(0xFFFFE07A)),
+                      PixelText(
+                        'The fight',
+                        size: 26,
+                        color: Color(0xFFFFE07A),
+                      ),
                     ],
                   ),
                 ),

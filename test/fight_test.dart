@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:memes_the_fight/game/components/fight_items.dart';
 import 'package:memes_the_fight/game/cpu.dart';
 import 'package:memes_the_fight/game/fighter/fighter.dart';
 import 'package:memes_the_fight/game/fighter/moves.dart';
@@ -113,6 +114,81 @@ void main() {
         expect(l.isStandable(c, s.mainTop), isTrue, reason: '${s.name} $f');
       }
     }
+  });
+
+  testWidgets('items: pizza heals, stonks hits harder, bombs explode', (
+    tester,
+  ) async {
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.wigDog,
+        cpu: MemeCharacter.stareCat,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60); // countdown
+    }
+    final p = game.player, c = game.cpu;
+    p.percent = 50;
+    p.useItem(ItemKind.pizza);
+    expect(p.percent, 30);
+
+    // Same jab, with and without stonks.
+    double jab() {
+      // Let both settle on the ground first.
+      for (var i = 0; i < 180 && !(c.onGround && p.onGround); i++) {
+        game.update(1 / 60);
+      }
+      p.position.y = c.position.y;
+      final before = c.percent;
+      // No specials or statuses in the way.
+      c.specialTimer = 99;
+      p.frozen = p.asleep = p.scared = p.dizzy = 0;
+      c.invincible = 0;
+      c.frozen = 5; // hold still (a hit unfreezes)
+      c.state = FighterState.normal;
+      c.velocity.setZero();
+      p.facingRight = true;
+      p.position.x = c.position.x - 24; // out of the push-apart range
+      p.input.pressAttack();
+      p.input.attack = false;
+      for (var i = 0; i < 20; i++) {
+        game.update(1 / 60);
+        p.input.attack = false;
+        if (c.percent > before) break;
+      }
+      return c.percent - before;
+    }
+
+    final normal = jab();
+    p.useItem(ItemKind.stonks);
+    for (var i = 0; i < 60; i++) {
+      game.update(1 / 60);
+    }
+    final boosted = jab();
+    expect(normal, greaterThan(0));
+    expect(boosted, closeTo(normal * 1.5, .01));
+
+    // A bomb dropped between the two.
+    final before = p.percent + c.percent;
+    final at = (p.position + c.position) / 2 - Vector2(0, 40);
+    final bomb = FightItem(ItemKind.bomb, position: at);
+    game.world.add(bomb);
+    p.invincible = c.invincible = 0;
+    p.stonks = 0;
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    for (var i = 0; i < 4 * 60; i++) {
+      p.position.x = at.x - 30;
+      c.position.x = at.x + 30;
+      game.update(1 / 60);
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      if (bomb.isRemoved) break;
+    }
+    expect(bomb.isRemoved, isTrue);
+    expect(p.percent + c.percent, greaterThan(before + 20));
   });
 
   testWidgets('a hard CPU match ends with a winner', (tester) async {

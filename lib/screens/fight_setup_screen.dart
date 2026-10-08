@@ -25,6 +25,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
   static String? _lastOpponent;
   static int _lastStage = -1;
   static Difficulty _lastDifficulty = Difficulty.normal;
+  static bool _lastItems = true;
 
   final _rnd = Random();
 
@@ -39,11 +40,13 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
   /// -1 = random arena.
   late int _stage = _lastStage;
   late Difficulty _difficulty = _lastDifficulty;
+  late bool _items = _lastItems;
 
   void _fight() {
     _lastOpponent = _opponent?.id;
     _lastStage = _stage;
     _lastDifficulty = _difficulty;
+    _lastItems = _items;
     final others = MemeCharacter.all
         .where((c) => c.id != widget.player.id)
         .toList();
@@ -58,6 +61,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
             stage: stage,
             difficulty: _difficulty,
             stocks: _stocks,
+            items: _items,
           ),
         ),
       ),
@@ -193,11 +197,29 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                               ],
                             ),
                             const SizedBox(height: 6),
-                            PixelButton(
-                              label: 'Combatti!',
-                              icon: 'play',
-                              width: 220,
-                              onPressed: _fight,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PixelButton(
+                                  label: _items ? 'Oggetti: Sì' : 'Oggetti: No',
+                                  height: 54,
+                                  fontSize: 12,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  color: _items
+                                      ? PixelColor.mint
+                                      : PixelColor.grey,
+                                  onPressed: () =>
+                                      setState(() => _items = !_items),
+                                ),
+                                const SizedBox(width: 6),
+                                PixelButton(
+                                  label: 'Combatti!',
+                                  icon: 'play',
+                                  onPressed: _fight,
+                                ),
+                              ],
                             ),
                           ],
                         ),

@@ -7,6 +7,7 @@ import '../../models/hats.dart';
 import '../../models/meme_character.dart';
 import '../../services/sound.dart';
 import '../components/body.dart';
+import '../components/fight_items.dart';
 import '../components/effects.dart';
 import '../components/projectiles.dart';
 import '../components/stage_render.dart';
@@ -152,6 +153,11 @@ class Fighter extends PositionComponent
   double dash = 0;
   bool slamming = false;
   double specialTimer = 0;
+
+  // Items.
+  double stonks = 0;
+  double coffee = 0;
+  double deal = 0;
   late bool puffer = character.passive == Passive.puffy;
   double _calm = 0;
   double _regen = 0;
@@ -166,6 +172,7 @@ class Fighter extends PositionComponent
   // Rendering.
   late final Strip _strip;
   late final Strip _hats;
+  late final Strip _items;
   Strip? _altStrip;
   double _t = 0;
   double _squash = 1;
@@ -229,12 +236,13 @@ class Fighter extends PositionComponent
       s *= 1 + .45 * min(1.0, _pedal / 1.5);
     }
     if (turbo > 0) s *= 1.7;
+    if (coffee > 0) s *= 1.3;
     if (scared > 0) s *= 1.15;
     return s;
   }
 
   double get _jumpSpeed {
-    var s = character.jumpSpeed * 1.05;
+    var s = character.jumpSpeed * (coffee > 0 ? 1.12 : 1.05);
     if (character.passive == Passive.highJump) s *= 1.06;
     return s;
   }
@@ -253,6 +261,7 @@ class Fighter extends PositionComponent
   Future<void> onLoad() async {
     _strip = Strip(game.images.fromCache(character.spriteSheet), 60, 60);
     _hats = Strip(game.images.fromCache(Hat.sheet), Hat.width, Hat.height);
+    _items = Strip(game.images.fromCache(FightItem.sheet), 16, 16);
     final alt = character.afterSpecialSheet;
     if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
     if (character.passive == Passive.featherweight) {
@@ -342,6 +351,9 @@ class Fighter extends PositionComponent
     if (armor > 0) armor -= dt;
     if (turbo > 0) turbo -= dt;
     if (dizzy > 0) dizzy -= dt;
+    if (stonks > 0) stonks -= dt;
+    if (coffee > 0) coffee -= dt;
+    if (deal > 0) deal -= dt;
     if (_lag > 0) _lag -= dt;
     if (_dropTimer > 0) {
       _dropTimer -= dt;
@@ -687,7 +699,7 @@ class Fighter extends PositionComponent
     final m = move;
     if (m == null || _hitThisMove.contains(target)) return;
     _hitThisMove.add(target);
-    var dmg = m.damage * charge;
+    var dmg = m.damage * charge * (stonks > 0 ? 1.5 : 1);
     var base = m.baseKb;
     var growth = m.kbGrowth;
     if (m.smash && character.passive == Passive.bossBrawler) growth *= 1.25;
@@ -917,6 +929,24 @@ class Fighter extends PositionComponent
     );
   }
 
+  // ------------------------------------------------------------ items
+
+  void useItem(ItemKind kind) {
+    switch (kind) {
+      case ItemKind.sunglasses:
+        deal = 6;
+        invincible = max(invincible, 6);
+      case ItemKind.stonks:
+        stonks = 10;
+      case ItemKind.pizza:
+        percent = max(0, percent - 20);
+      case ItemKind.coffee:
+        coffee = 10;
+      case ItemKind.bomb:
+        break;
+    }
+  }
+
   // ------------------------------------------------------------ KO
 
   /// Blasted off the arena.
@@ -946,6 +976,7 @@ class Fighter extends PositionComponent
     usedRecovery = false;
     puffer = character.passive == Passive.puffy;
     frozen = asleep = scared = slowed = armor = turbo = 0;
+    stonks = coffee = deal = 0;
     balloon = flight = spin = rolling = dash = 0;
     slamming = false;
     hitstun = 0;
@@ -1024,14 +1055,14 @@ class Fighter extends PositionComponent
           Color(0x8840C4FF),
           BlendMode.srcATop,
         );
-    } else if (armor > 0 || turbo > 0) {
+    } else if (armor > 0 || turbo > 0 || deal > 0) {
       final hue = (_t * 540) % 360;
       paint = Paint()
         ..colorFilter = ColorFilter.mode(
           HSVColor.fromAHSV(.25, hue, .6, 1).toColor(),
           BlendMode.srcATop,
         );
-    } else if (invincible > 0 && (_t * 14).floor().isEven) {
+    } else if (invincible > 0 && deal <= 0 && (_t * 14).floor().isEven) {
       paint = Paint()
         ..colorFilter = const ColorFilter.mode(
           Color(0x88FFFFFF),
@@ -1065,6 +1096,7 @@ class Fighter extends PositionComponent
     if (shielding) _renderShield(canvas);
     if (stunned) _renderStars(canvas);
     _renderTag(canvas);
+    _renderBuffs(canvas);
   }
 
   void _renderSwoosh(Canvas canvas) {
@@ -1120,6 +1152,24 @@ class Fighter extends PositionComponent
           duration: .9,
         ),
       );
+    }
+  }
+
+  /// Active item effects as little icons floating over the head.
+  void _renderBuffs(Canvas canvas) {
+    final icons = [
+      if (deal > 0) (ItemKind.sunglasses, deal),
+      if (stonks > 0) (ItemKind.stonks, stonks),
+      if (coffee > 0) (ItemKind.coffee, coffee),
+    ];
+    if (icons.isEmpty) return;
+    var x = -icons.length * 9.0;
+    for (final (kind, left) in icons) {
+      // Blink in the last two seconds.
+      if (left > 2 || (_t * 8).floor().isEven) {
+        _items.draw(canvas, kind.index, Offset(x, -92 + sin(_t * 5) * 1.5));
+      }
+      x += 18;
     }
   }
 
