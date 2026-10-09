@@ -209,83 +209,94 @@ class _TouchControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final input = game.player.input;
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            RepaintBoundary(child: _Joystick(input: input)),
-            const Spacer(),
-            SizedBox(
-              width: 196,
-              height: 170,
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: 0,
-                    bottom: 6,
-                    child: _HoldButton(
-                      icon: 'shield',
-                      label: 'Scudo',
-                      size: 54,
-                      color: 'grey',
-                      onChanged: (v) => input.shield = v,
-                    ),
-                  ),
-                  Positioned(
-                    left: 64,
-                    bottom: 84,
-                    child: ValueListenableBuilder<int>(
-                      valueListenable: game.hudTick,
-                      builder: (_, _, _) => _HoldButton(
-                        icon: 'bolt',
-                        label: 'Speciale',
-                        size: 60,
-                        color: game.player.specialReady ? 'yellow' : 'grey',
-                        progress: game.player.specialProgress,
-                        onChanged: (v) {
-                          input.special = v;
-                          if (v) input.specialPressed = true;
-                        },
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 60,
-                    bottom: 0,
-                    child: _HoldButton(
-                      icon: 'fist',
-                      label: 'Attacco',
-                      size: 66,
-                      color: 'pink',
-                      onChanged: (v) {
-                        input.attack = v;
-                        if (v) input.attackPressed = true;
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 26,
-                    child: _HoldButton(
-                      icon: 'up',
-                      label: 'Salto',
-                      size: 64,
-                      color: 'blue',
-                      onChanged: (v) {
-                        input.jump = v;
-                        if (v) input.jumpPressed = true;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return Stack(
+      children: [
+        // Floating stick: anywhere on the left part of the screen.
+        Positioned(
+          left: 0,
+          top: 64,
+          bottom: 0,
+          width: MediaQuery.sizeOf(context).width * .45,
+          child: RepaintBoundary(child: _Joystick(input: input)),
         ),
-      ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: 196,
+                  height: 170,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 0,
+                        bottom: 6,
+                        child: _HoldButton(
+                          icon: 'shield',
+                          label: 'Scudo',
+                          size: 54,
+                          color: 'grey',
+                          onChanged: (v) => input.shield = v,
+                        ),
+                      ),
+                      Positioned(
+                        left: 64,
+                        bottom: 84,
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: game.hudTick,
+                          builder: (_, _, _) => _HoldButton(
+                            icon: 'bolt',
+                            label: 'Speciale',
+                            size: 60,
+                            color: game.player.specialReady ? 'yellow' : 'grey',
+                            progress: game.player.specialProgress,
+                            onChanged: (v) {
+                              input.special = v;
+                              if (v) input.specialPressed = true;
+                            },
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 60,
+                        bottom: 0,
+                        child: _HoldButton(
+                          icon: 'fist',
+                          label: 'Attacco',
+                          size: 66,
+                          color: 'pink',
+                          onChanged: (v) {
+                            input.attack = v;
+                            if (v) input.attackPressed = true;
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 26,
+                        child: _HoldButton(
+                          icon: 'up',
+                          label: 'Salto',
+                          size: 64,
+                          color: 'blue',
+                          onChanged: (v) {
+                            input.jump = v;
+                            if (v) input.jumpPressed = true;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -304,18 +315,27 @@ class _Joystick extends StatefulWidget {
 class _JoystickState extends State<_Joystick> {
   static const _size = 132.0;
   static const _knob = 52.0;
+
+  /// Where the stick sits while untouched (bottom-left), and where the
+  /// thumb landed while touched: the stick follows the thumb.
+  Offset? _origin;
   Offset _offset = Offset.zero;
   int? _pointer;
 
   void _set(Offset local) {
-    const c = Offset(_size / 2, _size / 2);
+    final c = _origin!;
     var d = local - c;
     const maxR = _size / 2 - _knob / 4;
+    // Dragging far past the rim drags the stick along (no dead thumb).
+    if (d.distance > maxR * 1.6) {
+      _origin = c + d / d.distance * (d.distance - maxR * 1.6);
+      d = local - _origin!;
+    }
     if (d.distance > maxR) d = d / d.distance * maxR;
     final nx = d.dx / maxR, ny = d.dy / maxR;
     final i = widget.input;
     final wasX = i.x.abs() > .5;
-    i.x = nx.abs() < .25 ? 0 : nx.clamp(-1.0, 1.0);
+    i.x = nx.abs() < .22 ? 0 : nx.clamp(-1.0, 1.0);
     // Up/down only when they dominate: running a bit diagonally must not
     // turn a forward attack into an up attack.
     i.up = ny < -.5 && ny.abs() > nx.abs() * .8;
@@ -330,55 +350,75 @@ class _JoystickState extends State<_Joystick> {
     i.up = false;
     i.down = false;
     _pointer = null;
-    setState(() => _offset = Offset.zero);
+    setState(() {
+      _origin = null;
+      _offset = Offset.zero;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      behavior: HitTestBehavior.opaque,
-      onPointerDown: (e) {
-        _pointer = e.pointer;
-        _set(e.localPosition);
-      },
-      onPointerMove: (e) {
-        if (e.pointer == _pointer) _set(e.localPosition);
-      },
-      onPointerUp: (e) {
-        if (e.pointer == _pointer) _release();
-      },
-      onPointerCancel: (e) {
-        if (e.pointer == _pointer) _release();
-      },
-      child: SizedBox(
-        width: _size,
-        height: _size,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: _size - 8,
-              height: _size - 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0x553A2440),
-                border: Border.all(color: const Color(0xAA3A2440), width: 3),
-              ),
-            ),
-            Transform.translate(
-              offset: _offset,
-              child: Container(
-                width: _knob,
-                height: _knob,
-                decoration: pixelFrame(
-                  'assets/images/ui/button_blue.png',
-                  px: 2,
+    return LayoutBuilder(
+      builder: (context, box) {
+        final rest = Offset(14 + _size / 2, box.maxHeight - 8 - _size / 2);
+        final c = _origin ?? rest;
+        return Listener(
+          behavior: HitTestBehavior.opaque,
+          onPointerDown: (e) {
+            if (_pointer != null) return;
+            _pointer = e.pointer;
+            _origin = e.localPosition;
+            _set(e.localPosition);
+          },
+          onPointerMove: (e) {
+            if (e.pointer == _pointer) _set(e.localPosition);
+          },
+          onPointerUp: (e) {
+            if (e.pointer == _pointer) _release();
+          },
+          onPointerCancel: (e) {
+            if (e.pointer == _pointer) _release();
+          },
+          child: Stack(
+            children: [
+              Positioned(
+                left: c.dx - _size / 2,
+                top: c.dy - _size / 2,
+                width: _size,
+                height: _size,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: _size - 8,
+                      height: _size - 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(_origin == null ? 0x403A2440 : 0x663A2440),
+                        border: Border.all(
+                          color: const Color(0xAA3A2440),
+                          width: 3,
+                        ),
+                      ),
+                    ),
+                    Transform.translate(
+                      offset: _offset,
+                      child: Container(
+                        width: _knob,
+                        height: _knob,
+                        decoration: pixelFrame(
+                          'assets/images/ui/button_blue.png',
+                          px: 2,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -418,41 +458,49 @@ class _HoldButtonState extends State<_HoldButton> {
   @override
   Widget build(BuildContext context) {
     return Listener(
+      // Generous touch target: the transparent margin counts too.
+      behavior: HitTestBehavior.opaque,
       onPointerDown: (_) => _set(true),
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
       // (No Opacity here: it forced an offscreen layer every frame.)
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: widget.size,
-            height: widget.size,
-            padding: EdgeInsets.only(top: _down ? 5 : 0, bottom: _down ? 0 : 5),
-            decoration: pixelFrame(
-              'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (widget.progress < 1)
-                  Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: CircularProgressIndicator(
-                        value: widget.progress,
-                        strokeWidth: 3,
-                        color: const Color(0xFFFFD86A),
-                        backgroundColor: const Color(0x333A2440),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: widget.size,
+              height: widget.size,
+              padding: EdgeInsets.only(
+                top: _down ? 5 : 0,
+                bottom: _down ? 0 : 5,
+              ),
+              decoration: pixelFrame(
+                'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (widget.progress < 1)
+                    Positioned.fill(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: CircularProgressIndicator(
+                          value: widget.progress,
+                          strokeWidth: 3,
+                          color: const Color(0xFFFFD86A),
+                          backgroundColor: const Color(0x333A2440),
+                        ),
                       ),
                     ),
-                  ),
-                PixelIcon(widget.icon, scale: widget.size / 24),
-              ],
+                  PixelIcon(widget.icon, scale: widget.size / 24),
+                ],
+              ),
             ),
-          ),
-          PixelText(widget.label, size: 10, color: Colors.white),
-        ],
+            PixelText(widget.label, size: 10, color: Colors.white),
+          ],
+        ),
       ),
     );
   }

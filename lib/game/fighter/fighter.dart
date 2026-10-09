@@ -887,6 +887,12 @@ class Fighter extends PositionComponent
     }
     Sound.play(heavy ? 'hit_heavy' : 'hit_light', volume: heavy ? .8 : .6);
     game.world.add(HitSpark(position: mid.clone(), big: heavy));
+    // Feel it in the hand: a tap when you land a hit, a thump when hit.
+    if (!isCpu) {
+      Sound.haptic(strong: true);
+    } else if (attacker != null && !attacker.isCpu) {
+      Sound.haptic(strong: heavy);
+    }
     if (heavy && character.hurtLines.isNotEmpty && _rnd.nextDouble() < .4) {
       game.world.add(
         FloatingText(
