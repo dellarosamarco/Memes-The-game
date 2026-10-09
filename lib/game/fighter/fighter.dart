@@ -187,6 +187,7 @@ class Fighter extends PositionComponent
   double _spinAngle = 0;
   bool _wasOnGround = true;
   double _hitFlash = 0;
+  double _dustCd = 0;
   final List<String> _recentMoves = [];
 
   /// Hits taken in the current combo (resets once you're free again).
@@ -380,6 +381,7 @@ class Fighter extends PositionComponent
     if (turbo > 0) turbo -= dt;
     if (dizzy > 0) dizzy -= dt;
     if (_hitFlash > 0) _hitFlash -= dt;
+    if (_dustCd > 0) _dustCd -= dt;
     if (_mashShake > 0) _mashShake -= dt;
     _freeFor = state == FighterState.hitstun ? 0 : _freeFor + dt;
     if (stonks > 0) stonks -= dt;
@@ -461,6 +463,20 @@ class Fighter extends PositionComponent
     final accel = (onGround ? 2400.0 : 1500.0 * airControl) * sneakers;
     final reversing = target * velocity.x < 0 || (x.abs() < .2 && onGround);
     final a = accel * (reversing ? 1.6 : 1);
+    // Feet on the ground: a puff when you dash off, a skid when you turn.
+    if (onGround && _dustCd <= 0) {
+      final behind = position + Vector2(-velocity.x.sign * 10, 0);
+      if (target * velocity.x < 0 && velocity.x.abs() > 120) {
+        game.world.add(Dust(position: behind, dx: velocity.x.sign * 30));
+        Sound.play('skid', volume: .25);
+        _dustCd = .25;
+      } else if (x.abs() > .6 && velocity.x.abs() < 30) {
+        game.world.add(
+          Dust(position: position + Vector2(-x.sign * 10, 0), dx: -x.sign * 26),
+        );
+        _dustCd = .3;
+      }
+    }
     velocity.x += (target - velocity.x).clamp(-a * dt, a * dt);
     if (x.abs() > .3 && onGround) facingRight = x > 0;
     if (x.abs() > .3 && !onGround && move == null) facingRight = x > 0;
@@ -573,6 +589,11 @@ class Fighter extends PositionComponent
   bool _jumpCuttable = false;
 
   void _jump(double speed) {
+    if (onGround) {
+      // Kick-off dust from both feet.
+      game.world.add(Dust(position: position + Vector2(-7, 0), dx: -22));
+      game.world.add(Dust(position: position + Vector2(7, 0), dx: 22));
+    }
     velocity.y = -speed;
     _jumpCuttable = true;
     _coyote = 0;
@@ -885,7 +906,12 @@ class Fighter extends PositionComponent
       game.hitStop((.03 + damage * .004).clamp(.03, .12));
       if (heavy) game.shake(.18, intensity: 3 + damage / 4);
     }
-    Sound.play(heavy ? 'hit_heavy' : 'hit_light', volume: heavy ? .8 : .6);
+    Sound.play(
+      heavy ? 'hit_heavy' : 'hit_light',
+      volume: heavy ? .8 : .6,
+      // Bigger hits sound deeper; a little randomness keeps it lively.
+      pitch: (heavy ? .92 : 1.08) - damage * .006 + _rnd.nextDouble() * .1,
+    );
     game.world.add(HitSpark(position: mid.clone(), big: heavy));
     // Feel it in the hand: a tap when you land a hit, a thump when hit.
     if (!isCpu) {
@@ -1309,23 +1335,131 @@ class Fighter extends PositionComponent
     _renderBuffs(canvas);
   }
 
+  static final _smearFill = Paint();
+  static final _smearEdge = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeCap = StrokeCap.round;
+
+  /// Attacks drawn as filled "smears" in the fighter's colour, shaped by
+  /// the move, plus a glint telegraphing where a hit is about to land.
   void _renderSwoosh(Canvas canvas) {
-    final b = hitbox;
-    if (b == null) return;
-    final local = b.shift(Offset(-position.x, -position.y));
-    final paint = Paint()
-      ..color = (move!.smash ? const Color(0xFFFFE07A) : Colors.white)
-          .withValues(alpha: .75)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = move!.smash ? 4 : 3;
-    final m = move!;
-    if (m.name == 'nair' || m.name == 'recovery' || m.name == 'down') {
-      canvas.drawOval(local.deflate(2), paint);
-    } else {
-      // A front-facing arc, mirrored when facing left.
-      final start = facingRight ? -pi * .45 : pi * .55;
-      canvas.drawArc(local, start, pi * .9, false, paint);
+    final m = move;
+    if (state == FighterState.charge) {
+      _renderChargeRing(canvas);
+      return;
     }
+    if (m == null || state != FighterState.attack) return;
+    final b = m.box;
+    final x = facingRight ? b.left : -b.right;
+    final box = Rect.fromLTWH(x, b.top, b.width, b.height);
+    final tag = slot == 0 ? const Color(0xFFFF6FA5) : const Color(0xFF63B4FF);
+    final color = m.smash ? const Color(0xFFFFC94A) : tag;
+
+    // Wind-up: a glint where the hit will land.
+    if (moveT < m.startup) {
+      final k = moveT / m.startup;
+      _glint(
+        canvas,
+        box.center,
+        5 + 9 * k,
+        Colors.white.withValues(alpha: .45 + .5 * k),
+      );
+      return;
+    }
+    final afterActive = moveT - m.startup - m.active;
+    if (afterActive > .12) return;
+    final alpha = afterActive <= 0 ? .85 : .85 * (1 - afterActive / .12);
+    final outer = box.inflate(m.smash ? 11 : 8);
+    final w = outer.width, h = outer.height;
+    final f = facingRight ? 1.0 : -1.0;
+    final path = Path();
+    switch (m.name) {
+      case 'nair' || 'recovery':
+        final spin = moveT * 22 * f;
+        path.addArc(outer, spin, pi * 1.5);
+        path.arcTo(
+          outer.deflate(min(w, h) * .22),
+          spin + pi * 1.5,
+          -pi * 1.5,
+          false,
+        );
+      case 'up' || 'uair':
+        final inner = Rect.fromLTRB(
+          outer.left + w * .12,
+          outer.top + h * .38,
+          outer.right - w * .12,
+          outer.bottom + h * .2,
+        );
+        path.addArc(outer, pi * 1.05, pi * .9);
+        path.arcTo(inner, pi * 1.95, -pi * .9, false);
+      case 'down' || 'dair':
+        final inner = Rect.fromLTRB(
+          outer.left + w * .12,
+          outer.top - h * .2,
+          outer.right - w * .12,
+          outer.bottom - h * .38,
+        );
+        path.addArc(outer, pi * .05, pi * .9);
+        path.arcTo(inner, pi * .95, -pi * .9, false);
+      default:
+        // A crescent hugging the front edge of the hitbox.
+        final inner = facingRight
+            ? Rect.fromLTRB(
+                outer.left - w * .3,
+                outer.top + h * .16,
+                outer.right - w * .32,
+                outer.bottom - h * .16,
+              )
+            : Rect.fromLTRB(
+                outer.left + w * .32,
+                outer.top + h * .16,
+                outer.right + w * .3,
+                outer.bottom - h * .16,
+              );
+        final start = facingRight ? -pi * .5 : pi * .5;
+        path.addArc(outer, start, pi);
+        path.arcTo(inner, start + pi, -pi, false);
+    }
+    path.close();
+    _smearFill.color = color.withValues(alpha: alpha * .75);
+    canvas.drawPath(path, _smearFill);
+    _smearEdge
+      ..color = Colors.white.withValues(alpha: alpha)
+      ..strokeWidth = m.smash ? 4 : 3;
+    canvas.drawPath(path, _smearEdge);
+    if (m.smash && afterActive <= 0) {
+      _glint(canvas, box.center + Offset(f * w * .3, 0), 10, Colors.white);
+    }
+  }
+
+  void _renderChargeRing(Canvas canvas) {
+    final k = (charge / 1.2).clamp(0.0, 1.0);
+    final c = Offset((facingRight ? 1 : -1) * 22, -26);
+    _smearEdge
+      ..color = const Color(0xFFFFE07A).withValues(alpha: .5 + .5 * k)
+      ..strokeWidth = 2 + 2 * k;
+    // The ring closes in as the smash charges up.
+    canvas.drawCircle(c, 26 - 16 * k, _smearEdge);
+    if (k > .95 && (_t * 16).floor().isEven) {
+      _glint(canvas, c, 9, Colors.white);
+    }
+  }
+
+  static final _glintPaint = Paint();
+
+  void _glint(Canvas canvas, Offset c, double r, Color color) {
+    _glintPaint.color = color;
+    final path = Path()
+      ..moveTo(c.dx, c.dy - r)
+      ..lineTo(c.dx + r * .25, c.dy - r * .25)
+      ..lineTo(c.dx + r, c.dy)
+      ..lineTo(c.dx + r * .25, c.dy + r * .25)
+      ..lineTo(c.dx, c.dy + r)
+      ..lineTo(c.dx - r * .25, c.dy + r * .25)
+      ..lineTo(c.dx - r, c.dy)
+      ..lineTo(c.dx - r * .25, c.dy - r * .25)
+      ..close();
+    canvas.drawPath(path, _glintPaint);
   }
 
   void _renderShield(Canvas canvas) {

@@ -30,12 +30,19 @@ class Sound {
     }
   }
 
-  static void play(String name, {double volume = 0.7}) {
+  /// [pitch] > 0 plays the sound slightly faster/slower (e.g. 1.08):
+  /// varied hits don't sound like a machine gun.
+  static void play(String name, {double volume = 0.7, double pitch = 1}) {
     if (!_ready || !LocalStore.instance.sfxOn) return;
-    FlameAudio.play('$name.wav', volume: volume).catchError((Object e) {
-      debugPrint('sfx $name: $e');
-      return AudioPlayer();
-    });
+    FlameAudio.play('$name.wav', volume: volume)
+        .then((p) {
+          if (pitch != 1) p.setPlaybackRate(pitch).catchError((_) {});
+          return p;
+        })
+        .catchError((Object e) {
+          debugPrint('sfx $name: $e');
+          return AudioPlayer();
+        });
   }
 
   /// Plays a looping track: 'menu', 'level' or 'boss'.

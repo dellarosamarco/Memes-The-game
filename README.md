@@ -87,6 +87,13 @@ decorazioni animate.
 - **Impatti leggibili**: micro-pausa sui colpi (hit-stop) con il colpito che lampeggia di
   bianco e trema, scintille, tremolio dello schermo; gli attacchi hanno una posa in tre
   tempi (caricamento, colpo "stirato" verso il bersaglio, ritorno) e una scia sui colpi forti.
+- **Attacchi visibili**: ogni colpo disegna una "spazzata" piena nel colore del lottatore
+  (mezzaluna davanti, arco sopra la testa, spazzata a terra, giro completo negli aerei; oro
+  per gli smash) e, durante la preparazione, un luccichio dove sta per arrivare il colpo:
+  si leggono anche gli attacchi della CPU. Caricando lo smash, un anello si stringe.
+- **Feel**: polvere quando scatti, quando inverti la corsa e quando salti; vibrazione quando
+  colpisci o vieni colpito; i suoni dei colpi cambiano leggermente tono (più gravi se forti).
+- **Joystick fluttuante**: appare dove appoggi il pollice nella metà sinistra dello schermo.
 - **Colpo finale alla Smash**: quando un colpo sta per mandare fuori l'avversario, il gioco
   lo capisce in anticipo: pausa più lunga, zoom della telecamera sull'impatto e flash.
 - **Comandi reattivi**: i tasti premuti un attimo troppo presto (durante un attacco o un

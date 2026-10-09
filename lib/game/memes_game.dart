@@ -226,7 +226,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
         _fpsT = 0;
       }
     }
-    dt = min(dt, 1 / 30);
+    dt = min(dt, 1 / 30) * _debugTimeScale;
     if (_hitStop > 0) {
       _hitStop -= dt;
       _updateShake(dt);
@@ -327,6 +327,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  double _debugTimeScale = 1;
+
   /// The CPU stops thinking (dev tools and tests).
   bool cpuOff = false;
 
@@ -348,6 +350,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
         overlays.remove(overlayHud);
       case 'hide:fighters':
         Fighter.debugHidden = true;
+      case 'slow':
+        _debugTimeScale = .12;
       case 'cpuFar':
         cpuOff = true;
         // Hovering far away near the left blast line (marker check).
