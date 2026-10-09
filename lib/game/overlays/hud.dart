@@ -15,33 +15,39 @@ class Hud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          ValueListenableBuilder<int>(
-            valueListenable: game.hudTick,
-            builder: (context, _, _) => Padding(
-              padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FighterCard(fighter: game.player),
-                  const Spacer(),
-                  PixelButton(
-                    icon: 'pause',
-                    color: PixelColor.grey,
-                    height: 46,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    onPressed: game.togglePause,
+    // Repaint boundaries: the game canvas repaints every frame, the HUD
+    // only when it changes (it used to cost half of the frame time).
+    return RepaintBoundary(
+      child: SafeArea(
+        child: Stack(
+          children: [
+            RepaintBoundary(
+              child: ValueListenableBuilder<int>(
+                valueListenable: game.hudTick,
+                builder: (context, _, _) => Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FighterCard(fighter: game.player),
+                      const Spacer(),
+                      PixelButton(
+                        icon: 'pause',
+                        color: PixelColor.grey,
+                        height: 46,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        onPressed: game.togglePause,
+                      ),
+                      const Spacer(),
+                      FighterCard(fighter: game.cpu),
+                    ],
                   ),
-                  const Spacer(),
-                  FighterCard(fighter: game.cpu),
-                ],
+                ),
               ),
             ),
-          ),
-          _TouchControls(game: game),
-        ],
+            RepaintBoundary(child: _TouchControls(game: game)),
+          ],
+        ),
       ),
     );
   }
@@ -210,7 +216,7 @@ class _TouchControls extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _Joystick(input: input),
+            RepaintBoundary(child: _Joystick(input: input)),
             const Spacer(),
             SizedBox(
               width: 196,
@@ -415,43 +421,38 @@ class _HoldButtonState extends State<_HoldButton> {
       onPointerDown: (_) => _set(true),
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
-      child: Opacity(
-        opacity: .88,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: widget.size,
-              height: widget.size,
-              padding: EdgeInsets.only(
-                top: _down ? 5 : 0,
-                bottom: _down ? 0 : 5,
-              ),
-              decoration: pixelFrame(
-                'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (widget.progress < 1)
-                    Positioned.fill(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: CircularProgressIndicator(
-                          value: widget.progress,
-                          strokeWidth: 3,
-                          color: const Color(0xFFFFD86A),
-                          backgroundColor: const Color(0x333A2440),
-                        ),
+      // (No Opacity here: it forced an offscreen layer every frame.)
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: widget.size,
+            height: widget.size,
+            padding: EdgeInsets.only(top: _down ? 5 : 0, bottom: _down ? 0 : 5),
+            decoration: pixelFrame(
+              'assets/images/ui/button_${widget.color}${_down ? '_down' : ''}.png',
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (widget.progress < 1)
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: CircularProgressIndicator(
+                        value: widget.progress,
+                        strokeWidth: 3,
+                        color: const Color(0xFFFFD86A),
+                        backgroundColor: const Color(0x333A2440),
                       ),
                     ),
-                  PixelIcon(widget.icon, scale: widget.size / 24),
-                ],
-              ),
+                  ),
+                PixelIcon(widget.icon, scale: widget.size / 24),
+              ],
             ),
-            PixelText(widget.label, size: 10, color: Colors.white),
-          ],
-        ),
+          ),
+          PixelText(widget.label, size: 10, color: Colors.white),
+        ],
       ),
     );
   }

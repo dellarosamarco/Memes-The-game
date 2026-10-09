@@ -125,6 +125,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   void Function(bool won)? onMatchEnd;
   final hudTick = ValueNotifier<int>(0);
   double _hudAcc = 0;
+  int _hudSig = 0;
 
   double _shake = 0;
   double _shakeDur = 1;
@@ -275,10 +276,28 @@ class MemesGame extends FlameGame with KeyboardEvents {
       }
     }
     _updateShake(dt);
+    // The HUD only rebuilds when something it shows actually changed.
     _hudAcc += dt;
-    if (_hudAcc > .08) {
+    if (_hudAcc > .05) {
       _hudAcc = 0;
-      hudTick.value++;
+      final sig = Object.hash(
+        player.percent.floor(),
+        cpu.percent.floor(),
+        player.stocks,
+        cpu.stocks,
+        player.alive,
+        cpu.alive,
+        player.specialReady,
+        (player.specialProgress * 24).floor(),
+        countdown > 3
+            ? 4
+            : (countdown > 0 ? countdown.ceil() : (countdown > -1 ? 0 : -1)),
+        (countdown * 10).clamp(-10, 0).floor(),
+      );
+      if (sig != _hudSig) {
+        _hudSig = sig;
+        hudTick.value++;
+      }
     }
   }
 
@@ -318,6 +337,17 @@ class MemesGame extends FlameGame with KeyboardEvents {
         cpu.input.clear();
       case 'cpuOn':
         cpuOff = false;
+      // Perf experiments: switch layers off while the game runs.
+      case 'hide:bg':
+        camera.backdrop.removeAll(camera.backdrop.children);
+      case 'hide:level':
+        world.children.whereType<LevelMap>().toList().forEach(world.remove);
+      case 'hide:props':
+        world.children.whereType<Props>().toList().forEach(world.remove);
+      case 'hide:hud':
+        overlays.remove(overlayHud);
+      case 'hide:fighters':
+        Fighter.debugHidden = true;
       case 'cpuFar':
         cpuOff = true;
         // Hovering far away near the left blast line (marker check).

@@ -1132,9 +1132,12 @@ class Fighter extends PositionComponent
       ? _altStrip!
       : _strip;
 
+  /// Dev only (perf experiments).
+  static bool debugHidden = false;
+
   @override
   void render(Canvas canvas) {
-    if (state == FighterState.ko) return;
+    if (state == FighterState.ko || debugHidden) return;
     // Shadow.
     if (onGround) {
       canvas.drawOval(
