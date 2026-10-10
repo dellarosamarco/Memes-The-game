@@ -17,6 +17,8 @@ class Backdrop extends Component with HasGameReference<MemesGame> {
   late final ui.Image _clouds;
   double _t = 0;
   final List<_Particle> _particles = [];
+  final _sky = Paint();
+  double _skyH = -1;
 
   static const _night = {
     LevelTheme.comments,
@@ -50,15 +52,16 @@ class Backdrop extends Component with HasGameReference<MemesGame> {
   @override
   void render(Canvas canvas) {
     final size = game.size;
-    final th = ThemeColors.of(game.level.theme);
-    canvas.drawRect(
-      Offset.zero & size.toSize(),
-      Paint()
-        ..shader = ui.Gradient.linear(Offset.zero, Offset(0, size.y), [
-          th.skyTop,
-          th.skyBottom,
-        ]),
-    );
+    if (_skyH != size.y) {
+      // Rebuilt only when the screen size changes.
+      _skyH = size.y;
+      final th = ThemeColors.of(game.level.theme);
+      _sky.shader = ui.Gradient.linear(Offset.zero, Offset(0, size.y), [
+        th.skyTop,
+        th.skyBottom,
+      ]);
+    }
+    canvas.drawRect(Offset.zero & size.toSize(), _sky);
     final zoom = game.camera.viewfinder.zoom;
     final camX = game.camera.viewfinder.position.x;
     _sun(canvas, size, zoom);

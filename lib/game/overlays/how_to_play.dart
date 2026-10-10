@@ -124,11 +124,6 @@ class HowToPlay extends StatelessWidget {
                     'puoi saltare ancora in aria; finiti i salti, ti rilancia '
                         'verso l\'arena.',
                   ),
-                  _row(
-                    _button('shield', 'grey'),
-                    'Scudo',
-                    'para i colpi; con una direzione rotoli via, in aria schivi.',
-                  ),
                 ],
               ),
               const SizedBox(height: 4),

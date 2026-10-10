@@ -233,25 +233,14 @@ class _TouchControls extends StatelessWidget {
                   child: Stack(
                     children: [
                       Positioned(
-                        left: 0,
-                        bottom: 6,
-                        child: _HoldButton(
-                          icon: 'shield',
-                          label: 'Scudo',
-                          size: 54,
-                          color: 'grey',
-                          onChanged: (v) => input.shield = v,
-                        ),
-                      ),
-                      Positioned(
-                        left: 64,
-                        bottom: 84,
+                        left: 46,
+                        bottom: 92,
                         child: ValueListenableBuilder<int>(
                           valueListenable: game.hudTick,
                           builder: (_, _, _) => _HoldButton(
                             icon: 'bolt',
                             label: 'Speciale',
-                            size: 60,
+                            size: 64,
                             color: game.player.specialReady ? 'yellow' : 'grey',
                             progress: game.player.specialProgress,
                             onChanged: (v) {
@@ -262,12 +251,12 @@ class _TouchControls extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        left: 60,
+                        left: 4,
                         bottom: 0,
                         child: _HoldButton(
                           icon: 'fist',
                           label: 'Attacco',
-                          size: 66,
+                          size: 78,
                           color: 'pink',
                           onChanged: (v) {
                             input.attack = v;
@@ -277,11 +266,11 @@ class _TouchControls extends StatelessWidget {
                       ),
                       Positioned(
                         right: 0,
-                        bottom: 26,
+                        bottom: 30,
                         child: _HoldButton(
                           icon: 'up',
                           label: 'Salto',
-                          size: 64,
+                          size: 70,
                           color: 'blue',
                           onChanged: (v) {
                             input.jump = v;

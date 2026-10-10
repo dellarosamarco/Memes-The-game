@@ -20,14 +20,13 @@ class CpuBrain {
 
   double _tick = 0;
   double _attackHold = 0;
-  double _shieldHold = 0;
   double _downHold = 0;
   double _wander = 0;
   double _wanderDir = 0;
   bool _gapJump = false;
 
   /// How much the opponent has been swinging lately (decays): a CPU that
-  /// sees the same attack coming again and again blocks and punishes it.
+  /// sees the same attack coming again and again dodges and punishes it.
   double _threat = 0;
   bool _targetWasAttacking = false;
   bool _wasInHitstun = false;
@@ -44,7 +43,7 @@ class CpuBrain {
     Difficulty.hard => .95,
   };
 
-  double get _shieldChance => switch (difficulty) {
+  double get _evadeChance => switch (difficulty) {
     Difficulty.easy => .05,
     Difficulty.normal => .2,
     Difficulty.hard => .5,
@@ -58,9 +57,9 @@ class CpuBrain {
 
   MemesGame get _game => me.game;
 
-  double get _adaptiveShield => min(
+  double get _adaptiveEvade => min(
     .8,
-    _shieldChance + _threat * (difficulty == Difficulty.easy ? .03 : .12),
+    _evadeChance + _threat * (difficulty == Difficulty.easy ? .03 : .12),
   );
 
   /// The opponent is stuck in the end lag of a move, right next to us.
@@ -80,7 +79,7 @@ class CpuBrain {
       return;
     }
     // Just got free from hitstun with the opponent on top of us: react at
-    // once (jump away, block or swing back), like a player escaping a
+    // once (jump away, back off or swing back), like a player escaping a
     // string of hits.
     final inHitstun = me.state == FighterState.hitstun;
     if (_wasInHitstun &&
@@ -94,9 +93,8 @@ class CpuBrain {
       if (r < .3) {
         i.x = away == 0 ? 1 : away;
         i.pressJump();
-      } else if (r < .3 + _adaptiveShield) {
-        i.shield = true;
-        _shieldHold = .25;
+      } else if (r < .3 + _adaptiveEvade) {
+        i.x = away == 0 ? 1 : away;
       } else {
         final dx = target.position.x - me.position.x;
         me.facingRight = dx > 0;
@@ -120,8 +118,6 @@ class CpuBrain {
         _rnd.nextDouble() < _aggression * dt * 12) {
       final dx = target.position.x - me.position.x;
       me.facingRight = dx > 0;
-      i.shield = false;
-      _shieldHold = 0;
       _attack(dx, target.mid.y - me.mid.y);
       return;
     }
@@ -129,10 +125,6 @@ class CpuBrain {
     if (_attackHold > 0) {
       _attackHold -= dt;
       i.attack = _attackHold > 0;
-    }
-    if (_shieldHold > 0) {
-      _shieldHold -= dt;
-      i.shield = _shieldHold > 0;
     }
     if (_downHold > 0) {
       _downHold -= dt;
@@ -221,7 +213,6 @@ class CpuBrain {
     i.up = false;
     i.down = false;
     i.attack = false;
-    i.shield = false;
     if (me.state == FighterState.hitstun) return;
     final y = me.position.y;
     final falling = me.velocity.y > -60;
@@ -247,6 +238,10 @@ class CpuBrain {
     }
     if (me.flight > 0) i.jump = y > _stageTop - 60;
   }
+
+  /// Room behind us to hop back without falling off.
+  bool _safeToRetreat(double dir) =>
+      _standable(me.position.x + dir * kTile * 3);
 
   /// Don't walk off the stage by accident.
   void _guardEdges() {
@@ -305,22 +300,19 @@ class CpuBrain {
     }
 
     // Defence: the player is swinging at us.
-    if (target.attacking && dist < 80 && _rnd.nextDouble() < _adaptiveShield) {
+    if (target.attacking && dist < 80 && _rnd.nextDouble() < _adaptiveEvade) {
       if (me.onGround) {
-        if (_rnd.nextDouble() < .35) {
-          i.shield = true;
-          i.x = -toward;
-          _shieldHold = .05;
-        } else {
-          i.shield = true;
-          _shieldHold = .3;
+        // Hop back out of reach, or just step away.
+        i.x = -toward;
+        if (_rnd.nextDouble() < .45 && _safeToRetreat(-toward)) {
+          i.pressJump();
         }
         return;
       }
     }
 
     // Anti-air: someone dropping on us from above gets an up attack (or
-    // the shield), instead of free aerials.
+    // a step aside), instead of free aerials.
     if (me.onGround &&
         !target.onGround &&
         dy < -15 &&
@@ -334,9 +326,8 @@ class CpuBrain {
         _attackHold = .02;
         return;
       }
-      if (r < _aggression * .7 + _shieldChance) {
-        i.shield = true;
-        _shieldHold = .25;
+      if (r < _aggression * .7 + _evadeChance) {
+        i.x = dx >= 0 ? -1 : 1;
         return;
       }
     }

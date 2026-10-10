@@ -29,7 +29,6 @@ class FighterInput {
   bool jump = false;
   bool attack = false;
   bool special = false;
-  bool shield = false;
 
   // Edges, cleared after every frame.
   bool jumpPressed = false;
@@ -57,7 +56,7 @@ class FighterInput {
 
   void clear() {
     x = 0;
-    up = down = jump = attack = special = shield = false;
+    up = down = jump = attack = special = false;
     endFrame();
   }
 }
@@ -67,8 +66,6 @@ enum FighterState {
   attack,
   charge,
   hitstun,
-  shield,
-  roll,
   helpless,
   ko,
 }
@@ -110,7 +107,6 @@ class Fighter extends PositionComponent
   // Movement.
   int airJumps = 0;
   bool usedRecovery = false;
-  bool usedAirDodge = false;
   double _coyote = 0;
   double _dropTimer = 0;
   double _downHeld = 0;
@@ -140,12 +136,7 @@ class Fighter extends PositionComponent
   double lastHitByMove = 0;
   bool lastHitWasSmash = false;
 
-  // Defence.
-  double shieldHp = 50;
   double dizzy = 0;
-  double _rollT = 0;
-  double _dodgeT = 0;
-  int _rollDir = 1;
 
   // Status effects from specials.
   double frozen = 0;
@@ -199,12 +190,8 @@ class Fighter extends PositionComponent
 
   bool get alive => state != FighterState.ko && stocks > 0;
   bool get stunned => frozen > 0 || asleep > 0 || dizzy > 0;
-  bool get intangible =>
-      invincible > 0 ||
-      state == FighterState.ko ||
-      (state == FighterState.roll && _rollT > .08);
+  bool get intangible => invincible > 0 || state == FighterState.ko;
   bool get attacking => state == FighterState.attack;
-  bool get shielding => state == FighterState.shield;
   bool get specialReady => specialTimer <= 0;
   double get specialProgress =>
       1 - (specialTimer / character.specialCooldown).clamp(0.0, 1.0);
@@ -339,10 +326,6 @@ class Fighter extends PositionComponent
       _dashUpdate(dt);
     } else {
       switch (state) {
-        case FighterState.shield:
-          _shieldUpdate(dt);
-        case FighterState.roll:
-          _rollUpdate(dt);
         case FighterState.attack:
           _attackUpdate(dt);
         case FighterState.charge:
@@ -365,13 +348,6 @@ class Fighter extends PositionComponent
     // Stuns wear off faster in the air, so they can't force a fall.
     final stunDecay = onGround ? dt : dt * 3;
     if (frozen > 0) frozen -= stunDecay;
-    if (_dodgeT > 0) {
-      _dodgeT -= dt;
-      // The dodge itself doesn't leave you helpless.
-      if (_dodgeT <= 0 && state == FighterState.helpless && !usedRecovery) {
-        state = FighterState.normal;
-      }
-    }
     if (hitstun > 0) hitstun -= dt;
     if (invincible > 0) invincible -= dt;
     if (asleep > 0) asleep -= stunDecay;
@@ -401,9 +377,6 @@ class Fighter extends PositionComponent
     if (_turboHit > 0) _turboHit -= dt;
     if (specialTimer > 0) {
       specialTimer -= dt * (character.passive == Passive.refill ? 2 : 1);
-    }
-    if (state != FighterState.shield) {
-      shieldHp = min(50, shieldHp + dt * 9);
     }
     // Passive healing: onion layers, total relax.
     _calm += dt;
@@ -488,7 +461,6 @@ class Fighter extends PositionComponent
       _coyote = .08;
       airJumps = _maxAirJumps;
       usedRecovery = false;
-      usedAirDodge = false;
     } else {
       _coyote -= dt;
     }
@@ -512,16 +484,6 @@ class Fighter extends PositionComponent
         useSpecial();
       }
       return;
-    }
-    if (input.shield) {
-      if (onGround && _lag <= 0) {
-        state = FighterState.shield;
-        velocity.x = 0;
-        return;
-      } else if (!onGround && !usedAirDodge) {
-        _airDodge();
-        return;
-      }
     }
     if (_bufAttack > 0 && _lag <= 0 && scared <= 0) {
       _bufAttack = 0;
@@ -632,7 +594,6 @@ class Fighter extends PositionComponent
       _lag = .12;
       airJumps = _maxAirJumps;
       usedRecovery = false;
-      usedAirDodge = false;
       game.world.add(Dust(position: position.clone(), dx: -side * 18.0));
       Sound.play('land', volume: .3);
       return;
@@ -843,14 +804,6 @@ class Fighter extends PositionComponent
       return;
     }
     _calm = 0;
-    if (shielding) {
-      shieldHp -= damage * 1.5;
-      velocity.x = (towardsRight ? 1 : -1) * (60 + damage * 12);
-      Sound.play('block', volume: .6);
-      game.hitStop(.03);
-      if (shieldHp <= 0) _shieldBreak();
-      return;
-    }
     if (puffer) {
       // The puffer jacket takes the first hit of each life.
       puffer = false;
@@ -896,14 +849,14 @@ class Fighter extends PositionComponent
     // a longer freeze, a camera punch-in and a flash.
     final finisher = !armored && _wouldKo(angle, towardsRight, speed);
     if (finisher) {
-      game.hitStop(.24);
+      game.hitStop(.2);
       game.punchIn(mid);
       game.shake(.35, intensity: 7);
       game.camera.viewport.add(
         ScreenFlash(color: const Color(0x88FFFFFF), duration: .25),
       );
     } else {
-      game.hitStop((.03 + damage * .004).clamp(.03, .12));
+      game.hitStop((.025 + damage * .003).clamp(.025, .08));
       if (heavy) game.shake(.18, intensity: 3 + damage / 4);
     }
     Sound.play(
@@ -975,7 +928,6 @@ class Fighter extends PositionComponent
     onGround = false;
     // Getting hit gives your recovery back (like in Smash).
     usedRecovery = false;
-    usedAirDodge = false;
   }
 
   /// Rough prediction: will a launch at [speed] carry us past a blast line?
@@ -1004,69 +956,6 @@ class Fighter extends PositionComponent
       _spinAngle = 0;
       airJumps = max(airJumps, 1);
     }
-  }
-
-  // ------------------------------------------------------------ defence
-
-  void _shieldUpdate(double dt) {
-    shieldHp -= dt * 12;
-    velocity.x *= pow(0.001, dt).toDouble();
-    _airPhysics(dt, control: false);
-    if (shieldHp <= 0) {
-      _shieldBreak();
-      return;
-    }
-    if (input.x.abs() > .7 && onGround) {
-      _rollDir = input.x > 0 ? 1 : -1;
-      _rollT = .32;
-      state = FighterState.roll;
-      Sound.play('skid', volume: .5);
-      return;
-    }
-    if (input.jumpPressed) {
-      state = FighterState.normal;
-      _jump(_jumpSpeed);
-      return;
-    }
-    if (!input.shield || !onGround) state = FighterState.normal;
-  }
-
-  void _rollUpdate(double dt) {
-    _rollT -= dt;
-    velocity.x = _rollDir * 430 * (_rollT / .32 + .2);
-    _airPhysics(dt, control: false);
-    if (_rollT <= 0) {
-      state = FighterState.normal;
-      facingRight = _rollDir < 0;
-      _lag = .08;
-    }
-  }
-
-  void _airDodge() {
-    usedAirDodge = true;
-    _dodgeT = .3;
-    invincible = max(invincible, .26);
-    velocity.x = input.x * 260;
-    velocity.y = input.up ? -260 : (input.down ? 260 : velocity.y * .3);
-    state = FighterState.helpless;
-    Sound.play('skid', volume: .4);
-    game.world.add(PoofEffect(position: mid.clone()));
-  }
-
-  void _shieldBreak() {
-    shieldHp = 30;
-    state = FighterState.normal;
-    dizzy = 2.0;
-    velocity.y = -380;
-    Sound.play('shield_break', volume: .7);
-    game.world.add(
-      FloatingText(
-        position: mid - Vector2(0, 40),
-        text: 'SCUDO ROTTO!',
-        fontSize: 11,
-        color: const Color(0xFFFFD86A),
-      ),
-    );
   }
 
   // ------------------------------------------------------------ recovery
@@ -1142,7 +1031,6 @@ class Fighter extends PositionComponent
     slamming = false;
     hitstun = 0;
     tumbling = false;
-    shieldHp = 50;
     dizzy = 0;
     game.world.add(Sparkles(position: mid.clone()));
   }
@@ -1329,7 +1217,6 @@ class Fighter extends PositionComponent
     canvas.restore();
 
     _renderSwoosh(canvas);
-    if (shielding) _renderShield(canvas);
     if (stunned) _renderStars(canvas);
     _renderTag(canvas);
     _renderBuffs(canvas);
@@ -1460,24 +1347,6 @@ class Fighter extends PositionComponent
       ..lineTo(c.dx - r * .25, c.dy - r * .25)
       ..close();
     canvas.drawPath(path, _glintPaint);
-  }
-
-  void _renderShield(Canvas canvas) {
-    final r = 16 + 18 * (shieldHp / 50).clamp(0.0, 1.0);
-    final c = slot == 0 ? const Color(0xFFFF82B4) : const Color(0xFF7CC8FF);
-    canvas.drawCircle(
-      Offset(0, -bodyHeight / 2),
-      r,
-      Paint()..color = c.withValues(alpha: .35),
-    );
-    canvas.drawCircle(
-      Offset(0, -bodyHeight / 2),
-      r,
-      Paint()
-        ..color = c.withValues(alpha: .8)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
   }
 
   void _renderStars(Canvas canvas) {

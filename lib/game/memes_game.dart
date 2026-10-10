@@ -611,16 +611,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
     const jumpKeys = [LogicalKeyboardKey.space, LogicalKeyboardKey.keyZ];
     const attackKeys = [LogicalKeyboardKey.keyX, LogicalKeyboardKey.keyJ];
     const specialKeys = [LogicalKeyboardKey.keyC, LogicalKeyboardKey.keyK];
-    const shieldKeys = [
-      LogicalKeyboardKey.keyV,
-      LogicalKeyboardKey.keyL,
-      LogicalKeyboardKey.shiftLeft,
-      LogicalKeyboardKey.shiftRight,
-    ];
     i.jump = any(jumpKeys);
     i.attack = any(attackKeys);
     i.special = any(specialKeys);
-    i.shield = any(shieldKeys);
     if (event is KeyDownEvent) {
       final k = event.logicalKey;
       if (jumpKeys.contains(k)) i.jumpPressed = true;

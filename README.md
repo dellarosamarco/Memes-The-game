@@ -46,8 +46,7 @@ a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto,
   **smash caricato** tenendo premuto attacco; aerei neutro, avanti, su e giù
   (quello in giù schiaccia verso il basso).
 - **Congelato, addormentato o stordito?** Premi i tasti a raffica per liberarti prima.
-- **Scudo** (si consuma e può rompersi), **schivata rotolando** (scudo + direzione) e
-  **schivata in aria**.
+- **Niente scudo**: per evitare i colpi ti muovi, salti e contrattacchi.
 - **Recupero**: su + speciale in aria ti rilancia verso l'arena (una volta per salto,
   ritorna quando vieni colpito o tocchi terra). Doppio salto per tutti.
 - Piattaforme attraversabili dal basso, giù per scendere; giù in aria per cadere veloce.
@@ -73,7 +72,7 @@ dalle bombe.
 Si avvicina, sceglie l'attacco in base alla posizione, carica lo smash quando sei ad alta
 percentuale, para e rotola, usa la propria speciale con criterio (i proiettili da lontano,
 gli scatti in linea, il volo per tornare) e recupera verso l'arena. Le tre difficoltà
-cambiano tempi di reazione, aggressività e uso di scudo e speciali.
+cambiano tempi di reazione, aggressività e uso di schivate e speciali.
 
 ### 10 arene
 
@@ -134,9 +133,9 @@ tiene tutti i 24 meme in una forbice di vittorie compatibile con il caso. Con
 ## Comandi
 
 - **Mobile** (orizzontale): joystick a sinistra; **Salto**, **Attacco**, **Speciale**
-  (con l'indicatore di ricarica) e **Scudo** a destra, con vibrazione.
+  (con l'indicatore di ricarica) a destra, grandi e con vibrazione.
 - **Tastiera**: frecce o `WASD` per muoverti e mirare, `Z`/`SPAZIO` salto, `X`/`J`
-  attacco (tieni premuto per lo smash), `C`/`K` speciale, `V`/`L`/`Shift` scudo,
+  attacco (tieni premuto per lo smash), `C`/`K` speciale,
   `ESC`/`P` pausa.
 
 ## Pubblicazione
@@ -188,7 +187,7 @@ Rigenera tutto con `python3 tool/generate_sprites.py` (servono `pillow` e `numpy
 
 Effetti sonori e musiche chiptune sono **sintetizzati da zero** da `tool/generate_audio.py`
 (onde quadre/triangolari + rumore, nessun file di terzi) in `assets/audio/`: salto, like,
-colpo leggero e forte, smash caricato, attacco a vuoto, scudo rotto, KO con esplosione, mossa speciale, vittoria, sconfitta e tre musiche in loop
+colpo leggero e forte, smash caricato, attacco a vuoto, KO con esplosione, mossa speciale, vittoria, sconfitta e tre musiche in loop
 (menu, lotta, lotta finale). Si riproducono con `flame_audio`; musica, effetti
 e vibrazione si attivano/disattivano dalle impostazioni (ingranaggio nella home o pausa).
 
@@ -207,7 +206,7 @@ lib/
   widgets/                    kit UI pixel (testo, icone, pannelli, pulsanti), anteprima sprite
   game/
     memes_game.dart           FlameGame: regole della lotta, KO, camera, input
-    fighter/                  il lottatore: mosse, knockback, scudo, speciali e passive
+    fighter/                  il lottatore: mosse, knockback, speciali e passive
     cpu.dart                  l'avversario controllato dal computer
     arcade.dart               la scala degli 8 avversari
     stages.dart               le 10 arene

@@ -79,7 +79,7 @@ class PauseOverlay extends StatelessWidget {
               const SizedBox(height: 10),
               const Text(
                 'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
-                'C/K speciale · V/L/SHIFT scudo · ESC pausa\n'
+                'C/K speciale · ESC pausa\n'
                 'Su + speciale: recupero · tieni premuto attacco: smash',
                 textAlign: TextAlign.center,
                 style: TextStyle(

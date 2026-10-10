@@ -37,7 +37,7 @@ void _pixmap(
 enum ProjectileKind { plush, rock, egg, chick, police, waterJet }
 
 /// Things the specials throw, send or summon. They hurt the owner's
-/// opponents (helmets bounce projectiles, shields block them).
+/// opponents (helmets bounce projectiles).
 class FightProjectile extends PositionComponent
     with HasGameReference<MemesGame>, TileBody {
   FightProjectile._(

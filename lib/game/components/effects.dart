@@ -144,8 +144,14 @@ class FloatingText extends PositionComponent with HasGameReference<FlameGame> {
     final p = _t / duration;
     final alpha = p > .7 ? 1 - (p - .7) / .3 : 1.0;
     final off = Offset(-_fill.width / 2, -_fill.height / 2);
+    if (alpha >= 1) {
+      _stroke.paint(canvas, off);
+      _fill.paint(canvas, off);
+      return;
+    }
+    // Fading: a layer just as big as the text (not the whole screen).
     canvas.saveLayer(
-      null,
+      (off & Size(_stroke.width, _stroke.height)).inflate(fontSize / 4),
       Paint()..color = Colors.white.withValues(alpha: alpha.clamp(0, 1)),
     );
     _stroke.paint(canvas, off);
