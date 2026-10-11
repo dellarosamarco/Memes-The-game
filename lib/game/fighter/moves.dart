@@ -64,7 +64,7 @@ class Move {
     required double targetPercent,
     double weight = 1,
   }) {
-    final v = base + growth * targetPercent * (0.55 + damage / 22);
+    final v = base + growth * targetPercent * (0.6 + damage / 20);
     return v / weight;
   }
 

@@ -436,7 +436,11 @@ class MemesGame extends FlameGame with KeyboardEvents {
       final x = f.position.x + d * push;
       final col = (x / kTile).floor();
       final row = (f.position.y / kTile).floor();
-      if (level.isStandable(col, row)) f.position.x = x;
+      // Ground under the feet, and no wall where the body would go.
+      final edge = ((x + d * f.bodyWidth / 2) / kTile).floor();
+      final blocked =
+          level.isSolid(edge, row - 1) || level.isSolid(edge, row - 2);
+      if (level.isStandable(col, row) && !blocked) f.position.x = x;
     }
   }
 
@@ -538,8 +542,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   // ----------------------------------------------------------------- camera
 
-  double get _closeZoom => size.y / (kTile * 11);
-  double get _wideZoom => size.y / (kTile * 15);
+  double get _closeZoom => size.y / (kTile * 9.5);
+  double get _wideZoom => size.y / (kTile * 14);
 
   void _updateCamera(double dt) {
     final pts = [
@@ -547,15 +551,18 @@ class MemesGame extends FlameGame with KeyboardEvents {
         if (f.alive) f.mid,
     ];
     if (pts.isEmpty) return;
-    var minX = pts.map((p) => p.x).reduce(min) - 110;
-    var maxX = pts.map((p) => p.x).reduce(max) + 110;
-    var minY = pts.map((p) => p.y).reduce(min) - 90;
-    var maxY = pts.map((p) => p.y).reduce(max) + 80;
-    // Keep the main island in view while the fight is near it (not when
-    // both are up on the high platforms: that would shrink everyone).
+    var minX = pts.map((p) => p.x).reduce(min) - 100;
+    var maxX = pts.map((p) => p.x).reduce(max) + 100;
+    var minY = pts.map((p) => p.y).reduce(min) - 80;
+    var maxY = pts.map((p) => p.y).reduce(max) + 64;
+    // Keep the main island in view whenever it fits at the widest zoom
+    // (the floor tells where you are), but never shrink everyone for it.
     final top = stage.mainTop * kTile;
-    if (pts.any((p) => p.y > top - kTile * 6)) {
-      maxY = max(maxY, top + kTile * 2);
+    final band0 = size.y * (1 - .08 - .15);
+    final withFloor = max(maxY, top + kTile * 2);
+    if (pts.any((p) => p.y > top - kTile * 6) ||
+        withFloor - minY <= band0 / _wideZoom) {
+      maxY = withFloor;
     }
     // Don't chase fighters deep into the blast zone.
     final zone = blastZone.deflate(kTile * 2);

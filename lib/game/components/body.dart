@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 
 import '../level.dart';
@@ -56,18 +58,27 @@ mixin TileBody on PositionComponent, HasGameReference<MemesGame>
       ..y = position.y
       ..vx = velocity.x
       ..vy = velocity.y;
-    stepBox(
-      game.level,
-      b,
-      dt,
-      extra: extraPlatforms,
-      onCeiling: onCeiling,
-      ignoreOneWay: dropThrough,
-    );
+    // Fast bodies (strong launches) move in small steps, so they can't
+    // skip over a whole tile and end up inside the ground.
+    final dist = max(b.vx.abs(), b.vy.abs()) * dt;
+    final steps = dist > 10 ? min(8, (dist / 10).ceil()) : 1;
+    var wall = false;
+    for (var i = 0; i < steps; i++) {
+      stepBox(
+        game.level,
+        b,
+        dt / steps,
+        extra: extraPlatforms,
+        onCeiling: onCeiling,
+        ignoreOneWay: dropThrough,
+      );
+      wall |= b.hitWall;
+      if (b.onGround) break;
+    }
     position.setValues(b.x, b.y);
     velocity.setValues(b.vx, b.vy);
     onGround = b.onGround;
-    hitWall = b.hitWall;
+    hitWall = wall;
     standingOn = b.landSurface;
     if (b.landCol != null) onLandTile(b.landCol!, b.landRow!);
   }
