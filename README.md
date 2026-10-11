@@ -99,6 +99,7 @@ decorazioni animate.
   atterraggio) vengono ricordati per 150 ms; con lo stick al centro attacchi e speciali si
   girano da soli verso l'avversario vicino; su/giù del joystick contano solo se prevalgono
   sulla direzione orizzontale.
+- **"GAME!"**: quando l'incontro è deciso, la scritta piomba sullo schermo al rallentatore.
 - **Contatore combo**: dal secondo colpo di fila appare "2 HIT!", "3 HIT!"... nel colore di
   chi attacca, sempre più grande; la combo migliore finisce nei risultati.
 - **DI**: tenendo una direzione mentre vieni scagliato devii la traiettoria fino a 15°.

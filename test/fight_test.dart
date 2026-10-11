@@ -227,6 +227,40 @@ void main() {
     expect(p.velocity.y, lessThan(-300));
   });
 
+  testWidgets('hits in a row count as a combo', (tester) async {
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.wigDog,
+        cpu: MemeCharacter.stareCat,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60);
+    }
+    game.cpuOff = true;
+    final p = game.player, c = game.cpu;
+    c.specialTimer = 99;
+    // Two blows while the target is still reeling from the first.
+    for (final damage in [8.0, 8.0]) {
+      c.receiveHit(
+        attacker: p,
+        damage: damage,
+        angle: 40,
+        baseKb: 200,
+        kbGrowth: 2,
+        towardsRight: true,
+      );
+      for (var i = 0; i < 6; i++) {
+        game.update(1 / 60);
+      }
+    }
+    expect(p.bestCombo, 2);
+    expect(c.bestCombo, 0);
+  });
+
   testWidgets('mashing buttons breaks a freeze sooner', (tester) async {
     final game = await boot(
       tester,
