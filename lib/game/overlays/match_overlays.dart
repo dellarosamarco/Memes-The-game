@@ -257,6 +257,7 @@ class _StatsTable extends StatelessWidget {
         row('KO', '${p.kos}', '${c.kos}'),
         row('Cadute', '${p.falls}', '${c.falls}'),
         row('Danni inflitti', dmg(p), dmg(c)),
+        row('Combo migliore', '${p.bestCombo}', '${c.bestCombo}'),
         row('Speciali', '${p.specialsUsed}', '${c.specialsUsed}'),
       ],
     );

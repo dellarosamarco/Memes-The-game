@@ -183,6 +183,10 @@ class Fighter extends PositionComponent
 
   /// Hits taken in the current combo (resets once you're free again).
   int _comboHits = 0;
+  FloatingText? _comboText;
+
+  /// Longest string of hits this fighter landed (shown in the results).
+  int bestCombo = 0;
   double _freeFor = 0;
   double _lastWiggle = 0;
   double _mashShake = 0;
@@ -915,6 +919,22 @@ class Fighter extends PositionComponent
     // fast jab can't keep someone locked forever.
     final caught = state == FighterState.hitstun || _freeFor < .25;
     _comboHits = caught ? _comboHits + 1 : 1;
+    if (_comboHits >= 2 && attacker != null) {
+      attacker.bestCombo = max(attacker.bestCombo, _comboHits);
+      // One counter that grows with the combo (not a pile of texts).
+      _comboText?.removeFromParent();
+      game.world.add(
+        _comboText = FloatingText(
+          position: mid - Vector2(0, 60),
+          text: '$_comboHits HIT!',
+          fontSize: 9 + min(_comboHits, 7).toDouble(),
+          color: attacker.slot == 0
+              ? const Color(0xFFFF82B4)
+              : const Color(0xFF7CC8FF),
+          duration: .9,
+        ),
+      );
+    }
     hitstun = (.12 + speed * .00055) / (1 + .3 * (_comboHits - 1));
     tumbling = speed > 700;
     state = FighterState.hitstun;

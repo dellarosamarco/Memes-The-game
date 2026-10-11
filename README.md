@@ -99,6 +99,8 @@ decorazioni animate.
   atterraggio) vengono ricordati per 150 ms; con lo stick al centro attacchi e speciali si
   girano da soli verso l'avversario vicino; su/giù del joystick contano solo se prevalgono
   sulla direzione orizzontale.
+- **Contatore combo**: dal secondo colpo di fila appare "2 HIT!", "3 HIT!"... nel colore di
+  chi attacca, sempre più grande; la combo migliore finisce nei risultati.
 - **DI**: tenendo una direzione mentre vieni scagliato devii la traiettoria fino a 15°.
 - **Liberati**: congelato, addormentato o stordito? Premi i tasti a raffica.
 - **Bordi amichevoli**: se cadi appena oltre lo spigolo di un'isola ci risali sopra; finiti i
@@ -106,7 +108,7 @@ decorazioni animate.
 - **Bolle a bordo schermo** per chi è fuori inquadratura, e la telecamera non perde mai il
   giocatore.
 - **Niente spam**: la stessa mossa ripetuta perde potenza (fino al 40%) e ogni colpo in più di
-  una combo stordisce meno, quindi niente "jab infiniti"; la CPU para chi ripete sempre lo stesso
+  una combo stordisce meno, quindi niente "jab infiniti"; la CPU schiva chi ripete sempre lo stesso
   attacco, punisce le mosse a vuoto e si libera dalle raffiche.
 - **Animazioni procedurali**: respiro da fermi, corsa saltellante, allungamento nei salti.
 - **Telecamera** che inquadra entrambi i lottatori nella fascia tra l'HUD e i comandi touch,
@@ -126,7 +128,7 @@ tiene tutti i 24 meme in una forbice di vittorie compatibile con il caso. Con
 - Ogni lotta fa guadagnare **like** (di più vincendo, con i KO e a difficoltà alta; il
   meme del giorno li raddoppia): nel **Negozio** li spendi in 16 cappellini pixel che il
   tuo meme indossa in lotta e nei menu.
-- **16 trofei** (prima vittoria, vittoria senza perdere vite, KO con uno smash, Arcade,
+- **17 trofei** (prima vittoria, vittoria senza perdere vite, KO con uno smash, combo da 5, Arcade,
   100 KO, tutti i meme...), con una notifica pixel su qualsiasi schermata. Dopo una
   sconfitta puoi **premere F per rendere omaggio**.
 

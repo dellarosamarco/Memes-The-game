@@ -537,6 +537,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       s.markWonWith(config.player.id);
     }
     if (player.smashKos > 0) Achievements.unlock('smash_ko');
+    if (player.bestCombo >= 5) Achievements.unlock('combo5');
     Achievements.checkStats();
   }
 

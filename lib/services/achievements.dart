@@ -21,6 +21,7 @@ class Achievements {
     Trophy('perfect', 'Intoccabile', 'Vinci senza perdere nemmeno una vita.'),
     Trophy('survivor', 'Duro a morire', 'Vinci con il 150% di danni o più.'),
     Trophy('smash_ko', 'SMASH!', "Manda KO l'avversario con uno smash."),
+    Trophy('combo5', 'Combo breaker', 'Metti a segno una combo da 5 colpi.'),
     Trophy('hard_win', 'Pro player', 'Vinci un incontro a Difficile.'),
     Trophy('wins10', 'Campione del feed', 'Vinci 10 incontri.'),
     Trophy('wins50', 'Leggenda di internet', 'Vinci 50 incontri.'),
