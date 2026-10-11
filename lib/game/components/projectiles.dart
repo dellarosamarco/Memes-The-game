@@ -199,7 +199,7 @@ class FightProjectile extends PositionComponent
     }
     final o = _touching(18);
     if (o != null) {
-      _strike(o, damage: 9, angle: 30, base: 240, growth: 6.5);
+      _strike(o, damage: 9, angle: 30, base: 260, growth: 7.5);
       _returning = true;
     }
   }

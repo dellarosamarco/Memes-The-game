@@ -95,11 +95,11 @@ class Moves {
     name: 'forward',
     startup: .09,
     active: .08,
-    recovery: .2,
+    recovery: .24,
     damage: 8,
     angle: 32,
     baseKb: 230,
-    kbGrowth: 7.8,
+    kbGrowth: 7.4,
     box: Rect.fromLTWH(6, -36, 38, 26),
     lunge: 120,
   );

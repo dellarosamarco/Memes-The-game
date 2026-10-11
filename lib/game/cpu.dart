@@ -45,7 +45,7 @@ class CpuBrain {
 
   double get _evadeChance => switch (difficulty) {
     Difficulty.easy => .05,
-    Difficulty.normal => .2,
+    Difficulty.normal => .32,
     Difficulty.hard => .5,
   };
 
@@ -90,8 +90,10 @@ class CpuBrain {
       _wasInHitstun = false;
       final away = (me.position.x - target.position.x).sign;
       final r = _rnd.nextDouble();
-      if (r < .3) {
-        i.x = away == 0 ? 1 : away;
+      if (r < .3 || (r < .6 && !_safeToRetreat(away == 0 ? 1 : away))) {
+        // Jump away, or over them when the edge is behind us.
+        final dir = away == 0 ? 1.0 : away;
+        i.x = _safeToRetreat(dir) ? dir : -dir;
         i.pressJump();
       } else if (r < .3 + _adaptiveEvade) {
         i.x = away == 0 ? 1 : away;
@@ -302,11 +304,15 @@ class CpuBrain {
     // Defence: the player is swinging at us.
     if (target.attacking && dist < 80 && _rnd.nextDouble() < _adaptiveEvade) {
       if (me.onGround) {
+        if (!_safeToRetreat(-toward)) {
+          // Cornered at the edge: leap over them, back to the middle.
+          i.x = toward;
+          i.pressJump();
+          return;
+        }
         // Hop back out of reach, or just step away.
         i.x = -toward;
-        if (_rnd.nextDouble() < .45 && _safeToRetreat(-toward)) {
-          i.pressJump();
-        }
+        if (_rnd.nextDouble() < .45) i.pressJump();
         return;
       }
     }

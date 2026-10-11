@@ -431,7 +431,7 @@ class MemeCharacter {
     specialType: SpecialType.plushThrow,
     specialName: 'Lancio del Peluche',
     specialDescription: 'Lancia il peluche: colpisce da lontano (9%).',
-    specialCooldown: 2.5,
+    specialCooldown: 2,
     specialShout: 'PRENDI!',
     hurtLines: ['Uh-uh-ah!', 'Il peluche!', '*broncio*'],
   );
