@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/hats.dart';
 import '../../models/meme_character.dart';
+import '../../services/local_store.dart';
 import '../../services/sound.dart';
 import '../components/body.dart';
 import '../components/fight_items.dart';
@@ -477,7 +478,9 @@ class Fighter extends PositionComponent
 
     if (_bufSpecial > 0) {
       _bufSpecial = 0;
-      if (input.up) {
+      // Off the arena, the special is always the way back (players on a
+      // phone don't have to know "up + special").
+      if (input.up || (_assisted && _offStage && !usedRecovery)) {
         _recovery();
       } else {
         useSpecial();
@@ -642,7 +645,7 @@ class Fighter extends PositionComponent
       facingRight = x > 0;
       m = Moves.forward;
     } else {
-      m = Moves.jab;
+      m = _smartGround() ?? Moves.jab;
     }
     if (x.abs() <= .5) _faceNearest(90);
     _startMove(m);
@@ -658,9 +661,70 @@ class Fighter extends PositionComponent
       facingRight = input.x > 0;
       m = Moves.fair;
     } else {
-      m = Moves.nair;
+      m = _smartAerial() ?? Moves.nair;
     }
     _startMove(m);
+  }
+
+  /// Simple controls for the human player: with the stick in the middle,
+  /// the attack button picks the move that reaches the opponent and the
+  /// special brings you back when you're off the arena.
+  bool get _assisted =>
+      !isCpu &&
+      (assistOverride ?? (LocalStore.ready && LocalStore.instance.assistOn));
+
+  /// Tests: force the simple controls on or off.
+  @visibleForTesting
+  static bool? assistOverride;
+
+  /// No ground under us for a long way: we're off the arena.
+  bool get _offStage {
+    if (onGround) return false;
+    final level = game.level;
+    final c = (position.x / kTile).floor();
+    final r = (position.y / kTile).floor();
+    for (var i = 0; i < 10; i++) {
+      if (level.isStandable(c, r + i)) return false;
+    }
+    return true;
+  }
+
+  /// The opponent close enough to aim at, and where it is (dx > 0: ahead
+  /// in any direction, dy < 0: above).
+  ({double dx, double dy})? _target(double range) {
+    Fighter? best;
+    var bestD = range;
+    for (final o in opponents) {
+      final d = o.mid.distanceTo(mid);
+      if (d < bestD) {
+        bestD = d;
+        best = o;
+      }
+    }
+    if (best == null) return null;
+    return (dx: (best.position.x - position.x).abs(), dy: best.mid.y - mid.y);
+  }
+
+  Move? _smartGround() {
+    if (!_assisted) return null;
+    final t = _target(110);
+    if (t == null) return null;
+    if (t.dy < -34 && t.dx < 50) return Moves.up;
+    if (t.dx > 30 && t.dy.abs() < 40) return Moves.forward;
+    return null;
+  }
+
+  Move? _smartAerial() {
+    if (!_assisted) return null;
+    final t = _target(110);
+    if (t == null) return null;
+    if (t.dy < -30 && t.dx < 48) return Moves.uair;
+    if (t.dy > 30 && t.dx < 44) return Moves.dair;
+    if (t.dx > 30) {
+      _faceNearest(110);
+      return Moves.fair;
+    }
+    return null;
   }
 
   /// Aim assist for neutral inputs (handy on a touch screen): turn toward
@@ -982,10 +1046,16 @@ class Fighter extends PositionComponent
   void _recovery() {
     if (usedRecovery) return;
     usedRecovery = true;
-    if (input.x.abs() > .3) facingRight = input.x > 0;
+    var steer = input.x;
+    // No direction given: head back toward the arena by itself.
+    if (steer.abs() <= .3 && _assisted && _offStage) {
+      final center = (game.stage.left + game.stage.right + 1) * kTile / 2;
+      steer = center > position.x ? 1 : -1;
+    }
+    if (steer.abs() > .3) facingRight = steer > 0;
     _startMove(Moves.recovery);
     velocity.y = -780;
-    velocity.x = input.x * 240;
+    velocity.x = steer * 240;
     _spinAngle = 2 * pi;
     Sound.play('spring', volume: .5);
     game.world.add(

@@ -92,6 +92,12 @@ decorazioni animate.
   si leggono anche gli attacchi della CPU. Caricando lo smash, un anello si stringe.
 - **Feel**: polvere quando scatti, quando inverti la corsa e quando salti; vibrazione quando
   colpisci o vieni colpito; i suoni dei colpi cambiano leggermente tono (più gravi se forti).
+- **Comandi "Assistito"** (attivi di serie, si spengono nelle impostazioni): con il joystick
+  al centro il tasto Attacco sceglie da solo il colpo che raggiunge l'avversario (in alto, in
+  basso, in avanti); fuori dall'arena la Speciale fa partire il recupero verso l'arena senza
+  dover tenere su; una spinta in su del joystick fa saltare.
+- **Tasti generosi**: tutta la parte destra dello schermo è dei tasti, e un tocco va al tasto
+  più vicino, così anche un pollice impreciso colpisce.
 - **Joystick fluttuante**: appare dove appoggi il pollice nella metà sinistra dello schermo.
 - **Colpo finale alla Smash**: quando un colpo sta per mandare fuori l'avversario, il gioco
   lo capisce in anticipo: pausa più lunga, zoom della telecamera sull'impatto e flash.

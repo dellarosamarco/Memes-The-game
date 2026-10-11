@@ -101,8 +101,7 @@ class PauseOverlay extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '${c.passiveName}: ${c.passiveDescription}\n'
-                      '${c.specialName}: ${c.specialDescription}\n'
-                      'Su + speciale: recupero · tieni premuto attacco: smash',
+                      '${c.specialName}: ${c.specialDescription}',
                       textAlign: TextAlign.center,
                       style: body,
                     ),

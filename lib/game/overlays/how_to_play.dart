@@ -104,19 +104,20 @@ class HowToPlay extends StatelessWidget {
                       ),
                     ),
                     'Joystick',
-                    'muoviti. Giù su una piattaforma: scendi.',
+                    'muoviti; spingi in su per saltare. Giù su una '
+                        'piattaforma: scendi.',
                   ),
                   _row(
                     _button('fist', 'pink'),
                     'Attacco',
-                    'tocca per colpire, tieni premuto per lo SMASH. Su o giù '
-                        'col joystick cambiano colpo.',
+                    'tocca per colpire: il colpo giusto parte da solo verso '
+                        "l'avversario. Tieni premuto per lo SMASH.",
                   ),
                   _row(
                     _button('bolt', 'yellow'),
                     'Speciale',
-                    'la mossa del tuo meme. In aria, su + speciale ti rilancia '
-                        'verso l\'arena.',
+                    'la mossa del tuo meme. Fuori dall\'arena ti riporta '
+                        'su da sola.',
                   ),
                   _row(
                     _button('up', 'blue'),
@@ -129,7 +130,8 @@ class HowToPlay extends StatelessWidget {
               const SizedBox(height: 4),
               const Text(
                 'Congelato, addormentato o stordito? Premi i tasti a raffica '
-                'per liberarti prima!',
+                'per liberarti prima! (Comandi esperti: Impostazioni > '
+                'Assistito: No.)',
                 textAlign: TextAlign.center,
                 style: _body,
               ),

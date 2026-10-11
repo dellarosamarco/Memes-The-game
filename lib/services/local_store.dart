@@ -38,6 +38,10 @@ class LocalStore {
   Future<void> setSfxOn(bool v) => _prefs.setBool('sfx', v);
   Future<void> setHapticsOn(bool v) => _prefs.setBool('haptics', v);
 
+  /// Simple controls: smart attacks and automatic recovery.
+  bool get assistOn => _prefs.getBool('assist') ?? true;
+  Future<void> setAssistOn(bool v) => _prefs.setBool('assist', v);
+
   /// The "how to fight" card was shown once already.
   bool get tutorialSeen => _prefs.getBool('tutorial_seen') ?? false;
   Future<void> setTutorialSeen() => _prefs.setBool('tutorial_seen', true);

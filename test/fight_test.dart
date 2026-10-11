@@ -261,6 +261,59 @@ void main() {
     expect(c.bestCombo, 0);
   });
 
+  testWidgets('simple controls: smart attack and automatic recovery', (
+    tester,
+  ) async {
+    Fighter.assistOverride = true;
+    addTearDown(() => Fighter.assistOverride = null);
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.wigDog,
+        cpu: MemeCharacter.stareCat,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60);
+    }
+    game.cpuOff = true;
+    final p = game.player, c = game.cpu;
+    c.specialTimer = 99;
+    for (var i = 0; i < 120 && !p.onGround; i++) {
+      game.update(1 / 60);
+    }
+    // The opponent right above: a neutral attack becomes the up attack.
+    c.position.setValues(p.position.x + 4, p.position.y - 60);
+    c.velocity.setZero();
+    c.frozen = 5;
+    p.input.pressAttack();
+    p.input.attack = false;
+    for (var i = 0; i < 3 && p.move == null; i++) {
+      game.update(1 / 60);
+    }
+    expect(p.move, Moves.up);
+
+    // Off the side of the arena: the special alone brings you back.
+    for (var i = 0; i < 60; i++) {
+      game.update(1 / 60);
+    }
+    p.position.setValues(
+      game.stage.left * 24.0 - 80,
+      game.stage.mainTop * 24.0 + 30,
+    );
+    p.onGround = false;
+    p.state = FighterState.normal;
+    p.velocity.setValues(0, 150);
+    p.usedRecovery = false;
+    p.input.pressSpecial();
+    p.input.special = false;
+    game.update(1 / 60);
+    expect(p.usedRecovery, isTrue);
+    expect(p.velocity.x, greaterThan(0)); // toward the arena
+  });
+
   testWidgets('mashing buttons breaks a freeze sooner', (tester) async {
     final game = await boot(
       tester,

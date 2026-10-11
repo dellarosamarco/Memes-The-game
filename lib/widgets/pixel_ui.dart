@@ -688,6 +688,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
         row('music', 'Musica', store.musicOn, Sound.setMusicOn),
         row('sound', 'Effetti', store.sfxOn, store.setSfxOn),
         row('vibrate', 'Vibrazione', store.hapticsOn, store.setHapticsOn),
+        row('fist', 'Assistito', store.assistOn, store.setAssistOn),
       ],
     );
   }
