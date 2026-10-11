@@ -23,69 +23,90 @@ class PauseOverlay extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: PixelPanel(
-          width: 440,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          width: 700,
+          // Two columns: it has to fit a phone held sideways.
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const PixelText('Pausa', size: 34, color: Color(0xFFFF82B4)),
-              PixelText(
-                '${c.name} vs ${game.config.cpu.name} · ${game.stage.name}',
-                size: 14,
-                color: kPlum,
-                outline: false,
-              ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 10,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: [
-                  PixelButton(
-                    label: 'Riprendi',
-                    icon: 'play',
-                    color: PixelColor.mint,
-                    onPressed: game.togglePause,
-                  ),
-                  PixelButton(
-                    label: 'Comandi',
-                    icon: 'gear',
-                    color: PixelColor.blue,
-                    onPressed: () => showDialog<void>(
-                      context: context,
-                      builder: (ctx) => Dialog(
-                        backgroundColor: Colors.transparent,
-                        insetPadding: EdgeInsets.zero,
-                        child: HowToPlay(onClose: () => Navigator.pop(ctx)),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const PixelText(
+                      'Pausa',
+                      size: 34,
+                      color: Color(0xFFFF82B4),
+                    ),
+                    PixelText(
+                      '${c.name} vs ${game.config.cpu.name}\n${game.stage.name}',
+                      size: 14,
+                      color: kPlum,
+                      outline: false,
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        PixelButton(
+                          label: 'Riprendi',
+                          icon: 'play',
+                          color: PixelColor.mint,
+                          onPressed: game.togglePause,
+                        ),
+                        PixelButton(
+                          label: 'Comandi',
+                          icon: 'gear',
+                          color: PixelColor.blue,
+                          onPressed: () => showDialog<void>(
+                            context: context,
+                            builder: (ctx) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding: EdgeInsets.zero,
+                              child: HowToPlay(
+                                onClose: () => Navigator.pop(ctx),
+                              ),
+                            ),
+                          ),
+                        ),
+                        PixelButton(
+                          label: 'Esci',
+                          icon: 'home',
+                          color: PixelColor.grey,
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
+                      'C/K speciale · ESC pausa',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: kPixelFont,
+                        fontSize: 11,
+                        color: Color(0xFF9A8FB0),
                       ),
                     ),
-                  ),
-                  PixelButton(
-                    label: 'Esci',
-                    icon: 'home',
-                    color: PixelColor.grey,
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-              const SettingsPanel(),
-              const SizedBox(height: 10),
-              Text(
-                '${c.passiveName}: ${c.passiveDescription}\n'
-                '${c.specialName}: ${c.specialDescription}',
-                textAlign: TextAlign.center,
-                style: body,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
-                'C/K speciale · ESC pausa\n'
-                'Su + speciale: recupero · tieni premuto attacco: smash',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: kPixelFont,
-                  fontSize: 11,
-                  color: Color(0xFF9A8FB0),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SettingsPanel(),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${c.passiveName}: ${c.passiveDescription}\n'
+                      '${c.specialName}: ${c.specialDescription}\n'
+                      'Su + speciale: recupero · tieni premuto attacco: smash',
+                      textAlign: TextAlign.center,
+                      style: body,
+                    ),
+                  ],
                 ),
               ),
             ],
