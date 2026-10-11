@@ -182,12 +182,6 @@ def fight_sfx():
     whistle = square(slide(1400, 300, d, .7), d, .125) * env(n, release=.3)
     write('ko', boom * .9 + triangle(slide(120, 35, d), d) * env(n, release=.6)
           + whistle * .25, 0.6)
-    # Shield break: glassy crack.
-    d = 0.35
-    n = int(SR * d)
-    crack = noise(d, 24) * env(n, release=.3) * .5
-    ping = square(slide(1800, 900, d), d, .5) * env(n, release=.3) * .4
-    write('shield_break', crack + ping, 0.4)
     # Whiff: an attack that hits nothing.
     d = 0.09
     n = int(SR * d)
