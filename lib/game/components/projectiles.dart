@@ -124,7 +124,7 @@ class FightProjectile extends PositionComponent
       for (final o in _targets.toList()) {
         final d = o.mid - position;
         if (d.x * dir > -8 && d.x * dir < 190 && d.y.abs() < 34) {
-          _strike(o, damage: 4, angle: 12, base: 420, growth: 2.5);
+          _strike(o, damage: 7, angle: 12, base: 420, growth: 3.8);
         }
       }
     }
@@ -199,7 +199,7 @@ class FightProjectile extends PositionComponent
     }
     final o = _touching(18);
     if (o != null) {
-      _strike(o, damage: 7, angle: 30, base: 200, growth: 4.5);
+      _strike(o, damage: 9, angle: 30, base: 240, growth: 6.5);
       _returning = true;
     }
   }
@@ -216,7 +216,7 @@ class FightProjectile extends PositionComponent
     }
     final o = _touching(20);
     if (o != null) {
-      _strike(o, damage: 10, angle: 40, base: 240, growth: 7);
+      _strike(o, damage: 11, angle: 40, base: 240, growth: 7);
       game.world.add(PoofEffect(position: position.clone()));
       removeFromParent();
     }
@@ -267,7 +267,7 @@ class FightProjectile extends PositionComponent
     applyGravity(dt);
     moveAndCollide(dt);
     final o = _touching(22);
-    if (o != null) _strike(o, damage: 7, angle: 45, base: 200, growth: 5);
+    if (o != null) _strike(o, damage: 9, angle: 45, base: 200, growth: 5.5);
     if (_t > 2.6 || _stuck > .4) {
       game.world.add(PoofEffect(position: position - Vector2(0, 9)));
       removeFromParent();

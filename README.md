@@ -14,28 +14,28 @@ a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto,
 | Meme | Passiva | Speciale |
 |---|---|---|
 | **Wig Dog** | *Parrucca-Paracadute*: plana tenendo premuto salto | *Voglio il Manager!*: onda d'urto (11%) |
-| **Stare Cat** | *Riflessi Felini*: due salti in aria | *Il Fissatore*: paralizza l'avversario vicino |
+| **Stare Cat** | *Riflessi Felini*: due salti in aria | *Il Fissatore*: paralizza l'avversario vicino (5%) |
 | **Robber Chihuahua** | *Fuga Rapida*: il più veloce | *La Rapina*: scatto invulnerabile (10%) |
 | **Smile Dog** | *Pelle Dura*: pesante, difficile da scagliare | *Sorriso Maledetto*: l'avversario scappa terrorizzato |
-| **Puffer Pinscher** | *Piumino Imbottito*: il primo colpo di ogni vita è assorbito | *Frullatore di Treccine*: trottola (9%) |
-| **Lady Terrier** | *Like di Lusso*: like di fine lotta doppi | *Borsettata*: colpo potentissimo (13%) |
-| **Ka-Chow Bassotto** | *Crocs Corazzate*: -15% di danni subiti | *Ka-Chow!*: turbo che investe (8%) |
-| **Bassotto Criceto** | *Guance Capienti*: ogni colpo a segno cura 1% | *Gonfia Guance*: risale fluttuando |
-| **Bebè Pupazzo** | *Pancino Gommoso*: rimbalza sulla testa dell'avversario (6%) | *Ninna Nanna*: si cura e addormenta |
-| **Scimmietta Rosa** | *Agilità da Scimmia*: tre salti in aria | *Lancio del Peluche*: proiettile (7%) |
-| **Baby Orco** | *Strati di Cipolla*: si rigenera se non colpito | *Esci dalla mia Palude!*: schianto (13%) |
-| **Orecchione** | *Orecchie a Molla*: salto più alto | *Dentiera Smagliante*: acceca e blocca (5%) |
+| **Puffer Pinscher** | *Piumino Imbottito*: il primo colpo leggero di ogni vita è assorbito | *Frullatore di Treccine*: trottola (7%) |
+| **Lady Terrier** | *Like di Lusso*: like di fine lotta doppi | *Borsettata*: colpo potentissimo (11%) |
+| **Ka-Chow Bassotto** | *Crocs Corazzate*: -15% di danni subiti | *Ka-Chow!*: turbo che investe (10%) |
+| **Bassotto Criceto** | *Guance Capienti*: ogni colpo a segno cura 1% | *Gonfia Guance*: spinge via (9%) e risale fluttuando |
+| **Bebè Pupazzo** | *Pancino Gommoso*: rimbalza sulla testa dell'avversario (4%) | *Ninna Nanna*: si cura del 5% e addormenta |
+| **Scimmietta Rosa** | *Agilità da Scimmia*: tre salti in aria | *Lancio del Peluche*: proiettile (9%) |
+| **Baby Orco** | *Strati di Cipolla*: si rigenera se non colpito | *Esci dalla mia Palude!*: schianto (9%) |
+| **Orecchione** | *Orecchie a Molla*: salto più alto | *Dentiera Smagliante*: acceca e blocca chi è vicino (6%) |
 | **Maiale Drip** | *Catena d'Oro*: speciali +20% danni | *Cancellazione del Rumore*: 4 s senza contraccolpo |
-| **Pulcino Caschetto** | *Pulcino Leggero*: salti lunghi, ma vola via facilmente | *Cip Cip!*: tre pulcini (5% l'uno) |
-| **Piccione Casco** | *Casco Protettivo*: immune ai proiettili | *Volo Urbano*: vola per 2,5 secondi |
-| **Pietro** | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: l'avversario si ferma a rispondere |
+| **Pulcino Caschetto** | *Pulcino Leggero*: salti lunghi, ma vola via facilmente | *Cip Cip!*: tre pulcini (9% l'uno) |
+| **Piccione Casco** | *Casco Protettivo*: immune ai proiettili | *Volo Urbano*: colpo d'ala (8%) e vola per 2,5 secondi |
+| **Pietro** | *Converse ai Piedi*: accelera e frena all'istante | *Pietro is calling...*: l'avversario si ferma a rispondere (4%) |
 | **Cane in Bici** | *Pedalata*: accelera pedalando | *POLIS!*: la volante investe (14%) |
 | **Gallina Hypebeast** | *Hustler*: like ×1,5 | *Uovo Bomba*: esplosione (12%) |
 | **Mr. San Andreas** | *Respawn all'Ospedale*: 4 s di invincibilità dopo ogni KO | *HESOYAM*: -25% di danni |
-| **Masha Baffuta** | *Mani Pesanti*: smash +25% di spinta | *Salto di Masha*: salto enorme (8%) |
-| **Patrick Roccia** | *Testa di Roccia*: attacco in alto doppio | *Roccia Rotolante*: rotola travolgendo (11%) |
-| **Patrick Boccione** | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: spinge via |
-| **Scimmia col Sasso** | *Presa Salda*: i colpi deboli non lo smuovono | *Tiro del Sasso*: sasso a parabola (10%) |
+| **Masha Baffuta** | *Mani Pesanti*: smash +25% di spinta | *Salto di Masha*: salto enorme (10%) |
+| **Patrick Roccia** | *Testa di Roccia*: attacco in alto doppio | *Roccia Rotolante*: rotola travolgendo (12%) |
+| **Patrick Boccione** | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: spinge via (7%) |
+| **Scimmia col Sasso** | *Presa Salda*: i colpi deboli non lo smuovono | *Tiro del Sasso*: sasso a parabola (11%) |
 | **Chihuahua Relax** | *Relax Totale*: fermo recupera 1% al secondo | *Modalità Ferie*: avversario al rallentatore |
 
 ## Come si combatte

@@ -61,14 +61,7 @@ class FighterInput {
   }
 }
 
-enum FighterState {
-  normal,
-  attack,
-  charge,
-  hitstun,
-  helpless,
-  ko,
-}
+enum FighterState { normal, attack, charge, hitstun, helpless, ko }
 
 /// A meme in the arena.
 class Fighter extends PositionComponent
@@ -163,6 +156,7 @@ class Fighter extends PositionComponent
   double _pedal = 0;
   int _pedalDir = 0;
   double _turboHit = 0;
+  double _stompCd = 0;
 
   // Respawn.
   double koTimer = 0;
@@ -211,8 +205,8 @@ class Fighter extends PositionComponent
 
   /// How hard a meme is to launch (1 = average).
   static double weightOf(MemeCharacter c) => switch (c.passive) {
-    Passive.tough => 1.2,
-    Passive.featherweight => .97,
+    Passive.tough => 1.15,
+    Passive.featherweight => 1.04,
     // Burly memes (4 hearts) are a bit heavier.
     _ => c.hearts >= 4 ? 1.1 : 1.0,
   };
@@ -272,7 +266,7 @@ class Fighter extends PositionComponent
     final alt = character.afterSpecialSheet;
     if (alt != null) _altStrip = Strip(game.images.fromCache(alt), 60, 60);
     if (character.passive == Passive.featherweight) {
-      gravity = Phys.gravity * .9;
+      gravity = Phys.gravity * .94;
     }
     respawnAt = position.clone();
     airJumps = _maxAirJumps;
@@ -379,6 +373,7 @@ class Fighter extends PositionComponent
       dropThrough = _dropTimer > 0;
     }
     if (_turboHit > 0) _turboHit -= dt;
+    if (_stompCd > 0) _stompCd -= dt;
     if (specialTimer > 0) {
       specialTimer -= dt * (character.passive == Passive.refill ? 2 : 1);
     }
@@ -808,8 +803,12 @@ class Fighter extends PositionComponent
       return;
     }
     _calm = 0;
-    if (puffer) {
-      // The puffer jacket takes the first hit of each life.
+    if (puffer && damage > 8) {
+      // A strong hit bursts the jacket and goes through.
+      puffer = false;
+      game.world.add(Confetti(position: mid, count: 10));
+    } else if (puffer) {
+      // The puffer jacket takes the first light hit of each life.
       puffer = false;
       invincible = .5;
       Sound.play('block');

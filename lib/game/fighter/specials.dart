@@ -70,8 +70,10 @@ extension FighterSpecials on Fighter {
         game.camera.viewport.add(
           ScreenFlash(color: const Color(0x6640C4FF), duration: .4),
         );
-        for (final o in _near(280)) {
-          o.frozen = 1.2;
+        for (final o in _near(300).toList()) {
+          o.frozen = 1.4;
+          _hit(o, damage: 5, base: 60, growth: 0);
+          o.frozen = 1.4;
           o.velocity.x = 0;
         }
 
@@ -85,7 +87,7 @@ extension FighterSpecials on Fighter {
           ScreenFlash(color: const Color(0xAA000000), duration: .6),
         );
         for (final o in _near(320)) {
-          o.scared = 2.0;
+          o.scared = 1.4;
         }
 
       case SpecialType.braidSpin:
@@ -104,7 +106,7 @@ extension FighterSpecials on Fighter {
               damage: 11,
               angle: 35,
               base: 280,
-              growth: 9,
+              growth: 7.5,
               right: facingRight,
             );
           }
@@ -125,21 +127,21 @@ extension FighterSpecials on Fighter {
           ),
         );
         for (final o in _near(75).toList()) {
-          _hit(o, damage: 7, angle: 60, base: 260, growth: 5);
+          _hit(o, damage: 9, angle: 60, base: 270, growth: 5.5);
         }
 
       case SpecialType.lullaby:
-        percent = max(0, percent - 12);
+        percent = max(0, percent - 5);
         game.world.add(
           ShockwaveEffect(
             position: c,
-            maxRadius: 220,
+            maxRadius: 180,
             color: const Color(0xFFB39DDB),
             duration: .7,
           ),
         );
-        for (final o in _near(220)) {
-          o.asleep = 1.6;
+        for (final o in _near(180)) {
+          o.asleep = .85;
         }
 
       case SpecialType.plushThrow:
@@ -157,14 +159,14 @@ extension FighterSpecials on Fighter {
         game.camera.viewport.add(
           ScreenFlash(color: const Color(0xEEFFFFFF), duration: .5),
         );
-        for (final o in opponents.toList()) {
-          o.frozen = 1.2;
-          _hit(o, damage: 8, base: 60, growth: 0);
-          o.frozen = 1.2;
+        for (final o in _near(280).toList()) {
+          o.frozen = .9;
+          _hit(o, damage: 6, base: 60, growth: 0);
+          o.frozen = .9;
         }
 
       case SpecialType.airpods:
-        armor = 4;
+        armor = 5;
 
       case SpecialType.chickArmy:
         for (var i = 0; i < 3; i++) {
@@ -177,15 +179,16 @@ extension FighterSpecials on Fighter {
         // Take-off: a wing gust.
         game.world.add(PoofEffect(position: c));
         for (final o in _near(80).toList()) {
-          _hit(o, damage: 6, angle: 40, base: 240, growth: 4);
+          _hit(o, damage: 8, angle: 40, base: 280, growth: 4.5);
         }
 
       case SpecialType.phoneCall:
         game.camera.viewport.add(
           ScreenFlash(color: const Color(0x5540E070), duration: .4),
         );
-        for (final o in opponents) {
-          o.frozen = 1.1;
+        for (final o in opponents.toList()) {
+          _hit(o, damage: 4, base: 60, growth: 0);
+          o.frozen = 1.5;
           game.world.add(
             FloatingText(
               position: o.mid - Vector2(0, 36),
@@ -218,7 +221,7 @@ extension FighterSpecials on Fighter {
           ),
         );
         for (final o in _near(90).toList()) {
-          _hit(o, damage: 8, angle: 70, base: 240, growth: 5);
+          _hit(o, damage: 10, angle: 70, base: 250, growth: 5.5);
         }
 
       case SpecialType.rockRoll:
@@ -262,7 +265,7 @@ extension FighterSpecials on Fighter {
       _hitThisMove.add(o);
       _hit(
         o,
-        damage: dash > 0 ? 9 : 11,
+        damage: dash > 0 ? 10 : 12,
         angle: 38,
         base: 260,
         growth: 7,
@@ -281,7 +284,7 @@ extension FighterSpecials on Fighter {
       for (final o in _near(52).toList()) {
         if (_hitThisMove.contains(o)) continue;
         _hitThisMove.add(o);
-        _hit(o, damage: 8, angle: 50, base: 240, growth: 6);
+        _hit(o, damage: 7, angle: 50, base: 230, growth: 4.5);
       }
     }
     if (turbo > 0 && _turboHit <= 0) {
@@ -321,14 +324,18 @@ extension FighterSpecials on Fighter {
     }
     if (slamming) velocity.y = 760;
     // Bouncy belly: landing on someone's head hurts them.
-    if (character.passive == Passive.bouncy && velocity.y > 120) {
+    // (Once in a while: no stomp chains.)
+    if (character.passive == Passive.bouncy &&
+        velocity.y > 120 &&
+        _stompCd <= 0) {
       for (final o in opponents.toList()) {
         final top = o.position.y - o.bodyHeight;
         if ((o.position.x - position.x).abs() < 22 &&
             position.y > top - 4 &&
             position.y < top + 14) {
-          _hit(o, damage: 6, angle: -60, base: 160, growth: 3);
+          _hit(o, damage: 4, angle: 80, base: 150, growth: 2.5);
           velocity.y = -520;
+          _stompCd = 3;
         }
       }
     }
@@ -349,7 +356,7 @@ extension FighterSpecials on Fighter {
     for (final o in opponents.toList()) {
       final d = o.position - position;
       if (d.x.abs() < 150 && d.y.abs() < 70) {
-        _hit(o, damage: 11, angle: 75, base: 260, growth: 7);
+        _hit(o, damage: 9, angle: 75, base: 250, growth: 6);
       }
     }
   }
