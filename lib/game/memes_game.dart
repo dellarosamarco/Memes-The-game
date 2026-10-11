@@ -118,6 +118,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
   Fighter? winner;
   double _resultsIn = 0;
   double _slowMo = 0;
+  BigBanner? _banner;
   double _nextItem = 9;
   int likesEarned = 0;
 
@@ -272,6 +273,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
       _resultsIn -= dt;
       if (_resultsIn <= 0) {
         overlays.remove(overlayHud);
+        _banner?.removeFromParent();
         overlays.add(overlayResults);
       }
     }
@@ -493,6 +495,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     this.winner = winner;
     _slowMo = 1.2;
     _resultsIn = 2.2;
+    camera.viewport.add(_banner = BigBanner('GAME!'));
     for (final f in fighters) {
       f.input.clear();
     }

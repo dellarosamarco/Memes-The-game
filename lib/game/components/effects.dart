@@ -392,3 +392,63 @@ class KoBlast extends PositionComponent {
     canvas.restore();
   }
 }
+
+/// A big "GAME!" style word that slams onto the screen; add it to the
+/// camera viewport.
+class BigBanner extends PositionComponent with HasGameReference<FlameGame> {
+  BigBanner(this.text, {this.color = const Color(0xFFFFE07A)})
+    : super(priority: 120);
+
+  final String text;
+  final Color color;
+  double _t = 0;
+  late final TextPainter _fill;
+  late final TextPainter _stroke;
+
+  @override
+  Future<void> onLoad() async {
+    TextStyle style(Paint? fg) => TextStyle(
+      fontFamily: 'Pixelify',
+      fontSize: 72,
+      fontWeight: FontWeight.w900,
+      foreground: fg,
+      color: fg == null ? color : null,
+    );
+    _stroke = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: style(
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 14
+            ..color = const Color(0xFF3A2440),
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    _fill = TextPainter(
+      text: TextSpan(text: text, style: style(null)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+  }
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    position.setValues(game.size.x / 2, game.size.y * .42);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // Slams in big, settles with a little bounce.
+    final s = _t < .25
+        ? 2.2 - 1.2 * Curves.easeOutBack.transform(_t / .25)
+        : 1.0;
+    canvas.save();
+    canvas.scale(s);
+    final off = Offset(-_fill.width / 2, -_fill.height / 2);
+    _stroke.paint(canvas, off);
+    _fill.paint(canvas, off);
+    canvas.restore();
+  }
+}
