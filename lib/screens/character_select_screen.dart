@@ -249,8 +249,6 @@ class _Info extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text(c.lore, style: body),
-          const SizedBox(height: 8),
           Wrap(
             spacing: 14,
             children: [
@@ -273,15 +271,22 @@ class _Info extends StatelessWidget {
             ),
           _Ability(title: c.passiveName, text: c.passiveDescription),
           _Ability(
-            title: '${c.specialName} (${c.specialCooldown}s)',
+            title: '${c.specialName} (${_secs(c.specialCooldown)})',
             text: c.specialDescription,
             special: true,
           ),
+          // The lore last: what matters for picking comes first.
+          const SizedBox(height: 8),
+          Text(c.lore, style: body),
         ],
       ),
     );
   }
 }
+
+/// 8 -> "8s", 4.5 -> "4,5s".
+String _secs(double v) =>
+    '${v == v.roundToDouble() ? v.round() : v.toString().replaceAll('.', ',')}s';
 
 class _Ability extends StatelessWidget {
   const _Ability({
