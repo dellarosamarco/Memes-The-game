@@ -216,6 +216,7 @@ class _Info extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -234,27 +235,23 @@ class _Info extends StatelessWidget {
                       outline: false,
                       align: TextAlign.left,
                     ),
+                    const SizedBox(height: 6),
+                    // The stats sit next to the photo, so the bigger
+                    // photo doesn't push the abilities down.
+                    Wrap(
+                      spacing: 14,
+                      runSpacing: 2,
+                      children: [
+                        _Stat('Velocità', Fighter.speedRating(c)),
+                        _Stat('Salto', Fighter.jumpRating(c)),
+                        _Stat('Peso', Fighter.weightRating(c)),
+                      ],
+                    ),
                   ],
                 ),
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.asset(
-                  c.photoAsset,
-                  width: 54,
-                  height: 54,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 14,
-            children: [
-              _Stat('Velocità', Fighter.speedRating(c)),
-              _Stat('Salto', Fighter.jumpRating(c)),
-              _Stat('Peso', Fighter.weightRating(c)),
+              const SizedBox(width: 8),
+              _Photo(character: c),
             ],
           ),
           const SizedBox(height: 8),
@@ -287,6 +284,54 @@ class _Info extends StatelessWidget {
 /// 8 -> "8s", 4.5 -> "4,5s".
 String _secs(double v) =>
     '${v == v.roundToDouble() ? v.round() : v.toString().replaceAll('.', ',')}s';
+
+/// The original meme photo: a tap shows it big.
+class _Photo extends StatelessWidget {
+  const _Photo({required this.character});
+
+  final MemeCharacter character;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => showDialog<void>(
+        context: context,
+        builder: (ctx) => GestureDetector(
+          onTap: () => Navigator.pop(ctx),
+          child: Center(
+            child: PixelPanel(
+              padding: const EdgeInsets.all(8),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.asset(
+                  character.photoAsset,
+                  height: MediaQuery.sizeOf(ctx).height * .78,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: kPlum,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.asset(
+            character.photoAsset,
+            width: 84,
+            height: 84,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _Ability extends StatelessWidget {
   const _Ability({
