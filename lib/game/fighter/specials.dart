@@ -43,7 +43,7 @@ extension FighterSpecials on Fighter {
 
   /// Special button (without up): the meme's own move.
   void useSpecial() {
-    if (!specialReady || !alive || stunned) return;
+    if (!specialReady || !alive || stunned || charmed > 0) return;
     specialTimer = character.specialCooldown;
     if (input.x.abs() < .3) _faceNearest(320);
     specialsUsed++;
@@ -234,6 +234,78 @@ extension FighterSpecials on Fighter {
       case SpecialType.rockThrow:
         game.world.add(FightProjectile.rock(this));
 
+      case SpecialType.omg:
+        game.world.add(
+          ShockwaveEffect(
+            position: c,
+            maxRadius: 100,
+            color: const Color(0xFFFFF3A0),
+          ),
+        );
+        game.shake(.2);
+        for (final o in _near(100).toList()) {
+          _hit(o, damage: 7, angle: 50, base: 160, growth: 2);
+          o.dizzy = max(o.dizzy, .7);
+        }
+
+      case SpecialType.skyBeam:
+        final target = opponents.firstOrNull;
+        if (target != null) game.world.add(FightProjectile.beam(this, target));
+
+      case SpecialType.timeOut:
+        game.camera.viewport.add(
+          ScreenFlash(color: const Color(0x66FFFFFF), duration: .5),
+        );
+        percent = max(0, percent - 4);
+        for (final o in opponents.toList()) {
+          o.frozen = max(o.frozen, .8);
+          o.velocity.x = 0;
+          game.world.add(
+            FloatingText(
+              position: o.mid - Vector2(0, 40),
+              text: 'PAUSA',
+              fontSize: 10,
+              color: const Color(0xFF9AD0FF),
+              duration: 1.1,
+            ),
+          );
+        }
+
+      case SpecialType.lecture:
+        game.world.add(FightProjectile.lecture(this));
+
+      case SpecialType.tongueGrab:
+        game.world.add(FightProjectile.tongue(this));
+
+      case SpecialType.charm:
+        game.world.add(
+          ShockwaveEffect(
+            position: c,
+            maxRadius: 240,
+            color: const Color(0xFFFF9ECF),
+            duration: .6,
+          ),
+        );
+        for (final o in _near(240)) {
+          o.charmed = 1.2;
+        }
+
+      case SpecialType.pounce:
+        final target = opponents.firstOrNull;
+        if (target != null && target.position.x != position.x) {
+          facingRight = target.position.x > position.x;
+        }
+        final d = facingRight ? 1.0 : -1.0;
+        // Aimed: about .6 s in the air, so it lands on the opponent.
+        final gap = target == null
+            ? 200.0
+            : (target.position.x - position.x).abs();
+        velocity.setValues(d * (gap / .55).clamp(150.0, 480.0), -430);
+        invincible = max(invincible, .2);
+        onGround = false;
+        pounce = .9;
+        _hitThisMove.clear();
+
       case SpecialType.vacation:
         game.camera.viewport.add(
           ScreenFlash(color: const Color(0x5540C4FF), duration: .5),
@@ -247,7 +319,12 @@ extension FighterSpecials on Fighter {
   /// Dash-like specials (heist, rolling rock): fast, invulnerable rush.
   void _dashUpdate(double dt) {
     final dir = facingRight ? 1 : -1;
-    if (dash > 0) {
+    if (pounce > 0) {
+      // A leap in an arc: the bite lands on whoever it touches.
+      pounce -= dt;
+      applyGravity(dt);
+      if (onGround && pounce < .5) pounce = 0;
+    } else if (dash > 0) {
       dash -= dt;
       velocity.setValues(dir * 470, 0);
       if (_t % .05 < dt) game.world.add(PoofEffect(position: mid.clone()));
@@ -265,14 +342,14 @@ extension FighterSpecials on Fighter {
       _hitThisMove.add(o);
       _hit(
         o,
-        damage: dash > 0 ? 10 : 12,
+        damage: pounce > 0 ? 12 : (dash > 0 ? 10 : 12),
         angle: 38,
         base: 260,
         growth: 7,
         right: facingRight,
       );
     }
-    if (dash <= 0 && rolling <= 0) {
+    if (dash <= 0 && rolling <= 0 && pounce <= 0) {
       _spinAngle = 0;
       state = FighterState.normal;
     }

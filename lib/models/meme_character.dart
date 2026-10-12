@@ -26,6 +26,13 @@ enum Passive {
   refill,
   rockSolid,
   chill,
+  panic,
+  despair,
+  giant,
+  actually,
+  slobber,
+  wink,
+  pajamas,
 }
 
 /// Signature move, on a cooldown.
@@ -54,6 +61,13 @@ enum SpecialType {
   waterJet,
   rockThrow,
   vacation,
+  omg,
+  skyBeam,
+  timeOut,
+  lecture,
+  tongueGrab,
+  charm,
+  pounce,
 }
 
 /// A playable meme. Every field is meant to stay faithful to the original
@@ -133,6 +147,13 @@ class MemeCharacter {
     'bottle_patrick' => (x: 2, y: -55),
     'rock_monkey' => (x: 3, y: -46),
     'chill_dog' => (x: 0, y: -41),
+    'shock_guy' => (x: -0.5, y: -52),
+    'sky_man' => (x: 5, y: -50),
+    'timeout_man' => (x: 8.5, y: -54),
+    'nerd_cat' => (x: 1, y: -44),
+    'tongue_cat' => (x: 0.5, y: -48),
+    'wink_cat' => (x: -0.5, y: -53),
+    'stitch_shrek' => (x: -0.5, y: -54),
     _ => (x: -4.5, y: -52),
   };
 
@@ -189,6 +210,13 @@ class MemeCharacter {
     bottlePatrick,
     rockMonkey,
     chillDog,
+    shockGuy,
+    skyMan,
+    timeoutMan,
+    nerdCat,
+    tongueCat,
+    winkCat,
+    stitchShrek,
   ];
 
   static const wigDog = MemeCharacter(
@@ -531,7 +559,7 @@ class MemeCharacter {
     specialType: SpecialType.chickArmy,
     specialName: 'Cip Cip!',
     specialDescription: 'Tre pulcini corrono verso l\'avversario (9% l\'uno).',
-    specialCooldown: 4.5,
+    specialCooldown: 4,
     specialShout: 'CIP CIP CIP!',
     hurtLines: ['Pio!', 'Il caschetto!', 'Cip?!'],
   );
@@ -784,5 +812,184 @@ class MemeCharacter {
     specialCooldown: 12,
     specialShout: 'IO SONO IN FERIE',
     hurtLines: ['Che stress.', 'Mi rovini il relax.', 'Ehi, calma.'],
+  );
+
+  static const shockGuy = MemeCharacter(
+    id: 'shock_guy',
+    name: 'Ragazzo Sconvolto',
+    memeAlias: 'Le mani nei capelli',
+    tagline: 'Occhi sbarrati, bocca aperta: NON CI CREDO.',
+    lore:
+        'Il ragazzo con la maglietta bianca che si mette le mani nei capelli '
+        'con gli occhi fuori dalle orbite: la reazione universale a qualsiasi '
+        'notizia, dal finale di una serie al conto del ristorante.',
+    color: Color(0xFFF2F0EA),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 510,
+    passive: Passive.panic,
+    passiveName: 'Panico!',
+    passiveDescription: 'Quando lo colpiscono scappa più veloce per 2 secondi.',
+    specialType: SpecialType.omg,
+    specialName: 'NON CI CREDO!',
+    specialDescription: 'Un urlo sconvolto che stordisce chi è vicino (7%).',
+    specialCooldown: 9,
+    specialShout: 'NON CI CREDO!!',
+    hurtLines: ['NO WAY!', 'Ma davvero?!', 'Bro...'],
+  );
+
+  static const skyMan = MemeCharacter(
+    id: 'sky_man',
+    name: 'Pittore Tormentato',
+    memeAlias: 'Lo sguardo disperato al cielo',
+    tagline: 'Guarda in alto e chiede spiegazioni all\'universo.',
+    lore:
+        'L\'uomo con la barba che fissa il cielo con gli occhi lucidi e la '
+        'bocca aperta, nella luce blu del tramonto: il meme di chi ha appena '
+        'capito tutto, o di chi non ha capito niente.',
+    color: Color(0xFF6E86C8),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 505,
+    passive: Passive.despair,
+    passiveName: 'Disperazione',
+    passiveDescription: 'Dal 100% di danni in su colpisce il 15% più forte.',
+    specialType: SpecialType.skyBeam,
+    specialName: 'Grazia Divina',
+    specialDescription:
+        'Dopo un attimo un raggio di luce piomba dal cielo sull\'avversario '
+        '(11%).',
+    specialCooldown: 10,
+    specialShout: 'PERCHÉ?!',
+    hurtLines: ['Perché?', 'Il cielo mi odia.', 'Ah, la vita...'],
+  );
+
+  static const timeoutMan = MemeCharacter(
+    id: 'timeout_man',
+    name: 'Mister Time-Out',
+    memeAlias: 'Il gigante che chiede il time-out',
+    tagline: 'Mani a T, sguardo stanco: basta così.',
+    lore:
+        'Il gigante con la polo azzurra che fa il segno del time-out con le '
+        'mani: la risposta perfetta a ogni discussione che è durata '
+        'troppo. Quando lui chiede una pausa, la pausa arriva.',
+    color: Color(0xFF8FA9C8),
+    hearts: 4,
+    runSpeed: 135,
+    jumpSpeed: 495,
+    passive: Passive.giant,
+    passiveName: 'Gigante',
+    passiveDescription: 'Pesantissimo: è il più difficile da scagliare via.',
+    specialType: SpecialType.timeOut,
+    specialName: 'TIME-OUT!',
+    specialDescription:
+        'Ferma il gioco: l\'avversario resta bloccato per un attimo e lui '
+        'recupera il 4%.',
+    specialCooldown: 12,
+    specialShout: 'TIME-OUT!',
+    hurtLines: ['Fallo!', 'Ehi, arbitro!', 'Pausa, pausa.'],
+  );
+
+  static const nerdCat = MemeCharacter(
+    id: 'nerd_cat',
+    name: 'Gatto Nerd',
+    memeAlias: '"Ehm, in realtà..."',
+    tagline: 'Occhiali, dentoni e il dito alzato: sta per correggerti.',
+    lore:
+        'Il gatto con gli occhiali neri, i dentoni da castoro e il ditino '
+        'alzato: la faccia di chi sta per dirti che, ehm, in realtà, hai '
+        'torto. Ha sempre una precisazione pronta.',
+    color: Color(0xFFE8D4B8),
+    hearts: 3,
+    runSpeed: 145,
+    jumpSpeed: 505,
+    passive: Passive.actually,
+    passiveName: 'Correzione',
+    passiveDescription:
+        'Dopo aver subito un colpo, il suo colpo successivo fa il 25% in più.',
+    specialType: SpecialType.lecture,
+    specialName: 'Ehm, in realtà...',
+    specialDescription:
+        'Una nuvoletta di precisazioni che confonde chi la prende (6%).',
+    specialCooldown: 6,
+    specialShout: 'EHM, IN REALTÀ...',
+    hurtLines: ['Tecnicamente...', 'Non è corretto.', 'Ehm...'],
+  );
+
+  static const tongueCat = MemeCharacter(
+    id: 'tongue_cat',
+    name: 'Gatto Linguaccia',
+    memeAlias: 'Il gatto con la linguona',
+    tagline: 'Occhi sgranati e una lingua lunghissima.',
+    lore:
+        'Il gatto tigrato che guarda in camera con gli occhioni e tira fuori '
+        'una lingua lunga il doppio della sua faccia. Nessuno sa come ci '
+        'stia tutta lì dentro.',
+    color: Color(0xFFFF8A9A),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 505,
+    passive: Passive.slobber,
+    passiveName: 'Bava',
+    passiveDescription: 'I suoi colpi rallentano l\'avversario per un attimo.',
+    specialType: SpecialType.tongueGrab,
+    specialName: 'Linguata',
+    specialDescription:
+        'La lingua scatta in avanti, afferra l\'avversario e lo tira a sé '
+        '(8%).',
+    specialCooldown: 6,
+    specialShout: 'BLEAH!',
+    hurtLines: ['Mlem!', 'Bleah!', 'Slurp?'],
+  );
+
+  static const winkCat = MemeCharacter(
+    id: 'wink_cat',
+    name: 'Gatto Occhiolino',
+    memeAlias: 'Occhiolino e linguaccia',
+    tagline: 'Fa l\'occhiolino con la lingua di fuori. Irresistibile.',
+    lore:
+        'Il gatto grigio e bianco sdraiato sul divano che ti fa l\'occhiolino '
+        'con la lingua di fuori, come se sapesse qualcosa che tu non sai. '
+        'Nessuno resiste al suo fascino.',
+    color: Color(0xFFB7B0BE),
+    hearts: 3,
+    runSpeed: 150,
+    jumpSpeed: 505,
+    passive: Passive.wink,
+    passiveName: 'Occhiolino',
+    passiveDescription: 'A volte schiva un colpo con un occhiolino (10%).',
+    specialType: SpecialType.charm,
+    specialName: 'Ammaliante',
+    specialDescription:
+        'L\'avversario vicino resta incantato: gli cammina incontro senza '
+        'poter attaccare.',
+    specialCooldown: 10,
+    specialShout: ';)',
+    hurtLines: ['Miao?', 'Ehi, piano!', ';('],
+  );
+
+  static const stitchShrek = MemeCharacter(
+    id: 'stitch_shrek',
+    name: 'Orchetto Blu',
+    memeAlias: 'Il baby orco in pigiama da alieno',
+    tagline: 'Faccina da orco, pigiamone blu. Esperimento fallito (bene).',
+    lore:
+        'Il pupazzetto dalla faccia verde da orco vestito con un pigiama '
+        'intero da alieno blu, orecchie comprese. Sembra tenerissimo, ma '
+        'quando salta addosso morde.',
+    color: Color(0xFF6FA3E0),
+    hearts: 3,
+    runSpeed: 155,
+    jumpSpeed: 520,
+    passive: Passive.pajamas,
+    passiveName: 'Pigiamone',
+    passiveDescription:
+        'Il pigiamone morbido attutisce i colpi: vola via il 12% in meno.',
+    specialType: SpecialType.pounce,
+    specialName: 'Assalto Alieno',
+    specialDescription: 'Balza addosso all\'avversario e lo morde (12%).',
+    specialCooldown: 4.5,
+    specialShout: 'GRRR!',
+    hurtLines: ['Grr!', 'Ohana!', 'Uffa.'],
   );
 }

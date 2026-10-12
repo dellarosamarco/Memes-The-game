@@ -475,7 +475,28 @@ class CpuBrain {
       case SpecialType.chickArmy:
       case SpecialType.police:
       case SpecialType.eggBomb:
+      case SpecialType.lecture:
         go = dy.abs() < 40 && dx.abs() > 60 && dx.abs() < 320;
+        if (go && !facing) i.x = dx.sign;
+      case SpecialType.omg:
+        go = dist < 90;
+      case SpecialType.skyBeam:
+        // The beam is slow to land: aim at someone standing still-ish.
+        go = dist < 420 && target.velocity.x.abs() < 150;
+      case SpecialType.timeOut:
+        go = dist < 200 || me.percent > 80;
+      case SpecialType.tongueGrab:
+        go = dy.abs() < 30 && dx.abs() < 110 && dx.abs() > 30;
+        if (go && !facing) i.x = dx.sign;
+      case SpecialType.charm:
+        go = dist < 230;
+      case SpecialType.pounce:
+        go =
+            me.onGround &&
+            dist > 50 &&
+            dist < 220 &&
+            dy.abs() < 60 &&
+            _standable(target.position.x);
         if (go && !facing) i.x = dx.sign;
       case SpecialType.heist:
       case SpecialType.rockRoll:

@@ -136,6 +136,18 @@ class Fighter extends PositionComponent
   double frozen = 0;
   double asleep = 0;
   double scared = 0;
+
+  /// Charmed by a wink: walks toward the charmer and can't attack.
+  double charmed = 0;
+
+  /// Panic run after being hit (Ragazzo Sconvolto).
+  double panicT = 0;
+
+  /// Leaping bite (Orchetto Blu).
+  double pounce = 0;
+
+  /// The nerd's next blow is a correction (+30%).
+  bool _correction = false;
   double slowed = 0;
   double armor = 0;
   double turbo = 0;
@@ -207,6 +219,7 @@ class Fighter extends PositionComponent
   /// How hard a meme is to launch (1 = average).
   static double weightOf(MemeCharacter c) => switch (c.passive) {
     Passive.tough => 1.15,
+    Passive.giant => 1.2,
     Passive.featherweight => 1.04,
     // Burly memes (4 hearts) are a bit heavier.
     _ => c.hearts >= 4 ? 1.1 : 1.0,
@@ -238,6 +251,7 @@ class Fighter extends PositionComponent
       s *= 1 + .45 * min(1.0, _pedal / 1.5);
     }
     if (turbo > 0) s *= 1.7;
+    if (panicT > 0) s *= 1.3;
     if (coffee > 0) s *= 1.3;
     if (scared > 0) s *= 1.15;
     return s;
@@ -321,7 +335,7 @@ class Fighter extends PositionComponent
       _airPhysics(dt, control: false);
     } else if (state == FighterState.hitstun) {
       _hitstunUpdate(dt);
-    } else if (dash > 0 || rolling > 0) {
+    } else if (dash > 0 || rolling > 0 || pounce > 0) {
       _dashUpdate(dt);
     } else {
       switch (state) {
@@ -351,6 +365,8 @@ class Fighter extends PositionComponent
     if (invincible > 0) invincible -= dt;
     if (asleep > 0) asleep -= stunDecay;
     if (scared > 0) scared -= dt;
+    if (charmed > 0) charmed -= dt;
+    if (panicT > 0) panicT -= dt;
     if (slowed > 0) slowed -= dt;
     if (armor > 0) armor -= dt;
     if (turbo > 0) turbo -= dt;
@@ -426,6 +442,17 @@ class Fighter extends PositionComponent
       final row = (position.y / kTile).floor();
       if (!game.level.isStandable(ahead, row)) x = 0;
     }
+    if (charmed > 0 && onGround) {
+      // Charmed: drawn toward the wink, slowly (still never off a cliff).
+      final o = opponents.firstOrNull;
+      if (o != null) {
+        final d = o.position.x - position.x;
+        x = d.abs() < 26 ? 0 : d.sign * .6;
+      }
+      final ahead = ((position.x + x.sign * 20) / kTile).floor();
+      final row = (position.y / kTile).floor();
+      if (!game.level.isStandable(ahead, row)) x = 0;
+    }
     if (character.passive == Passive.momentum) {
       final dir = x.abs() > .3 ? x.sign.toInt() : 0;
       _pedal = dir != 0 && dir == _pedalDir && !hitWall ? _pedal + dt : 0;
@@ -487,7 +514,7 @@ class Fighter extends PositionComponent
       }
       return;
     }
-    if (_bufAttack > 0 && _lag <= 0 && scared <= 0) {
+    if (_bufAttack > 0 && _lag <= 0 && scared <= 0 && charmed <= 0) {
       _bufAttack = 0;
       if (onGround) {
         _pendingTap = true;
@@ -860,6 +887,19 @@ class Fighter extends PositionComponent
     bool projectile = false,
   }) {
     if (!alive || intangible) return;
+    // Wink: now and then the hit just misses.
+    if (character.passive == Passive.wink && _rnd.nextDouble() < .1) {
+      invincible = max(invincible, .25);
+      game.world.add(
+        FloatingText(
+          position: mid - Vector2(0, 34),
+          text: ';) Mancato!',
+          fontSize: 9,
+          color: const Color(0xFFFF9ECF),
+        ),
+      );
+      return;
+    }
     if (projectile && character.passive == Passive.helmet) {
       game.world.add(
         FloatingText(position: mid - Vector2(0, 30), text: 'TOC!', fontSize: 9),
@@ -888,6 +928,29 @@ class Fighter extends PositionComponent
     }
     if (character.passive == Passive.spikeProof) damage *= .85;
     if (character.passive == Passive.helmet) damage *= .9;
+    if (attacker != null) {
+      // Despair: past 100% the tormented painter hits harder.
+      if (attacker.character.passive == Passive.despair &&
+          attacker.percent >= 100) {
+        damage *= 1.15;
+      }
+      // "Ehm, in realtà": the nerd's answer to the last hit.
+      if (attacker._correction) {
+        attacker._correction = false;
+        damage *= 1.25;
+      }
+      if (attacker.character.passive == Passive.slobber) {
+        slowed = max(slowed, .5);
+      }
+    }
+    switch (character.passive) {
+      case Passive.panic:
+        panicT = 2;
+      case Passive.actually:
+        _correction = true;
+      default:
+        break;
+    }
     percent = min(999, percent + damage);
     if (attacker != null) {
       attacker.damageDealt += damage;
@@ -899,13 +962,15 @@ class Fighter extends PositionComponent
     }
     asleep = 0;
     frozen = 0;
-    final speed = Move.launchSpeed(
+    var speed = Move.launchSpeed(
       base: baseKb,
       growth: kbGrowth,
       damage: damage,
       targetPercent: percent,
       weight: weight,
     );
+    // The soft pajamas cushion every launch.
+    if (character.passive == Passive.pajamas) speed *= .88;
     final heavy = speed > 650;
     final armored =
         armor > 0 ||
@@ -1006,6 +1071,7 @@ class Fighter extends PositionComponent
     _pendingTap = false;
     dash = 0;
     rolling = 0;
+    pounce = 0;
     balloon = 0;
     flight = 0;
     onGround = false;
@@ -1115,6 +1181,8 @@ class Fighter extends PositionComponent
     usedRecovery = false;
     puffer = character.passive == Passive.puffy;
     frozen = asleep = scared = slowed = armor = turbo = 0;
+    charmed = panicT = pounce = 0;
+    _correction = false;
     stonks = coffee = deal = 0;
     balloon = flight = spin = rolling = dash = 0;
     slamming = false;
@@ -1307,6 +1375,7 @@ class Fighter extends PositionComponent
 
     _renderSwoosh(canvas);
     if (stunned) _renderStars(canvas);
+    if (charmed > 0) _renderHearts(canvas);
     _renderTag(canvas);
     _renderBuffs(canvas);
   }
@@ -1436,6 +1505,20 @@ class Fighter extends PositionComponent
       ..lineTo(c.dx - r * .25, c.dy - r * .25)
       ..close();
     canvas.drawPath(path, _glintPaint);
+  }
+
+  static final _heartPaint = Paint()..color = const Color(0xFFFF6FA8);
+
+  void _renderHearts(Canvas canvas) {
+    for (var i = 0; i < 2; i++) {
+      final a = _t * 3 + i * pi;
+      final c = Offset(cos(a) * 12, -62 + sin(a * 2) * 3);
+      // A tiny pixel heart.
+      canvas.drawRect(Rect.fromLTWH(c.dx - 3, c.dy - 2, 2, 2), _heartPaint);
+      canvas.drawRect(Rect.fromLTWH(c.dx + 1, c.dy - 2, 2, 2), _heartPaint);
+      canvas.drawRect(Rect.fromLTWH(c.dx - 3, c.dy, 6, 2), _heartPaint);
+      canvas.drawRect(Rect.fromLTWH(c.dx - 1, c.dy + 2, 2, 2), _heartPaint);
+    }
   }
 
   void _renderStars(Canvas canvas) {

@@ -1,7 +1,7 @@
 # Memes: The fight
 
 Picchiaduro **alla Super Smash Bros** in **pixel art cute**, fatto con **Flutter + Flame**.
-Scegli uno dei 24 meme più iconici di internet e affronta la CPU su 10 arene sospese:
+Scegli uno dei 31 meme più iconici di internet e affronta la CPU su 10 arene sospese:
 accumula danni sull'avversario e scaraventalo fuori dallo schermo.
 
 ## I lottatori
@@ -37,6 +37,13 @@ a renderli unici sono **passiva**, **speciale** e statistiche (velocità, salto,
 | **Patrick Boccione** | *Sempre Idratato*: speciale che si ricarica al doppio | *Spruzzo d'Acqua*: spinge via (7%) |
 | **Scimmia col Sasso** | *Presa Salda*: i colpi deboli non lo smuovono | *Tiro del Sasso*: sasso a parabola (11%) |
 | **Chihuahua Relax** | *Relax Totale*: fermo recupera 1% al secondo | *Modalità Ferie*: avversario al rallentatore |
+| **Ragazzo Sconvolto** | *Panico!*: colpito, scappa più veloce per 2 s | *NON CI CREDO!*: urlo che stordisce (7%) |
+| **Pittore Tormentato** | *Disperazione*: dal 100% colpisce il 15% più forte | *Grazia Divina*: raggio di luce dal cielo (11%) |
+| **Mister Time-Out** | *Gigante*: il più pesante di tutti | *TIME-OUT!*: blocca l'avversario e recupera il 4% |
+| **Gatto Nerd** | *Correzione*: dopo un colpo subito, il suo colpo dopo fa +25% | *Ehm, in realtà...*: nuvoletta che confonde (6%) |
+| **Gatto Linguaccia** | *Bava*: i suoi colpi rallentano | *Linguata*: afferra l'avversario e lo tira a sé (8%) |
+| **Gatto Occhiolino** | *Occhiolino*: schiva un colpo su dieci | *Ammaliante*: l'avversario gli cammina incontro senza attaccare |
+| **Orchetto Blu** | *Pigiamone*: vola via il 12% in meno | *Assalto Alieno*: balzo e morso (12%) |
 
 ## Come si combatte
 
@@ -125,8 +132,8 @@ decorazioni animate.
 ### Bilanciamento
 
 Tarato con simulazioni CPU contro CPU (test temporanei, non nel repo): ogni arena produce
-lotte da 1-3 minuti, i KO arrivano di solito tra il 90% e il 160%, e un torneo di 96 lotte
-tiene tutti i 24 meme in una forbice di vittorie compatibile con il caso. Con
+lotte da 1-3 minuti, i KO arrivano di solito tra il 90% e il 160%, e un torneo di 620 lotte
+(ripetuto con due semi casuali) tiene tutti i 31 meme tra circa il 30% e il 70% di vittorie. Con
 `--dart-define=MEMES_DEBUG=true` la build web espone `window.memesState()` e
 `window.memesCmd()` per i play-test automatici (in `MEMES_DEMO` giocano due CPU).
 
@@ -171,7 +178,7 @@ flutter run --dart-define=MEMES_STOCKS=1    # lotte libere a una vita
 ```
 
 Test: `flutter test` (modello del knockback, arene, Arcade, salvataggi e partite vere
-CPU contro CPU con tutti i 24 meme, per scovare errori e controllare che le lotte finiscano).
+CPU contro CPU con tutti i 31 meme, per scovare errori e controllare che le lotte finiscano).
 
 ## Grafica
 

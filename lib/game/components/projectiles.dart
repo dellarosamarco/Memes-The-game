@@ -34,7 +34,17 @@ void _pixmap(
   }
 }
 
-enum ProjectileKind { plush, rock, egg, chick, police, waterJet }
+enum ProjectileKind {
+  plush,
+  rock,
+  egg,
+  chick,
+  police,
+  waterJet,
+  beam,
+  lecture,
+  tongue,
+}
 
 /// Things the specials throw, send or summon. They hurt the owner's
 /// opponents (helmets bounce projectiles).
@@ -93,6 +103,41 @@ class FightProjectile extends PositionComponent
     ProjectileKind.waterJet,
     f,
     position: f.mid + Vector2(f.facingRight ? 14 : -14, -6),
+  );
+
+  /// A beam of light that falls where [target] stands, after a warning.
+  factory FightProjectile.beam(Fighter f, Fighter target) {
+    final level = f.game.level;
+    final c = (target.position.x / 24).floor();
+    var y = target.position.y;
+    // Strike the ground under the target (or where it hangs in the air).
+    for (
+      var r = (target.position.y / 24).floor();
+      r < level.height ~/ 24 + 1;
+      r++
+    ) {
+      if (level.isStandable(c, r)) {
+        y = r * 24.0;
+        break;
+      }
+    }
+    return FightProjectile._(
+      ProjectileKind.beam,
+      f,
+      position: Vector2(target.position.x, min(y, target.position.y + 160)),
+    );
+  }
+
+  factory FightProjectile.lecture(Fighter f) => FightProjectile._(
+    ProjectileKind.lecture,
+    f,
+    position: f.mid + Vector2(f.facingRight ? 18 : -18, -14),
+  );
+
+  factory FightProjectile.tongue(Fighter f) => FightProjectile._(
+    ProjectileKind.tongue,
+    f,
+    position: f.mid + Vector2(0, 2),
   );
 
   final ProjectileKind kind;
@@ -181,6 +226,12 @@ class FightProjectile extends PositionComponent
         _police(dt);
       case ProjectileKind.waterJet:
         if (_t > .45) removeFromParent();
+      case ProjectileKind.beam:
+        _beam();
+      case ProjectileKind.lecture:
+        _lecture(dt);
+      case ProjectileKind.tongue:
+        _tongue();
     }
     if (position.y > game.level.height + 300 || _t > 4) removeFromParent();
   }
@@ -272,6 +323,70 @@ class FightProjectile extends PositionComponent
       game.world.add(PoofEffect(position: position - Vector2(0, 9)));
       removeFromParent();
     }
+  }
+
+  static const _beamWarn = .7;
+
+  void _beam() {
+    if (_t >= _beamWarn && _bounces == 0) {
+      _bounces = 1;
+      game.shake(.2, intensity: 4);
+      Sound.play('boss_hit', volume: .6);
+      for (final o in _targets.toList()) {
+        final d = o.position - position;
+        if (d.x.abs() < 26 && d.y < 8 && d.y > -320) {
+          _strike(o, damage: 11, angle: 88, base: 280, growth: 6.5);
+        }
+      }
+    }
+    if (_t > _beamWarn + .35) removeFromParent();
+  }
+
+  void _lecture(double dt) {
+    position.x += dir * 170 * dt;
+    position.y += sin(_t * 6) * 12 * dt;
+    final o = _touching(22);
+    if (o != null) {
+      _strike(o, damage: 6, angle: 40, base: 120, growth: 2);
+      o.dizzy = max(o.dizzy, 1.1);
+      game.world.add(PoofEffect(position: position.clone()));
+      removeFromParent();
+      return;
+    }
+    if (_t > 2.2) {
+      game.world.add(PoofEffect(position: position.clone()));
+      removeFromParent();
+    }
+  }
+
+  static const _tongueLen = 110.0;
+
+  /// Out to [_tongueLen] and back in .32 s.
+  double get _tongueReach =>
+      _tongueLen * (_t < .12 ? _t / .12 : max(0.0, 1 - (_t - .12) / .2));
+
+  void _tongue() {
+    position.setFrom(owner.mid + Vector2(0, 2));
+    if (!owner.alive || owner.stunned) {
+      removeFromParent();
+      return;
+    }
+    if (_t < .14 && _hit.isEmpty) {
+      for (final o in _targets.toList()) {
+        final d = o.mid - position;
+        if (d.x * dir > -6 && d.x * dir < _tongueReach + 10 && d.y.abs() < 30) {
+          _strike(o, damage: 8, angle: 30, base: 60, growth: 0, right: dir < 0);
+          // Pulled right in front of the cat (if there's floor there).
+          final x = owner.position.x + dir * 26;
+          final col = (x / 24).floor();
+          final row = (o.position.y / 24).floor();
+          if (!game.level.isSolid(col, row - 1)) o.position.x = x;
+          o.velocity.setZero();
+          break;
+        }
+      }
+    }
+    if (_t > .32) removeFromParent();
   }
 
   void _police(double dt) {
@@ -378,7 +493,85 @@ class FightProjectile extends PositionComponent
         _renderCar(canvas);
       case ProjectileKind.waterJet:
         _renderJet(canvas);
+      case ProjectileKind.beam:
+        _renderBeam(canvas);
+      case ProjectileKind.lecture:
+        _renderLecture(canvas);
+      case ProjectileKind.tongue:
+        _renderTongue(canvas);
     }
+  }
+
+  static final _holy = _p(0xFFFFF3B0);
+  static final _tonguePaint = _p(0xFFFF7A94);
+  static final _tongueDark = _p(0xFFD94E6E);
+
+  void _renderBeam(Canvas canvas) {
+    if (_t < _beamWarn) {
+      // Warning: a glowing spot on the ground and a thin ray.
+      final k = _t / _beamWarn;
+      final pulse = .5 + .5 * sin(_t * 30);
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset.zero, width: 20 + 30 * k, height: 8),
+        Paint()..color = _holy.color.withValues(alpha: .4 + .4 * pulse),
+      );
+      canvas.drawRect(
+        Rect.fromLTWH(-1, -300, 2, 300),
+        Paint()..color = _holy.color.withValues(alpha: .25 + .25 * k),
+      );
+      return;
+    }
+    final fade = 1 - ((_t - _beamWarn) / .35).clamp(0.0, 1.0);
+    canvas.drawRect(
+      const Rect.fromLTWH(-24, -340, 48, 340),
+      Paint()..color = _holy.color.withValues(alpha: .55 * fade),
+    );
+    canvas.drawRect(
+      const Rect.fromLTWH(-10, -340, 20, 340),
+      Paint()..color = Colors.white.withValues(alpha: .9 * fade),
+    );
+  }
+
+  static final _ehm = TextPainter(
+    text: const TextSpan(
+      text: 'EHM...',
+      style: TextStyle(
+        fontFamily: 'Pixelify',
+        fontSize: 9,
+        fontWeight: FontWeight.w700,
+        color: Color(0xFF3A2440),
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+
+  void _renderLecture(Canvas canvas) {
+    const r = Rect.fromLTWH(-20, -11, 40, 20);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(r.inflate(2), const Radius.circular(6)),
+      _ink,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(r, const Radius.circular(5)),
+      _white,
+    );
+    // The little tail of the speech bubble, toward the nerd.
+    canvas.drawRect(Rect.fromLTWH(dir > 0 ? -18 : 12, 8, 6, 5), _white);
+    _ehm.paint(canvas, Offset(-_ehm.width / 2, -_ehm.height / 2 - 1));
+  }
+
+  void _renderTongue(Canvas canvas) {
+    final len = _tongueReach;
+    if (len <= 1) return;
+    final x0 = dir > 0 ? 6.0 : -6.0 - len;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(x0, -5, len, 10),
+        const Radius.circular(5),
+      ),
+      _tonguePaint,
+    );
+    canvas.drawRect(Rect.fromLTWH(x0, -1, len, 2), _tongueDark);
   }
 
   void _renderCar(Canvas canvas) {
