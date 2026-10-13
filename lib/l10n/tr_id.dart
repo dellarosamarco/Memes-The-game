@@ -28,9 +28,11 @@ const trId = <String, String>{
   'c.bike_dog.lore': 'Seekor anjing mengayuh sepeda di tengah lalu lintas sambil menggendong ransel, kayak mau berangkat sekolah. Di belakangnya ada mobil POLIS. Tidak ada yang tahu siapa yang mengejar siapa.',
   'c.bike_dog.memeAlias': 'Anjing bersepeda pakai ransel, dikejar Polis',
   'c.bike_dog.name': 'Anjing Sepeda',
-  'c.bike_dog.passiveDescription': 'Makin lama mengayuh ke arah yang sama, makin kencang.',
+  'c.bike_dog.passiveDescription':
+      'Makin lama mengayuh ke arah yang sama, makin kencang.',
   'c.bike_dog.passiveName': 'Gowes Terus',
-  'c.bike_dog.specialDescription': 'Panggil polisi: mobil patroli melesat ke arah lawan (14%).',
+  'c.bike_dog.specialDescription':
+      'Panggil polisi: mobil patroli melesat ke arah lawan (14%).',
   'c.bike_dog.specialName': 'POLIS!',
   'c.bike_dog.specialShout': 'NGIU-NGIU NGIU-NGIU!',
   'c.bike_dog.tagline': 'Ransel di punggung, polisi di belakang.',
@@ -40,9 +42,11 @@ const trId = <String, String>{
   'c.bottle_patrick.lore': 'Patrick dengan ujung kepala masuk ke galon air terbalik, bahagia seperti biasa. Tidak ada yang bilang ke dia kalau caranya bukan begitu.',
   'c.bottle_patrick.memeAlias': 'Patrick dengan kepala di dalam galon',
   'c.bottle_patrick.name': 'Patrick Galon',
-  'c.bottle_patrick.passiveDescription': 'Spesialnya terisi ulang dua kali lebih cepat.',
+  'c.bottle_patrick.passiveDescription':
+      'Spesialnya terisi ulang dua kali lebih cepat.',
   'c.bottle_patrick.passiveName': 'Selalu Terhidrasi',
-  'c.bottle_patrick.specialDescription': 'Semprotan dari galon yang mendorong lawan menjauh.',
+  'c.bottle_patrick.specialDescription':
+      'Semprotan dari galon yang mendorong lawan menjauh.',
   'c.bottle_patrick.specialName': 'Semprotan Air',
   'c.bottle_patrick.specialShout': 'GLUK GLUK!',
   'c.bottle_patrick.tagline': 'Selalu terhidrasi. Sayangnya.',
@@ -52,9 +56,11 @@ const trId = <String, String>{
   'c.bowl_chick.lore': 'Anak ayam kuning dengan potongan rambut mangkok hitam yang rapi kayak dipotong pakai penggaris, dan tatapan samping penuh wibawa. Tukang cukurnya jenius.',
   'c.bowl_chick.memeAlias': 'Anak ayam berambut mangkok hitam',
   'c.bowl_chick.name': 'Anak Ayam Mangkok',
-  'c.bowl_chick.passiveDescription': 'Ringan banget: lompatannya jauh dan pelan, tapi gampang terpental.',
+  'c.bowl_chick.passiveDescription':
+      'Ringan banget: lompatannya jauh dan pelan, tapi gampang terpental.',
   'c.bowl_chick.passiveName': 'Bulu Ringan',
-  'c.bowl_chick.specialDescription': 'Tiga anak ayam berlari ke arah lawan (masing-masing 9%).',
+  'c.bowl_chick.specialDescription':
+      'Tiga anak ayam berlari ke arah lawan (masing-masing 9%).',
   'c.bowl_chick.specialName': 'Ciap Ciap!',
   'c.bowl_chick.specialShout': 'CIAP CIAP CIAP!',
   'c.bowl_chick.tagline': 'Anak ayam. Rambut mangkok. Sempurna.',
@@ -64,21 +70,26 @@ const trId = <String, String>{
   'c.cheeks_dachshund.lore': 'Dachshund dengan pipi menggembung kayak hamster dan tatapan tanpa dosa. Tidak ada yang tahu isinya apa. Dia tidak bicara: memang tidak bisa.',
   'c.cheeks_dachshund.memeAlias': 'Dachshund dengan pipi penuh',
   'c.cheeks_dachshund.name': 'Dachshund Hamster',
-  'c.cheeks_dachshund.passiveDescription': 'Setiap serangan yang kena mengurangi 1% damage-nya.',
+  'c.cheeks_dachshund.passiveDescription':
+      'Setiap serangan yang kena mengurangi 1% damage-nya.',
   'c.cheeks_dachshund.passiveName': 'Pipi Muat Banyak',
-  'c.cheeks_dachshund.specialDescription': 'Menggembungkan pipi: mendorong yang dekat (9%) dan melayang naik.',
+  'c.cheeks_dachshund.specialDescription':
+      'Menggembungkan pipi: mendorong yang dekat (9%) dan melayang naik.',
   'c.cheeks_dachshund.specialName': 'Pipi Balon',
   'c.cheeks_dachshund.specialShout': '*PFFFFF*',
-  'c.cheeks_dachshund.tagline': 'Ada yang dia sembunyikan di pipinya. Semuanya.',
+  'c.cheeks_dachshund.tagline':
+      'Ada yang dia sembunyikan di pipinya. Semuanya.',
   'c.chill_dog.hurt0': 'Bikin stres aja.',
   'c.chill_dog.hurt1': 'Ganggu orang santai.',
   'c.chill_dog.hurt2': 'Woles, bro.',
   'c.chill_dog.lore': 'Chihuahua pirang rebahan di bantal dengan kaki di belakang kepala dan kaki bersilang, kayak bos lagi cuti. Stres bahkan tidak tahu alamatnya.',
   'c.chill_dog.memeAlias': 'Chihuahua rebahan dengan kaki di belakang kepala',
   'c.chill_dog.name': 'Chihuahua Santai',
-  'c.chill_dog.passiveDescription': 'Kalau diam, dia rileks dan memulihkan 1% per detik.',
+  'c.chill_dog.passiveDescription':
+      'Kalau diam, dia rileks dan memulihkan 1% per detik.',
   'c.chill_dog.passiveName': 'Santai Total',
-  'c.chill_dog.specialDescription': 'Lawan bergerak slow motion selama 2 detik.',
+  'c.chill_dog.specialDescription':
+      'Lawan bergerak slow motion selama 2 detik.',
   'c.chill_dog.specialName': 'Mode Liburan',
   'c.chill_dog.specialShout': 'AKU LAGI CUTI',
   'c.chill_dog.tagline': 'Kaki di belakang kepala, kaki bersilang. Zen.',
@@ -112,9 +123,11 @@ const trId = <String, String>{
   'c.gta_bean.lore': 'Pria paling kikuk di TV yang nyasar ke jalanan San Andreas, dengan jas cokelat, dasi merah, dan muka orang yang tidak paham kenapa bisa sampai di sana.',
   'c.gta_bean.memeAlias': 'Mr. Bean di dalam GTA San Andreas',
   'c.gta_bean.name': 'Mr. San Andreas',
-  'c.gta_bean.passiveDescription': 'Setelah setiap KO, dia kebal selama 4 detik.',
+  'c.gta_bean.passiveDescription':
+      'Setelah setiap KO, dia kebal selama 4 detik.',
   'c.gta_bean.passiveName': 'Respawn di Rumah Sakit',
-  'c.gta_bean.specialDescription': 'Cheat paling legendaris: menghapus 25% damage-nya.',
+  'c.gta_bean.specialDescription':
+      'Cheat paling legendaris: menghapus 25% damage-nya.',
   'c.gta_bean.specialName': 'HESOYAM',
   'c.gta_bean.specialShout': 'CHEAT ACTIVATED',
   'c.gta_bean.tagline': 'Alis naik sebelah dan grafis PS2.',
@@ -124,7 +137,8 @@ const trId = <String, String>{
   'c.helmet_pigeon.lore': 'Merpati kota dengan tudung karet di kepala yang entah bagaimana bisa nyangkut di situ. Dia cuek saja: berjalan gagah kayak ksatria berhelm.',
   'c.helmet_pigeon.memeAlias': 'Merpati dengan helm aneh di kepala',
   'c.helmet_pigeon.name': 'Merpati Helm',
-  'c.helmet_pigeon.passiveDescription': 'Helmnya membuatnya kebal proyektil dan meredam serangan (-10%).',
+  'c.helmet_pigeon.passiveDescription':
+      'Helmnya membuatnya kebal proyektil dan meredam serangan (-10%).',
   'c.helmet_pigeon.passiveName': 'Helm Pelindung',
   'c.helmet_pigeon.specialDescription': 'Terbang dengan kepakan sayap (8%) dan melayang selama 2,5 detik: tahan LOMPAT untuk naik.',
   'c.helmet_pigeon.specialName': 'Terbang Kota',
@@ -136,7 +150,8 @@ const trId = <String, String>{
   'c.masha_man.lore': 'Kerudung pink dan baju kecil Masha, tapi wajahnya pria dewasa berkumis dengan tatapan capek. Bahkan si Beruang takut padanya.',
   'c.masha_man.memeAlias': 'Masha bermuka bapak-bapak',
   'c.masha_man.name': 'Masha Berkumis',
-  'c.masha_man.passiveDescription': 'Tangan berat: serangan smash melempar 25% lebih jauh.',
+  'c.masha_man.passiveDescription':
+      'Tangan berat: serangan smash melempar 25% lebih jauh.',
   'c.masha_man.passiveName': 'Tangan Berat',
   'c.masha_man.specialDescription': 'Lompatan raksasa yang mengenai yang dekat (10%). Pas untuk kembali ke arena.',
   'c.masha_man.specialName': 'Lompatan Masha',
@@ -148,21 +163,26 @@ const trId = <String, String>{
   'c.nerd_cat.lore': 'Kucing berkacamata hitam dengan gigi berang-berang dan jari terangkat: wajah orang yang mau bilang, ehm, sebenarnya, kamu salah. Selalu punya koreksi.',
   'c.nerd_cat.memeAlias': '"Ehm, sebenarnya..."',
   'c.nerd_cat.name': 'Kucing Nerd',
-  'c.nerd_cat.passiveDescription': 'Setelah kena pukul, serangan berikutnya 25% lebih kuat.',
+  'c.nerd_cat.passiveDescription':
+      'Setelah kena pukul, serangan berikutnya 25% lebih kuat.',
   'c.nerd_cat.passiveName': 'Koreksi',
-  'c.nerd_cat.specialDescription': 'Awan penuh koreksi yang bikin bingung siapa pun yang kena (6%).',
+  'c.nerd_cat.specialDescription':
+      'Awan penuh koreksi yang bikin bingung siapa pun yang kena (6%).',
   'c.nerd_cat.specialName': 'Ehm, sebenarnya...',
   'c.nerd_cat.specialShout': 'EHM, SEBENARNYA...',
-  'c.nerd_cat.tagline': 'Kacamata, gigi tonggos, jari terangkat: siap mengoreksimu.',
+  'c.nerd_cat.tagline':
+      'Kacamata, gigi tonggos, jari terangkat: siap mengoreksimu.',
   'c.pearl_terrier.hurt0': 'Kurang ajar!',
   'c.pearl_terrier.hurt1': 'Mutiaraku!',
   'c.pearl_terrier.hurt2': 'Zaman saya dulu...',
   'c.pearl_terrier.lore': 'Bull terrier dengan wig bob, kalung mutiara, dan sweter hijau. Menatapmu kayak tante di acara Lebaran yang nanya kapan kamu nikah.',
   'c.pearl_terrier.memeAlias': 'Bull terrier dengan rambut bob dan mutiara',
   'c.pearl_terrier.name': 'Lady Terrier',
-  'c.pearl_terrier.passiveDescription': 'Like yang didapat di akhir duel jadi dua kali lipat.',
+  'c.pearl_terrier.passiveDescription':
+      'Like yang didapat di akhir duel jadi dua kali lipat.',
   'c.pearl_terrier.passiveName': 'Like Mewah',
-  'c.pearl_terrier.specialDescription': 'Hantaman tas tangan super kuat ke depan (11%).',
+  'c.pearl_terrier.specialDescription':
+      'Hantaman tas tangan super kuat ke depan (11%).',
   'c.pearl_terrier.specialName': 'Hantaman Tas',
   'c.pearl_terrier.specialShout': 'BERANI-BERANINYA KAMU?!',
   'c.pearl_terrier.tagline': 'Rambut bob, mutiara, dan sweter. Seorang nyonya.',
@@ -170,11 +190,13 @@ const trId = <String, String>{
   'c.pietro_pigeon.hurt1': 'Tuut tuut...',
   'c.pietro_pigeon.hurt2': 'Converse-ku!',
   'c.pietro_pigeon.lore': 'Pietro adalah merpati yang berdiri tegak pakai sepatu Converse dan meneleponmu lewat video call. Kamu tidak tahu dia mau apa. Tapi cepat atau lambat kamu harus angkat.',
-  'c.pietro_pigeon.memeAlias': 'Pietro is calling... merpati bersepatu Converse',
+  'c.pietro_pigeon.memeAlias':
+      'Pietro is calling... merpati bersepatu Converse',
   'c.pietro_pigeon.name': 'Pietro',
   'c.pietro_pigeon.passiveDescription': 'Mempercepat dan mengerem seketika.',
   'c.pietro_pigeon.passiveName': 'Kaki Converse',
-  'c.pietro_pigeon.specialDescription': 'Menelepon lawan, yang berhenti untuk mengangkat (4%).',
+  'c.pietro_pigeon.specialDescription':
+      'Menelepon lawan, yang berhenti untuk mengangkat (4%).',
   'c.pietro_pigeon.specialName': 'Pietro is calling...',
   'c.pietro_pigeon.specialShout': 'PIETRO IS CALLING...',
   'c.pietro_pigeon.tagline': 'Dia lagi nelepon. Angkat.',
@@ -210,7 +232,8 @@ const trId = <String, String>{
   'c.robber_dog.name': 'Chihuahua Rampok',
   'c.robber_dog.passiveDescription': 'Larinya paling cepat dari semuanya.',
   'c.robber_dog.passiveName': 'Kabur Kilat',
-  'c.robber_dog.specialDescription': 'Lesatan kilat yang kebal dan menabrak lawan (10%).',
+  'c.robber_dog.specialDescription':
+      'Lesatan kilat yang kebal dan menabrak lawan (10%).',
   'c.robber_dog.specialName': 'Perampokan',
   'c.robber_dog.specialShout': 'INI PERAMPOKAN!',
   'c.robber_dog.tagline': 'Balaclava, pisau, dan tanpa penyesalan.',
@@ -220,7 +243,8 @@ const trId = <String, String>{
   'c.rock_monkey.lore': 'Monyet kapusin dengan mata paling imut sedunia dan batu terangkat di atas kepala. Menatapmu seolah bilang: "coba ulangi omonganmu". Mending jangan.',
   'c.rock_monkey.memeAlias': 'Kapusin yang mengancam pakai batu',
   'c.rock_monkey.name': 'Monyet Batu',
-  'c.rock_monkey.passiveDescription': 'Serangan lemah tidak menggesernya sedikit pun.',
+  'c.rock_monkey.passiveDescription':
+      'Serangan lemah tidak menggesernya sedikit pun.',
   'c.rock_monkey.passiveName': 'Kuda-kuda Kokoh',
   'c.rock_monkey.specialDescription': 'Melempar batu melengkung (11%).',
   'c.rock_monkey.specialName': 'Lempar Batu',
@@ -232,9 +256,11 @@ const trId = <String, String>{
   'c.rock_patrick.lore': 'Bintang laut paling bahagia di dasar laut, dengan batu di kepala sebagai helm, dua jumput rumput laut, dan senyum penuh gigi berantakan. Dia tidak berpikir. Dia menggelinding.',
   'c.rock_patrick.memeAlias': 'Patrick dengan helm batu dan rumput laut',
   'c.rock_patrick.name': 'Patrick Batu',
-  'c.rock_patrick.passiveDescription': 'Kepala batu: serangan ke atas memberi damage dua kali lipat.',
+  'c.rock_patrick.passiveDescription':
+      'Kepala batu: serangan ke atas memberi damage dua kali lipat.',
   'c.rock_patrick.passiveName': 'Kepala Batu',
-  'c.rock_patrick.specialDescription': 'Menggulung diri dan menggelinding ke depan menabrak lawan (12%).',
+  'c.rock_patrick.specialDescription':
+      'Menggulung diri dan menggelinding ke depan menabrak lawan (12%).',
   'c.rock_patrick.specialName': 'Batu Menggelinding',
   'c.rock_patrick.specialShout': 'AKU BATU!',
   'c.rock_patrick.tagline': 'Helm batu, rumput laut, dan senyum ompong.',
@@ -244,9 +270,11 @@ const trId = <String, String>{
   'c.shock_guy.lore': 'Cowok berkaus putih yang memegang kepala dengan mata melotot: reaksi universal untuk kabar apa pun, dari ending serial sampai tagihan restoran.',
   'c.shock_guy.memeAlias': 'Tangan di kepala',
   'c.shock_guy.name': 'Cowok Syok',
-  'c.shock_guy.passiveDescription': 'Saat kena pukul, dia kabur lebih cepat selama 2 detik.',
+  'c.shock_guy.passiveDescription':
+      'Saat kena pukul, dia kabur lebih cepat selama 2 detik.',
   'c.shock_guy.passiveName': 'Panik!',
-  'c.shock_guy.specialDescription': 'Teriakan syok yang membuat pusing yang dekat (7%).',
+  'c.shock_guy.specialDescription':
+      'Teriakan syok yang membuat pusing yang dekat (7%).',
   'c.shock_guy.specialName': 'GAK PERCAYA!',
   'c.shock_guy.specialShout': 'GAK PERCAYA!!',
   'c.shock_guy.tagline': 'Mata melotot, mulut ternganga: GAK PERCAYA.',
@@ -261,16 +289,19 @@ const trId = <String, String>{
   'c.shrek_kid.specialDescription': 'Menghantam tanah dengan gelombang kejut (9%). Di udara, langsung terjun.',
   'c.shrek_kid.specialName': 'Keluar dari Rawaku!',
   'c.shrek_kid.specialShout': 'KELUAR DARI RAWAKU!',
-  'c.shrek_kid.tagline': 'Rambut mangkok, kemeja, dan dasi: hari pertama sekolah.',
+  'c.shrek_kid.tagline':
+      'Rambut mangkok, kemeja, dan dasi: hari pertama sekolah.',
   'c.sky_man.hurt0': 'Kenapa?',
   'c.sky_man.hurt1': 'Langit membenciku.',
   'c.sky_man.hurt2': 'Ah, hidup...',
   'c.sky_man.lore': 'Pria berjanggut yang menatap langit dengan mata berkaca-kaca dan mulut terbuka, di bawah cahaya biru senja: meme orang yang baru saja paham segalanya, atau yang tidak paham apa-apa.',
   'c.sky_man.memeAlias': 'Tatapan putus asa ke langit',
   'c.sky_man.name': 'Pelukis Galau',
-  'c.sky_man.passiveDescription': 'Mulai dari 100% damage, serangannya 15% lebih kuat.',
+  'c.sky_man.passiveDescription':
+      'Mulai dari 100% damage, serangannya 15% lebih kuat.',
   'c.sky_man.passiveName': 'Putus Asa',
-  'c.sky_man.specialDescription': 'Sesaat kemudian, sinar cahaya jatuh dari langit ke lawan (11%).',
+  'c.sky_man.specialDescription':
+      'Sesaat kemudian, sinar cahaya jatuh dari langit ke lawan (11%).',
   'c.sky_man.specialName': 'Rahmat Ilahi',
   'c.sky_man.specialShout': 'KENAPA?!',
   'c.sky_man.tagline': 'Menatap ke atas dan minta penjelasan ke alam semesta.',
@@ -282,7 +313,8 @@ const trId = <String, String>{
   'c.smile_dog.name': 'Smile Dog',
   'c.smile_dog.passiveDescription': 'Berat: susah dibuat terpental.',
   'c.smile_dog.passiveName': 'Kulit Tebal',
-  'c.smile_dog.specialDescription': 'Tersenyum: lawan ketakutan dan kabur selama 2 detik.',
+  'c.smile_dog.specialDescription':
+      'Tersenyum: lawan ketakutan dan kabur selama 2 detik.',
   'c.smile_dog.specialName': 'Senyum Terkutuk',
   'c.smile_dog.specialShout': 'SENYUM :)',
   'c.smile_dog.tagline': 'Senyum buram yang tak akan kamu lupakan.',
@@ -292,9 +324,11 @@ const trId = <String, String>{
   'c.sneaker_hen.lore': 'Ayam betina mendekam di atas sepasang Dunk panda yang masih gres, dengan selembar seratus dolar terselip di bulunya. Dia tidak mengerami telur: dia mengerami hype.',
   'c.sneaker_hen.memeAlias': 'Ayam di atas Dunk panda dengan dolar',
   'c.sneaker_hen.name': 'Ayam Hypebeast',
-  'c.sneaker_hen.passiveDescription': 'Like yang didapat di akhir duel bernilai satu setengah kali lipat.',
+  'c.sneaker_hen.passiveDescription':
+      'Like yang didapat di akhir duel bernilai satu setengah kali lipat.',
   'c.sneaker_hen.passiveName': 'Hustler',
-  'c.sneaker_hen.specialDescription': 'Melempar telur yang meledak dan merobohkan yang dekat (12%).',
+  'c.sneaker_hen.specialDescription':
+      'Melempar telur yang meledak dan merobohkan yang dekat (12%).',
   'c.sneaker_hen.specialName': 'Telur Bom',
   'c.sneaker_hen.specialShout': 'PETOOOK!',
   'c.sneaker_hen.tagline': 'Dunk panda dan seratus dolar di bawah sayap.',
@@ -304,7 +338,8 @@ const trId = <String, String>{
   'c.snow_baby.lore': 'Bayi gembul berbaju terusan ungu muda yang memeluk boneka saljunya dan menggigitnya sedikit. Tidak pernah dilepas. Tidak pernah.',
   'c.snow_baby.memeAlias': 'Bayi gembul dengan boneka salju',
   'c.snow_baby.name': 'Bayi Boneka Salju',
-  'c.snow_baby.passiveDescription': 'Kalau mendarat di kepala lawan, dia memantul (4%).',
+  'c.snow_baby.passiveDescription':
+      'Kalau mendarat di kepala lawan, dia memantul (4%).',
   'c.snow_baby.passiveName': 'Perut Kenyal',
   'c.snow_baby.specialDescription': 'Memulihkan 5% dan menidurkan yang dekat.',
   'c.snow_baby.specialName': 'Nina Bobo',
@@ -318,7 +353,8 @@ const trId = <String, String>{
   'c.stare_cat.name': 'Stare Cat',
   'c.stare_cat.passiveDescription': 'Dua lompatan di udara, bukan satu.',
   'c.stare_cat.passiveName': 'Refleks Kucing',
-  'c.stare_cat.specialDescription': 'Menatap lawan: kalau dekat, dia membeku sesaat karena canggung (5%).',
+  'c.stare_cat.specialDescription':
+      'Menatap lawan: kalau dekat, dia membeku sesaat karena canggung (5%).',
   'c.stare_cat.specialName': 'Tatapan Maut',
   'c.stare_cat.specialShout': '*MENATAPMU*',
   'c.stare_cat.tagline': 'Mata melotot. Nol kedipan.',
@@ -328,19 +364,23 @@ const trId = <String, String>{
   'c.stitch_shrek.lore': 'Boneka kecil berwajah ogre hijau yang memakai piyama terusan alien biru, lengkap dengan telinganya. Kelihatan imut banget, tapi kalau melompat ke arahmu, dia menggigit.',
   'c.stitch_shrek.memeAlias': 'Bayi ogre berpiyama alien',
   'c.stitch_shrek.name': 'Ogre Mini Biru',
-  'c.stitch_shrek.passiveDescription': 'Piyama empuk meredam serangan: terpental 12% lebih sedikit.',
+  'c.stitch_shrek.passiveDescription':
+      'Piyama empuk meredam serangan: terpental 12% lebih sedikit.',
   'c.stitch_shrek.passiveName': 'Piyama Tebal',
-  'c.stitch_shrek.specialDescription': 'Melompat ke lawan dan menggigitnya (12%).',
+  'c.stitch_shrek.specialDescription':
+      'Melompat ke lawan dan menggigitnya (12%).',
   'c.stitch_shrek.specialName': 'Serbuan Alien',
   'c.stitch_shrek.specialShout': 'GRRR!',
-  'c.stitch_shrek.tagline': 'Wajah ogre, piyama biru. Eksperimen gagal (dengan sukses).',
+  'c.stitch_shrek.tagline':
+      'Wajah ogre, piyama biru. Eksperimen gagal (dengan sukses).',
   'c.suit_dachshund.hurt0': 'Dasiku!',
   'c.suit_dachshund.hurt1': 'Ka-ouch!',
   'c.suit_dachshund.hurt2': 'Jangan crocs-ku!',
   'c.suit_dachshund.lore': 'Anak dachshund dengan setelan jas hitam, kemeja putih, dan dasi... plus crocs merah Lightning McQueen di kakinya. Siap ke kondangan dan Piston Cup sekaligus.',
   'c.suit_dachshund.memeAlias': 'Dachshund berjas dan crocs Lightning McQueen',
   'c.suit_dachshund.name': 'Ka-Chow Dachshund',
-  'c.suit_dachshund.passiveDescription': 'Crocs lapis baja: menerima damage 15% lebih sedikit.',
+  'c.suit_dachshund.passiveDescription':
+      'Crocs lapis baja: menerima damage 15% lebih sedikit.',
   'c.suit_dachshund.passiveName': 'Crocs Lapis Baja',
   'c.suit_dachshund.specialDescription': 'Turbo selama 2,5 detik: super cepat, lawan pertama yang ditabrak terpental (10%).',
   'c.suit_dachshund.specialName': 'Ka-Chow!',
@@ -352,9 +392,11 @@ const trId = <String, String>{
   'c.timeout_man.lore': 'Raksasa berkaus polo biru muda yang membuat tanda time-out dengan tangan: jawaban sempurna untuk setiap debat yang kepanjangan. Kalau dia minta jeda, jeda pasti datang.',
   'c.timeout_man.memeAlias': 'Raksasa yang minta time-out',
   'c.timeout_man.name': 'Mister Time-Out',
-  'c.timeout_man.passiveDescription': 'Super berat: paling susah dibuat terpental.',
+  'c.timeout_man.passiveDescription':
+      'Super berat: paling susah dibuat terpental.',
   'c.timeout_man.passiveName': 'Raksasa',
-  'c.timeout_man.specialDescription': 'Menghentikan permainan: lawan membeku sesaat dan dia pulih 4%.',
+  'c.timeout_man.specialDescription':
+      'Menghentikan permainan: lawan membeku sesaat dan dia pulih 4%.',
   'c.timeout_man.specialName': 'TIME-OUT!',
   'c.timeout_man.specialShout': 'TIME-OUT!',
   'c.timeout_man.tagline': 'Tangan bentuk T, tatapan capek: cukup.',
@@ -376,7 +418,8 @@ const trId = <String, String>{
   'c.wig_dog.lore': 'Chihuahua dengan rambut bob cokelat dan tatapan orang yang siap kasih ulasan bintang satu. Tidak pernah salah, dan kalaupun salah, tetap mau bicara dengan manajer.',
   'c.wig_dog.memeAlias': 'Chihuahua pakai wig',
   'c.wig_dog.name': 'Wig Dog',
-  'c.wig_dog.passiveDescription': 'Tahan LOMPAT di udara untuk melayang: recovery super jauh.',
+  'c.wig_dog.passiveDescription':
+      'Tahan LOMPAT di udara untuk melayang: recovery super jauh.',
   'c.wig_dog.passiveName': 'Wig Parasut',
   'c.wig_dog.specialDescription': 'Teriakan penuh amarah: gelombang kejut yang melempar yang dekat denganmu (11%).',
   'c.wig_dog.specialName': 'Panggil Manajer!',
@@ -388,7 +431,8 @@ const trId = <String, String>{
   'c.wink_cat.lore': 'Kucing abu-abu putih rebahan di sofa yang mengedipkan mata padamu dengan lidah menjulur, seolah tahu sesuatu yang kamu tidak tahu. Tidak ada yang kebal pesonanya.',
   'c.wink_cat.memeAlias': 'Kedipan dan melet',
   'c.wink_cat.name': 'Kucing Kedip',
-  'c.wink_cat.passiveDescription': 'Kadang menghindari serangan dengan kedipan (10%).',
+  'c.wink_cat.passiveDescription':
+      'Kadang menghindari serangan dengan kedipan (10%).',
   'c.wink_cat.passiveName': 'Kedipan',
   'c.wink_cat.specialDescription': 'Lawan yang dekat jadi terpesona: berjalan ke arahnya tanpa bisa menyerang.',
   'c.wink_cat.specialName': 'Memikat',
@@ -458,7 +502,8 @@ const trId = <String, String>{
   'name.anonymous': 'Anonim',
   'number.decimal': ',',
   'pause.controls': 'Kontrol',
-  'pause.keys': 'Panah/WASD gerak · Z/SPASI lompat · X/J serang · C/K spesial · ESC jeda',
+  'pause.keys':
+      'Panah/WASD gerak · Z/SPASI lompat · X/J serang · C/K spesial · ESC jeda',
   'pause.quit': 'Keluar',
   'pause.resume': 'Lanjut',
   'pause.title': 'Jeda',

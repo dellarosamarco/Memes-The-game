@@ -11,8 +11,9 @@ class HowToPlay extends StatelessWidget {
 
   final VoidCallback onClose;
 
-  static const _body = TextStyle(
+  static TextStyle get _body => TextStyle(
     fontFamily: kPixelFont,
+    fontFamilyFallback: fontFallback,
     fontSize: 13,
     height: 1.2,
     color: Color(0xFF6B5A78),

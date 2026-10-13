@@ -105,3 +105,13 @@ flutter:
         - asset: assets/fonts/PixelifySans-400.ttf
         - asset: assets/fonts/PixelifySans-700.ttf
           weight: 700
+    # Japanese, Korean and Chinese (subsets: tool/subset_cjk_fonts.py).
+    - family: DotGothic16
+      fonts:
+        - asset: assets/fonts/DotGothic16-subset.ttf
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR-subset.ttf
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-subset.ttf

@@ -12,8 +12,9 @@ const kAppVersion = '1.0.0';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  static const _body = TextStyle(
+  static TextStyle get _body => TextStyle(
     fontFamily: kPixelFont,
+    fontFamilyFallback: fontFallback,
     fontSize: 13,
     height: 1.3,
     color: Color(0xFF6B5A78),
@@ -157,16 +158,15 @@ class AboutScreen extends StatelessWidget {
                           ),
                           _section(
                             tr('about.creditsTitle', 'Crediti'),
-                            tr(
-                              'about.creditsText',
-                              '• Decorazioni delle arene: Pixel Platformer di '
-                                  'Kenney (kenney.nl), licenza CC0.\n'
-                                  '• Font Pixelify Sans, licenza SIL Open Font '
-                                  'License.\n'
-                                  '• Fatto con Flutter e Flame.\n'
-                                  '• Musica, effetti sonori, arene e interfaccia '
-                                  'creati per il gioco.',
-                            ),
+                            '${tr('about.creditsText', '• Decorazioni delle arene: Pixel Platformer di '
+                                'Kenney (kenney.nl), licenza CC0.\n'
+                                '• Font Pixelify Sans, licenza SIL Open Font '
+                                'License.\n'
+                                '• Fatto con Flutter e Flame.\n'
+                                '• Musica, effetti sonori, arene e interfaccia '
+                                'creati per il gioco.')}\n'
+                            '• DotGothic16, Noto Sans KR, Noto Sans SC: '
+                            'SIL Open Font License.',
                           ),
                           _section(
                             tr('about.privacyTitle', 'Privacy'),

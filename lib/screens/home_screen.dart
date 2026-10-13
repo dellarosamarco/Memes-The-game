@@ -66,8 +66,9 @@ class _HomeScreenState extends State<HomeScreen>
                 controller: ctrl,
                 maxLength: 16,
                 autofocus: true,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: kPixelFont,
+                  fontFamilyFallback: fontFallback,
                   fontSize: 20,
                   color: kPlum,
                 ),

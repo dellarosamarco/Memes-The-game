@@ -28,9 +28,11 @@ const trTr = <String, String>{
   'c.bike_dog.lore': 'Sırtında çantasıyla trafiğin ortasında pedal çeviren bir köpek, sanki okula gidiyor. Arkasında bir POLIS arabası. Kimin kimi kovaladığını kimse bilmiyor.',
   'c.bike_dog.memeAlias': 'Polis\'in kovaladığı, sırt çantalı bisikletli köpek',
   'c.bike_dog.name': 'Bisikletli Köpek',
-  'c.bike_dog.passiveDescription': 'Aynı yöne ne kadar pedal çevirirse o kadar hızlanır.',
+  'c.bike_dog.passiveDescription':
+      'Aynı yöne ne kadar pedal çevirirse o kadar hızlanır.',
   'c.bike_dog.passiveName': 'Pedal Gücü',
-  'c.bike_dog.specialDescription': 'Polisi çağırır: bir ekip arabası rakibe doğru fırlar (%14).',
+  'c.bike_dog.specialDescription':
+      'Polisi çağırır: bir ekip arabası rakibe doğru fırlar (%14).',
   'c.bike_dog.specialName': 'POLIS!',
   'c.bike_dog.specialShout': 'VİİYUU VİİYUU!',
   'c.bike_dog.tagline': 'Sırtta çanta, peşinde polis.',
@@ -42,7 +44,8 @@ const trTr = <String, String>{
   'c.bottle_patrick.name': 'Damacana Patrick',
   'c.bottle_patrick.passiveDescription': 'Özel hareketi iki kat hızlı dolar.',
   'c.bottle_patrick.passiveName': 'Hep Sulu',
-  'c.bottle_patrick.specialDescription': 'Damacanadan rakibi iten bir su fışkırtması.',
+  'c.bottle_patrick.specialDescription':
+      'Damacanadan rakibi iten bir su fışkırtması.',
   'c.bottle_patrick.specialName': 'Su Fışkırtma',
   'c.bottle_patrick.specialShout': 'GLU GLU!',
   'c.bottle_patrick.tagline': 'Hep sulu. Maalesef.',
@@ -52,9 +55,11 @@ const trTr = <String, String>{
   'c.bowl_chick.lore': 'Cetvelle kesilmiş siyah kase kesim saçlı, profilden onur dolu bakan sarı bir civciv. Berberi bir dahi.',
   'c.bowl_chick.memeAlias': 'Siyah kase kesimli civciv',
   'c.bowl_chick.name': 'Kase Kesim Civciv',
-  'c.bowl_chick.passiveDescription': 'Tüy gibi hafif: uzun, yavaş zıplar ama kolayca uçar gider.',
+  'c.bowl_chick.passiveDescription':
+      'Tüy gibi hafif: uzun, yavaş zıplar ama kolayca uçar gider.',
   'c.bowl_chick.passiveName': 'Hafif Civciv',
-  'c.bowl_chick.specialDescription': 'Üç civciv rakibe doğru koşar (her biri %9).',
+  'c.bowl_chick.specialDescription':
+      'Üç civciv rakibe doğru koşar (her biri %9).',
   'c.bowl_chick.specialName': 'Cik Cik!',
   'c.bowl_chick.specialShout': 'CİK CİK CİK!',
   'c.bowl_chick.tagline': 'Bir civciv. Kase kesimli. Mükemmel.',
@@ -64,9 +69,11 @@ const trTr = <String, String>{
   'c.cheeks_dachshund.lore': 'Yanakları hamster gibi şişmiş, masum bakışlı sosis köpeği. İçinde ne olduğunu kimse bilmiyor. O konuşmuyor: konuşamaz.',
   'c.cheeks_dachshund.memeAlias': 'Yanakları dolu sosis köpeği',
   'c.cheeks_dachshund.name': 'Hamster Sosis',
-  'c.cheeks_dachshund.passiveDescription': 'İsabet eden her vuruş hasarını %1 azaltır.',
+  'c.cheeks_dachshund.passiveDescription':
+      'İsabet eden her vuruş hasarını %1 azaltır.',
   'c.cheeks_dachshund.passiveName': 'Geniş Yanaklar',
-  'c.cheeks_dachshund.specialDescription': 'Yanaklarını şişirir: yakındakileri iter (%9) ve süzülerek yükselir.',
+  'c.cheeks_dachshund.specialDescription':
+      'Yanaklarını şişirir: yakındakileri iter (%9) ve süzülerek yükselir.',
   'c.cheeks_dachshund.specialName': 'Yanak Şişirme',
   'c.cheeks_dachshund.specialShout': '*PFFFFF*',
   'c.cheeks_dachshund.tagline': 'Yanaklarına bir şey saklamış. Her şeyi.',
@@ -76,9 +83,11 @@ const trTr = <String, String>{
   'c.chill_dog.lore': 'Patileri başının arkasında, bacak bacak üstüne atmış, yastığa yayılmış sarışın chihuahua; tatildeki patron gibi. Stres onun adresini bile bilmiyor.',
   'c.chill_dog.memeAlias': 'Patileri başının arkasında yatan chihuahua',
   'c.chill_dog.name': 'Keyifçi Chihuahua',
-  'c.chill_dog.passiveDescription': 'Hareketsiz kalırsa rahatlar ve saniyede %1 iyileşir.',
+  'c.chill_dog.passiveDescription':
+      'Hareketsiz kalırsa rahatlar ve saniyede %1 iyileşir.',
   'c.chill_dog.passiveName': 'Tam Keyif',
-  'c.chill_dog.specialDescription': 'Rakip 2 saniye boyunca ağır çekimde hareket eder.',
+  'c.chill_dog.specialDescription':
+      'Rakip 2 saniye boyunca ağır çekimde hareket eder.',
   'c.chill_dog.specialName': 'Tatil Modu',
   'c.chill_dog.specialShout': 'BEN TATİLDEYİM',
   'c.chill_dog.tagline': 'Patiler başın arkasında, bacak bacak üstüne. Zen.',
@@ -88,9 +97,11 @@ const trTr = <String, String>{
   'c.drip_pig.lore': 'Berberden taze fade kesimli, kulağında AirPods, boynunda kalın altın zincir olan bir domuz. Senden daha tarz ve bunu çok iyi biliyor.',
   'c.drip_pig.memeAlias': 'Fade kesimli, AirPods\'lu, zincirli domuz',
   'c.drip_pig.name': 'Drip Domuz',
-  'c.drip_pig.passiveDescription': 'Özel hareketleri %20 daha fazla hasar verir.',
+  'c.drip_pig.passiveDescription':
+      'Özel hareketleri %20 daha fazla hasar verir.',
   'c.drip_pig.passiveName': 'Altın Zincir',
-  'c.drip_pig.specialDescription': '4 saniye boyunca hiçbir şey duymaz: vuruşlar onu yerinden oynatamaz.',
+  'c.drip_pig.specialDescription':
+      '4 saniye boyunca hiçbir şey duymaz: vuruşlar onu yerinden oynatamaz.',
   'c.drip_pig.specialName': 'Gürültü Engelleme',
   'c.drip_pig.specialShout': 'DUYMUYORUM, AIRPODS\'UM VAR',
   'c.drip_pig.tagline': 'Taze fade, AirPods ve altın zincir.',
@@ -102,7 +113,8 @@ const trTr = <String, String>{
   'c.ears_dog.name': 'Koca Kulak',
   'c.ears_dog.passiveDescription': 'Herkesten daha yükseğe zıplar.',
   'c.ears_dog.passiveName': 'Yaylı Kulaklar',
-  'c.ears_dog.specialDescription': 'O kadar beyaz bir gülümseme ki yakındakileri kör eder ve durdurur (%6).',
+  'c.ears_dog.specialDescription':
+      'O kadar beyaz bir gülümseme ki yakındakileri kör eder ve durdurur (%6).',
   'c.ears_dog.specialName': 'Parlak Takma Diş',
   'c.ears_dog.specialShout': '*PIRIL PIRIL GÜLÜMSEME*',
   'c.ears_dog.tagline': 'İnsan kulakları. İnsan dişleri. Neden?',
@@ -124,7 +136,8 @@ const trTr = <String, String>{
   'c.helmet_pigeon.lore': 'Başında oraya nasıl geldiğini kimsenin bilmediği lastik bir başlık olan bir şehir güvercini. O hiç umursamıyor: miğferli bir şövalye gibi gururla yürüyor.',
   'c.helmet_pigeon.memeAlias': 'Başında garip kask olan güvercin',
   'c.helmet_pigeon.name': 'Kasklı Güvercin',
-  'c.helmet_pigeon.passiveDescription': 'Kask onu mermilere karşı korur ve darbeleri yumuşatır (-%10).',
+  'c.helmet_pigeon.passiveDescription':
+      'Kask onu mermilere karşı korur ve darbeleri yumuşatır (-%10).',
   'c.helmet_pigeon.passiveName': 'Koruyucu Kask',
   'c.helmet_pigeon.specialDescription': 'Kanat darbesiyle havalanır (%8) ve 2,5 saniye uçar: yükselmek için ZIPLA\'yı basılı tut.',
   'c.helmet_pigeon.specialName': 'Şehir Uçuşu',
@@ -136,9 +149,11 @@ const trTr = <String, String>{
   'c.masha_man.lore': 'Maşa\'nın pembe başörtüsü ve elbisesi üstünde, ama yüzü bıyıklı, yorgun bakışlı yetişkin bir adamınki. Koca Ayı bile ondan korkuyor.',
   'c.masha_man.memeAlias': 'Koca adam suratlı Maşa',
   'c.masha_man.name': 'Bıyıklı Maşa',
-  'c.masha_man.passiveDescription': 'Ağır el: smash saldırıları %25 daha uzağa fırlatır.',
+  'c.masha_man.passiveDescription':
+      'Ağır el: smash saldırıları %25 daha uzağa fırlatır.',
   'c.masha_man.passiveName': 'Ağır El',
-  'c.masha_man.specialDescription': 'Yakındakilere çarpan dev bir zıplayış (%10). Arenaya dönmek için ideal.',
+  'c.masha_man.specialDescription':
+      'Yakındakilere çarpan dev bir zıplayış (%10). Arenaya dönmek için ideal.',
   'c.masha_man.specialName': 'Maşa Zıplayışı',
   'c.masha_man.specialShout': 'BAY BAY!',
   'c.masha_man.tagline': 'Pembe başörtüsü, bıyık, sıfır korku.',
@@ -148,21 +163,26 @@ const trTr = <String, String>{
   'c.nerd_cat.lore': 'Siyah gözlüklü, kunduz dişli ve parmağı havada kedi: sana, ııı, aslında, haksız olduğunu söylemek üzere olan birinin yüzü. Her zaman hazır bir düzeltmesi var.',
   'c.nerd_cat.memeAlias': '"Iıı, aslında..."',
   'c.nerd_cat.name': 'İnek Kedi',
-  'c.nerd_cat.passiveDescription': 'Darbe yedikten sonraki vuruşu %25 daha fazla hasar verir.',
+  'c.nerd_cat.passiveDescription':
+      'Darbe yedikten sonraki vuruşu %25 daha fazla hasar verir.',
   'c.nerd_cat.passiveName': 'Düzeltme',
-  'c.nerd_cat.specialDescription': 'İsabet ettiği kişinin kafasını karıştıran bir düzeltme bulutu (%6).',
+  'c.nerd_cat.specialDescription':
+      'İsabet ettiği kişinin kafasını karıştıran bir düzeltme bulutu (%6).',
   'c.nerd_cat.specialName': 'Iıı, aslında...',
   'c.nerd_cat.specialShout': 'III, ASLINDA...',
-  'c.nerd_cat.tagline': 'Gözlük, kunduz dişleri ve kalkık parmak: seni düzeltmek üzere.',
+  'c.nerd_cat.tagline':
+      'Gözlük, kunduz dişleri ve kalkık parmak: seni düzeltmek üzere.',
   'c.pearl_terrier.hurt0': 'Ne terbiyesiz!',
   'c.pearl_terrier.hurt1': 'İncilerim!',
   'c.pearl_terrier.hurt2': 'Bizim zamanımızda...',
   'c.pearl_terrier.lore': 'Küt kesim peruklu, inci kolyeli ve yeşil kazaklı bull terrier. Sana bayram ziyaretinde "ne zaman evleniyorsun?" diye soran teyze gibi bakıyor.',
   'c.pearl_terrier.memeAlias': 'Küt saçlı ve incili bull terrier',
   'c.pearl_terrier.name': 'Lady Terrier',
-  'c.pearl_terrier.passiveDescription': 'Maç sonunda kazanılan beğeniler iki katına çıkar.',
+  'c.pearl_terrier.passiveDescription':
+      'Maç sonunda kazanılan beğeniler iki katına çıkar.',
   'c.pearl_terrier.passiveName': 'Lüks Beğeniler',
-  'c.pearl_terrier.specialDescription': 'Önüne doğru çok güçlü bir çanta darbesi (%11).',
+  'c.pearl_terrier.specialDescription':
+      'Önüne doğru çok güçlü bir çanta darbesi (%11).',
   'c.pearl_terrier.specialName': 'Çanta Darbesi',
   'c.pearl_terrier.specialShout': 'NASIL CÜRET EDERSİNİZ?!',
   'c.pearl_terrier.tagline': 'Küt saç, inci ve kazak. Tam bir hanımefendi.',
@@ -174,7 +194,8 @@ const trTr = <String, String>{
   'c.pietro_pigeon.name': 'Pietro',
   'c.pietro_pigeon.passiveDescription': 'Anında hızlanır ve anında durur.',
   'c.pietro_pigeon.passiveName': 'Ayakta Converse',
-  'c.pietro_pigeon.specialDescription': 'Rakibi arar, rakip de durup telefonu açar (%4).',
+  'c.pietro_pigeon.specialDescription':
+      'Rakibi arar, rakip de durup telefonu açar (%4).',
   'c.pietro_pigeon.specialName': 'Pietro is calling...',
   'c.pietro_pigeon.specialShout': 'PIETRO IS CALLING...',
   'c.pietro_pigeon.tagline': 'Seni arıyor. Aç şunu.',
@@ -184,7 +205,8 @@ const trTr = <String, String>{
   'c.pigtail_dog.lore': 'İnsan gibi ayakta duran, siyah örgülü, mavi şişme montlu, beyaz çoraplı ve rugan ayakkabılı pinscher. Ödevini yapmadan okula giden birinin havası var.',
   'c.pigtail_dog.memeAlias': 'Şişme montlu ve örgülü pinscher',
   'c.pigtail_dog.name': 'Şişme Mont Pinscher',
-  'c.pigtail_dog.passiveDescription': 'Mont her canda ilk hafif darbeyi emer (güçlü bir darbe onu deler).',
+  'c.pigtail_dog.passiveDescription':
+      'Mont her canda ilk hafif darbeyi emer (güçlü bir darbe onu deler).',
   'c.pigtail_dog.passiveName': 'Kalın Mont',
   'c.pigtail_dog.specialDescription': 'Kendi etrafında dönüp örgüleriyle her yeri kırbaçlar (%7). Havada onu yukarı taşır.',
   'c.pigtail_dog.specialName': 'Örgü Mikseri',
@@ -210,7 +232,8 @@ const trTr = <String, String>{
   'c.robber_dog.name': 'Robber Chihuahua',
   'c.robber_dog.passiveDescription': 'Herkesten hızlı koşar.',
   'c.robber_dog.passiveName': 'Hızlı Kaçış',
-  'c.robber_dog.specialDescription': 'Rakibi ezip geçen, yıldırım hızında ve hasar almaz bir atılış (%10).',
+  'c.robber_dog.specialDescription':
+      'Rakibi ezip geçen, yıldırım hızında ve hasar almaz bir atılış (%10).',
   'c.robber_dog.specialName': 'Soygun',
   'c.robber_dog.specialShout': 'BU BİR SOYGUNDUR!',
   'c.robber_dog.tagline': 'Kar maskesi, bıçak ve sıfır pişmanlık.',
@@ -220,7 +243,8 @@ const trTr = <String, String>{
   'c.rock_monkey.lore': 'Dünyanın en tatlı kocaman gözlerine sahip, başının üstünde taş tutan bir kapuçin maymunu. Sana "söylediğini bir daha söyle" der gibi bakıyor. Söyleme bence.',
   'c.rock_monkey.memeAlias': 'Taşla tehdit eden kapuçin',
   'c.rock_monkey.name': 'Taşlı Maymun',
-  'c.rock_monkey.passiveDescription': 'Zayıf darbeler onu bir milim bile kıpırdatmaz.',
+  'c.rock_monkey.passiveDescription':
+      'Zayıf darbeler onu bir milim bile kıpırdatmaz.',
   'c.rock_monkey.passiveName': 'Sıkı Tutuş',
   'c.rock_monkey.specialDescription': 'Kavisli bir taş fırlatır (%11).',
   'c.rock_monkey.specialName': 'Taş Atışı',
@@ -232,9 +256,11 @@ const trTr = <String, String>{
   'c.rock_patrick.lore': 'Deniz dibinin en mutlu denizyıldızı: başında miğfer niyetine bir taş, iki tutam yosun ve çarpık dişlerle dolu bir gülümseme. Düşünmez. Yuvarlanır.',
   'c.rock_patrick.memeAlias': 'Kaya miğferli ve yosunlu Patrick',
   'c.rock_patrick.name': 'Kaya Patrick',
-  'c.rock_patrick.passiveDescription': 'Taş kafa: yukarı saldırı iki kat hasar verir.',
+  'c.rock_patrick.passiveDescription':
+      'Taş kafa: yukarı saldırı iki kat hasar verir.',
   'c.rock_patrick.passiveName': 'Taş Kafa',
-  'c.rock_patrick.specialDescription': 'Top gibi kıvrılıp ileri yuvarlanır ve rakibi ezer (%12).',
+  'c.rock_patrick.specialDescription':
+      'Top gibi kıvrılıp ileri yuvarlanır ve rakibi ezer (%12).',
   'c.rock_patrick.specialName': 'Yuvarlanan Kaya',
   'c.rock_patrick.specialShout': 'BEN BİR KAYAYIM!',
   'c.rock_patrick.tagline': 'Kaya miğfer, yosun ve seyrek dişli bir gülüş.',
@@ -244,9 +270,11 @@ const trTr = <String, String>{
   'c.shock_guy.lore': 'Beyaz tişörtlü, gözleri yuvalarından fırlamış halde ellerini saçlarına götüren çocuk: dizi finalinden restoran hesabına kadar her habere evrensel tepki.',
   'c.shock_guy.memeAlias': 'Eller saçlarda',
   'c.shock_guy.name': 'Şok Olmuş Çocuk',
-  'c.shock_guy.passiveDescription': 'Vurulunca 2 saniye boyunca daha hızlı kaçar.',
+  'c.shock_guy.passiveDescription':
+      'Vurulunca 2 saniye boyunca daha hızlı kaçar.',
   'c.shock_guy.passiveName': 'Panik!',
-  'c.shock_guy.specialDescription': 'Yakındakileri sersemleten şok dolu bir çığlık (%7).',
+  'c.shock_guy.specialDescription':
+      'Yakındakileri sersemleten şok dolu bir çığlık (%7).',
   'c.shock_guy.specialName': 'İNANAMIYORUM!',
   'c.shock_guy.specialShout': 'İNANAMIYORUM!!',
   'c.shock_guy.tagline': 'Fal taşı gibi gözler, açık ağız: İNANAMIYORUM.',
@@ -256,9 +284,11 @@ const trTr = <String, String>{
   'c.shrek_kid.lore': 'Tombul yanaklı, siyah kase kesim saçlı, beyaz gömlekli ve mavi kravatlı yeşil bir dev. Tek istediği bataklığına dönmek olan birinin suratı var.',
   'c.shrek_kid.memeAlias': 'Kase kesim saçlı ve kravatlı yeşil dev',
   'c.shrek_kid.name': 'Bebek Dev',
-  'c.shrek_kid.passiveDescription': 'Soğan katmanları: 3 saniye vurulmazsa her 2 saniyede %1 iyileşir.',
+  'c.shrek_kid.passiveDescription':
+      'Soğan katmanları: 3 saniye vurulmazsa her 2 saniyede %1 iyileşir.',
   'c.shrek_kid.passiveName': 'Soğan Katmanları',
-  'c.shrek_kid.specialDescription': 'Şok dalgasıyla yere çakılır (%9). Havadaysa aşağı dalar.',
+  'c.shrek_kid.specialDescription':
+      'Şok dalgasıyla yere çakılır (%9). Havadaysa aşağı dalar.',
   'c.shrek_kid.specialName': 'Bataklığımdan Defol!',
   'c.shrek_kid.specialShout': 'BATAKLIĞIMDAN DEFOL!',
   'c.shrek_kid.tagline': 'Kase kesim, gömlek ve kravat: okulun ilk günü.',
@@ -282,7 +312,8 @@ const trTr = <String, String>{
   'c.smile_dog.name': 'Smile Dog',
   'c.smile_dog.passiveDescription': 'Ağır: onu uçurmak zordur.',
   'c.smile_dog.passiveName': 'Kalın Deri',
-  'c.smile_dog.specialDescription': 'Gülümser: rakip korkar ve 2 saniye boyunca kaçar.',
+  'c.smile_dog.specialDescription':
+      'Gülümser: rakip korkar ve 2 saniye boyunca kaçar.',
   'c.smile_dog.specialName': 'Lanetli Gülümseme',
   'c.smile_dog.specialShout': 'GÜLÜMSE :)',
   'c.smile_dog.tagline': 'Unutamayacağın bulanık bir gülümseme.',
@@ -292,9 +323,11 @@ const trTr = <String, String>{
   'c.sneaker_hen.lore': 'Yepyeni bir çift panda Dunk\'ın üstüne çömelmiş, tüylerinin arasına yüz dolarlık banknot sıkıştırmış bir tavuk. Yumurta değil, hype kuluçkalıyor.',
   'c.sneaker_hen.memeAlias': 'Panda Dunk\'ların üstünde dolarlı tavuk',
   'c.sneaker_hen.name': 'Hypebeast Tavuk',
-  'c.sneaker_hen.passiveDescription': 'Maç sonunda kazanılan beğeniler bir buçuk kat değerlidir.',
+  'c.sneaker_hen.passiveDescription':
+      'Maç sonunda kazanılan beğeniler bir buçuk kat değerlidir.',
   'c.sneaker_hen.passiveName': 'Hustler',
-  'c.sneaker_hen.specialDescription': 'Yakındakileri yere seren patlayan bir yumurta fırlatır (%12).',
+  'c.sneaker_hen.specialDescription':
+      'Yakındakileri yere seren patlayan bir yumurta fırlatır (%12).',
   'c.sneaker_hen.specialName': 'Bomba Yumurta',
   'c.sneaker_hen.specialShout': 'GIDAAAK!',
   'c.sneaker_hen.tagline': 'Panda Dunk\'lar ve kanadın altında yüz dolar.',
@@ -304,7 +337,8 @@ const trTr = <String, String>{
   'c.snow_baby.lore': 'Leylak rengi tulumlu, kardan adamına sıkıca sarılıp onu azıcık ısıran tombul bebek. Onu asla bırakmaz. Asla.',
   'c.snow_baby.memeAlias': 'Kardan adamlı tombul bebek',
   'c.snow_baby.name': 'Kardan Bebek',
-  'c.snow_baby.passiveDescription': 'Rakibin kafasına inerse üstünden seker (%4).',
+  'c.snow_baby.passiveDescription':
+      'Rakibin kafasına inerse üstünden seker (%4).',
   'c.snow_baby.passiveName': 'Lastik Göbiş',
   'c.snow_baby.specialDescription': '%5 iyileşir ve yakındakileri uyutur.',
   'c.snow_baby.specialName': 'Ninni',
@@ -318,7 +352,8 @@ const trTr = <String, String>{
   'c.stare_cat.name': 'Stare Cat',
   'c.stare_cat.passiveDescription': 'Havada bir yerine iki zıplama.',
   'c.stare_cat.passiveName': 'Kedi Refleksleri',
-  'c.stare_cat.specialDescription': 'Rakibe dik dik bakar: yakındaysa bir an utançtan donup kalır (%5).',
+  'c.stare_cat.specialDescription':
+      'Rakibe dik dik bakar: yakındaysa bir an utançtan donup kalır (%5).',
   'c.stare_cat.specialName': 'Dik Bakış',
   'c.stare_cat.specialShout': '*DİK DİK BAKAR*',
   'c.stare_cat.tagline': 'Faltaşı gözler. Sıfır göz kırpma.',
@@ -328,7 +363,8 @@ const trTr = <String, String>{
   'c.stitch_shrek.lore': 'Yeşil dev suratlı, kulakları dahil mavi uzaylı tulum pijama giymiş minik bebek. Çok tatlı görünüyor ama üstüne atlayınca ısırıyor.',
   'c.stitch_shrek.memeAlias': 'Uzaylı pijamalı bebek dev',
   'c.stitch_shrek.name': 'Mavi Minik Dev',
-  'c.stitch_shrek.passiveDescription': 'Yumuşacık pijama darbeleri emer: %12 daha az uçar.',
+  'c.stitch_shrek.passiveDescription':
+      'Yumuşacık pijama darbeleri emer: %12 daha az uçar.',
   'c.stitch_shrek.passiveName': 'Kocaman Pijama',
   'c.stitch_shrek.specialDescription': 'Rakibin üstüne atlayıp ısırır (%12).',
   'c.stitch_shrek.specialName': 'Uzaylı Saldırısı',
@@ -338,11 +374,14 @@ const trTr = <String, String>{
   'c.suit_dachshund.hurt1': 'Ka-ay!',
   'c.suit_dachshund.hurt2': 'Crocs\'larım olmaz!',
   'c.suit_dachshund.lore': 'Siyah takım, beyaz gömlek ve kravatlı yavru sosis köpeği... ayağında da Şimşek McQueen\'in kırmızı Crocs\'ları. Hem düğüne hem Piston Kupası\'na hazır.',
-  'c.suit_dachshund.memeAlias': 'Takım elbiseli ve Şimşek McQueen Crocs\'lu sosis köpeği',
+  'c.suit_dachshund.memeAlias':
+      'Takım elbiseli ve Şimşek McQueen Crocs\'lu sosis köpeği',
   'c.suit_dachshund.name': 'Ka-Chow Sosis',
-  'c.suit_dachshund.passiveDescription': 'Zırhlı Crocs: %15 daha az hasar alır.',
+  'c.suit_dachshund.passiveDescription':
+      'Zırhlı Crocs: %15 daha az hasar alır.',
   'c.suit_dachshund.passiveName': 'Zırhlı Crocs',
-  'c.suit_dachshund.specialDescription': '2,5 saniyelik turbo: süper hızlı, çarptığı ilk kişi uçar gider (%10).',
+  'c.suit_dachshund.specialDescription':
+      '2,5 saniyelik turbo: süper hızlı, çarptığı ilk kişi uçar gider (%10).',
   'c.suit_dachshund.specialName': 'Ka-Chow!',
   'c.suit_dachshund.specialShout': 'KA-CHOW!',
   'c.suit_dachshund.tagline': 'Üstü şık, altı Ka-chow.',
@@ -354,7 +393,8 @@ const trTr = <String, String>{
   'c.timeout_man.name': 'Bay Time-Out',
   'c.timeout_man.passiveDescription': 'Çok ağır: fırlatılması en zor olan o.',
   'c.timeout_man.passiveName': 'Dev',
-  'c.timeout_man.specialDescription': 'Oyunu durdurur: rakip bir an donar, o da %4 iyileşir.',
+  'c.timeout_man.specialDescription':
+      'Oyunu durdurur: rakip bir an donar, o da %4 iyileşir.',
   'c.timeout_man.specialName': 'TIME-OUT!',
   'c.timeout_man.specialShout': 'TIME-OUT!',
   'c.timeout_man.tagline': 'Eller T şeklinde, yorgun bakış: bu kadar yeter.',
@@ -366,7 +406,8 @@ const trTr = <String, String>{
   'c.tongue_cat.name': 'Dil Çıkaran Kedi',
   'c.tongue_cat.passiveDescription': 'Vuruşları rakibi kısa bir an yavaşlatır.',
   'c.tongue_cat.passiveName': 'Salya',
-  'c.tongue_cat.specialDescription': 'Dil ileri fırlar, rakibi yakalayıp kendine çeker (%8).',
+  'c.tongue_cat.specialDescription':
+      'Dil ileri fırlar, rakibi yakalayıp kendine çeker (%8).',
   'c.tongue_cat.specialName': 'Dil Kırbacı',
   'c.tongue_cat.specialShout': 'IYYY!',
   'c.tongue_cat.tagline': 'Kocaman gözler ve upuzun bir dil.',
@@ -376,9 +417,11 @@ const trTr = <String, String>{
   'c.wig_dog.lore': 'Kahverengi küt perukalı, bir yıldızlık yorum yazmak üzere olan birinin bakışlarına sahip chihuahua. Asla haksız değildir; haksızsa bile müdürle görüşmek ister.',
   'c.wig_dog.memeAlias': 'Peruklu chihuahua',
   'c.wig_dog.name': 'Wig Dog',
-  'c.wig_dog.passiveDescription': 'Süzülmek için havada ZIPLA\'yı basılı tut: upuzun dönüşler.',
+  'c.wig_dog.passiveDescription':
+      'Süzülmek için havada ZIPLA\'yı basılı tut: upuzun dönüşler.',
   'c.wig_dog.passiveName': 'Peruk-Paraşüt',
-  'c.wig_dog.specialDescription': 'Bir öfke çığlığı: yakınındakileri savuran şok dalgası (%11).',
+  'c.wig_dog.specialDescription':
+      'Bir öfke çığlığı: yakınındakileri savuran şok dalgası (%11).',
   'c.wig_dog.specialName': 'Müdürü Çağırın!',
   'c.wig_dog.specialShout': 'MÜDÜRÜNÜZLE GÖRÜŞMEK İSTİYORUM!',
   'c.wig_dog.tagline': 'Kusursuz küt saç. Yargılayan bakış.',
@@ -388,9 +431,11 @@ const trTr = <String, String>{
   'c.wink_cat.lore': 'Kanepeye uzanmış, dili dışarıda sana göz kırpan gri-beyaz kedi; sanki senin bilmediğin bir şeyi biliyor. Onun cazibesine kimse karşı koyamaz.',
   'c.wink_cat.memeAlias': 'Göz kırpma ve dil çıkarma',
   'c.wink_cat.name': 'Göz Kırpan Kedi',
-  'c.wink_cat.passiveDescription': 'Bazen bir göz kırpmayla darbeden kaçar (%10).',
+  'c.wink_cat.passiveDescription':
+      'Bazen bir göz kırpmayla darbeden kaçar (%10).',
   'c.wink_cat.passiveName': 'Göz Kırpma',
-  'c.wink_cat.specialDescription': 'Yakındaki rakip büyülenir: saldıramadan ona doğru yürür.',
+  'c.wink_cat.specialDescription':
+      'Yakındaki rakip büyülenir: saldıramadan ona doğru yürür.',
   'c.wink_cat.specialName': 'Büyüleyici',
   'c.wink_cat.specialShout': ';)',
   'c.wink_cat.tagline': 'Dili dışarıda göz kırpıyor. Karşı konulmaz.',
@@ -437,7 +482,8 @@ const trTr = <String, String>{
   'howto.attackText': 'vurmak için dokun: doğru vuruş kendiliğinden rakibe doğru gider. SMASH için basılı tut.',
   'howto.intro': 'Rakibin hasarı (%) ne kadar yüksekse, vurduğunda o kadar uzağa uçar: onu ekranın dışına fırlat!',
   'howto.joystick': 'Joystick',
-  'howto.joystickText': 'hareket et; zıplamak için yukarı it. Platformdayken aşağı: in.',
+  'howto.joystickText':
+      'hareket et; zıplamak için yukarı it. Platformdayken aşağı: in.',
   'howto.jumpText': 'havada tekrar zıplayabilirsin; zıplamaların bitince seni arenaya doğru geri fırlatır.',
   'howto.mash': 'Dondun, uyudun ya da sersemledin mi? Daha çabuk kurtulmak için tuşlara art arda bas! (Uzman kontroller: Ayarlar > Yardım: Kapalı.)',
   'howto.ok': 'Anladım!',

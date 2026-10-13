@@ -13,8 +13,9 @@ class PauseOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = game.config.player;
-    const body = TextStyle(
+    final body = TextStyle(
       fontFamily: kPixelFont,
+      fontFamilyFallback: fontFallback,
       fontSize: 13,
       color: Color(0xFF6B5A78),
     );
@@ -90,6 +91,7 @@ class PauseOverlay extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: kPixelFont,
+                        fontFamilyFallback: fontFallback,
                         fontSize: 11,
                         color: Color(0xFF9A8FB0),
                       ),

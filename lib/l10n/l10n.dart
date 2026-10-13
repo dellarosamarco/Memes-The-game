@@ -61,3 +61,12 @@ String tr(String key, String it, [Map<String, Object?> args = const {}]) {
   }
   return s;
 }
+
+/// Fonts for the scripts the pixel font doesn't have (bundled subsets, see
+/// tool/subset_cjk_fonts.py), in the best order for the current language:
+/// Japanese gets the pixel font first, Chinese and Korean their own.
+List<String> get fontFallback => switch (L10n.code) {
+  'zh' => const ['NotoSansSC', 'NotoSansKR', 'DotGothic16'],
+  'ko' => const ['NotoSansKR', 'DotGothic16', 'NotoSansSC'],
+  _ => const ['DotGothic16', 'NotoSansSC', 'NotoSansKR'],
+};

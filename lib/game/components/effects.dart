@@ -5,6 +5,8 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
+
 /// Expanding ring (the "Voglio il Manager!" shout, the cursed smile...).
 class ShockwaveEffect extends PositionComponent {
   ShockwaveEffect({
@@ -99,6 +101,7 @@ class FloatingText extends PositionComponent with HasGameReference<FlameGame> {
   Future<void> onLoad() async {
     TextStyle style(Paint? fg) => TextStyle(
       fontFamily: 'Pixelify',
+      fontFamilyFallback: fontFallback,
       fontSize: fontSize,
       fontWeight: FontWeight.w900,
       foreground: fg,
@@ -409,6 +412,7 @@ class BigBanner extends PositionComponent with HasGameReference<FlameGame> {
   Future<void> onLoad() async {
     TextStyle style(Paint? fg) => TextStyle(
       fontFamily: 'Pixelify',
+      fontFamilyFallback: fontFallback,
       fontSize: 72,
       fontWeight: FontWeight.w900,
       foreground: fg,

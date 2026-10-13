@@ -40,6 +40,7 @@ class PixelText extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = TextStyle(
       fontFamily: kPixelFont,
+      fontFamilyFallback: fontFallback,
       fontSize: size,
       fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
       height: 1.1,

@@ -28,9 +28,11 @@ const trEn = <String, String>{
   'c.bike_dog.lore': 'A dog pedaling through traffic with a backpack on, like he\'s late for school. Behind him, a POLIS car. Nobody knows who\'s chasing whom.',
   'c.bike_dog.memeAlias': 'The bike dog with a backpack, chased by the Polis',
   'c.bike_dog.name': 'Bike Dog',
-  'c.bike_dog.passiveDescription': 'The longer he pedals in one direction, the faster he goes.',
+  'c.bike_dog.passiveDescription':
+      'The longer he pedals in one direction, the faster he goes.',
   'c.bike_dog.passiveName': 'Pedal Power',
-  'c.bike_dog.specialDescription': 'Calls the cops: a squad car zooms toward the opponent (14%).',
+  'c.bike_dog.specialDescription':
+      'Calls the cops: a squad car zooms toward the opponent (14%).',
   'c.bike_dog.specialName': 'POLIS!',
   'c.bike_dog.specialShout': 'WEE-WOO WEE-WOO!',
   'c.bike_dog.tagline': 'Backpack on, cops behind.',
@@ -42,7 +44,8 @@ const trEn = <String, String>{
   'c.bottle_patrick.name': 'Water Jug Patrick',
   'c.bottle_patrick.passiveDescription': 'His special recharges twice as fast.',
   'c.bottle_patrick.passiveName': 'Always Hydrated',
-  'c.bottle_patrick.specialDescription': 'A splash from the jug that pushes the opponent away.',
+  'c.bottle_patrick.specialDescription':
+      'A splash from the jug that pushes the opponent away.',
   'c.bottle_patrick.specialName': 'Water Splash',
   'c.bottle_patrick.specialShout': 'GLUG GLUG!',
   'c.bottle_patrick.tagline': 'Always hydrated. Unfortunately.',
@@ -52,9 +55,11 @@ const trEn = <String, String>{
   'c.bowl_chick.lore': 'A yellow chick with a black bowl cut trimmed with a ruler and a dignified side profile. His barber is a genius.',
   'c.bowl_chick.memeAlias': 'The chick with the black bowl cut',
   'c.bowl_chick.name': 'Bowl Cut Chick',
-  'c.bowl_chick.passiveDescription': 'Super light: long, floaty jumps, but gets launched easily.',
+  'c.bowl_chick.passiveDescription':
+      'Super light: long, floaty jumps, but gets launched easily.',
   'c.bowl_chick.passiveName': 'Featherweight',
-  'c.bowl_chick.specialDescription': 'Three chicks run at the opponent (9% each).',
+  'c.bowl_chick.specialDescription':
+      'Three chicks run at the opponent (9% each).',
   'c.bowl_chick.specialName': 'Peep Peep!',
   'c.bowl_chick.specialShout': 'PEEP PEEP PEEP!',
   'c.bowl_chick.tagline': 'A chick. With a bowl cut. Perfection.',
@@ -64,21 +69,26 @@ const trEn = <String, String>{
   'c.cheeks_dachshund.lore': 'The dachshund with cheeks puffed up like a hamster and an innocent look. Nobody knows what\'s in there. He won\'t talk: he can\'t.',
   'c.cheeks_dachshund.memeAlias': 'The dachshund with stuffed cheeks',
   'c.cheeks_dachshund.name': 'Hamster Dachshund',
-  'c.cheeks_dachshund.passiveDescription': 'Every hit he lands heals 1% damage.',
+  'c.cheeks_dachshund.passiveDescription':
+      'Every hit he lands heals 1% damage.',
   'c.cheeks_dachshund.passiveName': 'Roomy Cheeks',
-  'c.cheeks_dachshund.specialDescription': 'Puffs his cheeks: pushes away anyone nearby (9%) and floats upward.',
+  'c.cheeks_dachshund.specialDescription':
+      'Puffs his cheeks: pushes away anyone nearby (9%) and floats upward.',
   'c.cheeks_dachshund.specialName': 'Cheek Puff',
   'c.cheeks_dachshund.specialShout': '*PFFFFF*',
-  'c.cheeks_dachshund.tagline': 'He\'s hiding something in his cheeks. Everything.',
+  'c.cheeks_dachshund.tagline':
+      'He\'s hiding something in his cheeks. Everything.',
   'c.chill_dog.hurt0': 'So stressful.',
   'c.chill_dog.hurt1': 'You\'re ruining my chill.',
   'c.chill_dog.hurt2': 'Hey, relax.',
   'c.chill_dog.lore': 'The blond chihuahua sprawled on a pillow with paws behind his head and legs crossed, like a boss on vacation. Stress doesn\'t even know his address.',
   'c.chill_dog.memeAlias': 'The chihuahua lounging with paws behind his head',
   'c.chill_dog.name': 'Chill Chihuahua',
-  'c.chill_dog.passiveDescription': 'Standing still, he chills out and heals 1% per second.',
+  'c.chill_dog.passiveDescription':
+      'Standing still, he chills out and heals 1% per second.',
   'c.chill_dog.passiveName': 'Total Chill',
-  'c.chill_dog.specialDescription': 'The opponent moves in slow motion for 2 seconds.',
+  'c.chill_dog.specialDescription':
+      'The opponent moves in slow motion for 2 seconds.',
   'c.chill_dog.specialName': 'Vacation Mode',
   'c.chill_dog.specialShout': 'I\'M ON VACATION',
   'c.chill_dog.tagline': 'Paws behind head, legs crossed. Zen.',
@@ -90,7 +100,8 @@ const trEn = <String, String>{
   'c.drip_pig.name': 'Drip Pig',
   'c.drip_pig.passiveDescription': 'His specials deal 20% more damage.',
   'c.drip_pig.passiveName': 'Gold Chain',
-  'c.drip_pig.specialDescription': 'For 4 seconds he hears nothing: hits don\'t move him.',
+  'c.drip_pig.specialDescription':
+      'For 4 seconds he hears nothing: hits don\'t move him.',
   'c.drip_pig.specialName': 'Noise Cancelling',
   'c.drip_pig.specialShout': 'CAN\'T HEAR YOU, GOT MY AIRPODS IN',
   'c.drip_pig.tagline': 'Fresh fade, AirPods and a gold chain.',
@@ -102,7 +113,8 @@ const trEn = <String, String>{
   'c.ears_dog.name': 'Big Ears',
   'c.ears_dog.passiveDescription': 'Jumps higher than anyone.',
   'c.ears_dog.passiveName': 'Spring Ears',
-  'c.ears_dog.specialDescription': 'A smile so white it blinds and freezes anyone nearby (6%).',
+  'c.ears_dog.specialDescription':
+      'A smile so white it blinds and freezes anyone nearby (6%).',
   'c.ears_dog.specialName': 'Dazzling Dentures',
   'c.ears_dog.specialShout': '*DAZZLING SMILE*',
   'c.ears_dog.tagline': 'Human ears. Human teeth. Why?',
@@ -112,9 +124,11 @@ const trEn = <String, String>{
   'c.gta_bean.lore': 'TV\'s clumsiest little man, lost by mistake on the streets of San Andreas, in a brown jacket and red tie, with the face of someone who has no idea how he got there.',
   'c.gta_bean.memeAlias': 'Mr. Bean inside GTA San Andreas',
   'c.gta_bean.name': 'Mr. San Andreas',
-  'c.gta_bean.passiveDescription': 'After every KO he stays invincible for 4 seconds.',
+  'c.gta_bean.passiveDescription':
+      'After every KO he stays invincible for 4 seconds.',
   'c.gta_bean.passiveName': 'Hospital Respawn',
-  'c.gta_bean.specialDescription': 'The most famous cheat: wipes 25% of his damage.',
+  'c.gta_bean.specialDescription':
+      'The most famous cheat: wipes 25% of his damage.',
   'c.gta_bean.specialName': 'HESOYAM',
   'c.gta_bean.specialShout': 'CHEAT ACTIVATED',
   'c.gta_bean.tagline': 'Raised eyebrow and PS2 graphics.',
@@ -124,7 +138,8 @@ const trEn = <String, String>{
   'c.helmet_pigeon.lore': 'A city pigeon wearing a rubber cap nobody knows how it got there. He doesn\'t care: he struts proudly like a knight in his helmet.',
   'c.helmet_pigeon.memeAlias': 'The pigeon with the weird helmet',
   'c.helmet_pigeon.name': 'Helmet Pigeon',
-  'c.helmet_pigeon.passiveDescription': 'The helmet makes him immune to projectiles and softens hits (-10%).',
+  'c.helmet_pigeon.passiveDescription':
+      'The helmet makes him immune to projectiles and softens hits (-10%).',
   'c.helmet_pigeon.passiveName': 'Safety Helmet',
   'c.helmet_pigeon.specialDescription': 'Takes off with a wing smack (8%) and flies for 2.5 seconds: hold JUMP to rise.',
   'c.helmet_pigeon.specialName': 'Urban Flight',
@@ -136,7 +151,8 @@ const trEn = <String, String>{
   'c.masha_man.lore': 'She\'s got Masha\'s pink headscarf and little dress, but the face of a grown man with a mustache and tired eyes. Even the Bear is scared of her.',
   'c.masha_man.memeAlias': 'Masha with a grown man\'s face',
   'c.masha_man.name': 'Mustache Masha',
-  'c.masha_man.passiveDescription': 'Heavy hands: smash attacks launch 25% farther.',
+  'c.masha_man.passiveDescription':
+      'Heavy hands: smash attacks launch 25% farther.',
   'c.masha_man.passiveName': 'Heavy Hands',
   'c.masha_man.specialDescription': 'Huge jump that hits anyone nearby (10%). Perfect for getting back to the arena.',
   'c.masha_man.specialName': 'Masha Leap',
@@ -148,21 +164,26 @@ const trEn = <String, String>{
   'c.nerd_cat.lore': 'The cat with black glasses, beaver teeth and a raised finger: the face of someone about to tell you that, um, actually, you\'re wrong. He always has a correction ready.',
   'c.nerd_cat.memeAlias': '"Um, actually..."',
   'c.nerd_cat.name': 'Nerd Cat',
-  'c.nerd_cat.passiveDescription': 'After taking a hit, his next hit deals 25% more.',
+  'c.nerd_cat.passiveDescription':
+      'After taking a hit, his next hit deals 25% more.',
   'c.nerd_cat.passiveName': 'Correction',
-  'c.nerd_cat.specialDescription': 'A little cloud of corrections that confuses whoever it hits (6%).',
+  'c.nerd_cat.specialDescription':
+      'A little cloud of corrections that confuses whoever it hits (6%).',
   'c.nerd_cat.specialName': 'Um, actually...',
   'c.nerd_cat.specialShout': 'UM, ACTUALLY...',
-  'c.nerd_cat.tagline': 'Glasses, buck teeth and a raised finger: he\'s about to correct you.',
+  'c.nerd_cat.tagline':
+      'Glasses, buck teeth and a raised finger: he\'s about to correct you.',
   'c.pearl_terrier.hurt0': 'How rude!',
   'c.pearl_terrier.hurt1': 'My pearls!',
   'c.pearl_terrier.hurt2': 'Back in my day...',
   'c.pearl_terrier.lore': 'The bull terrier with a bob wig, a pearl necklace and a green sweater. She looks at you like an aunt at Christmas dinner asking when you\'re getting married.',
   'c.pearl_terrier.memeAlias': 'The bull terrier with a bob and pearls',
   'c.pearl_terrier.name': 'Lady Terrier',
-  'c.pearl_terrier.passiveDescription': 'Likes earned after a fight are doubled.',
+  'c.pearl_terrier.passiveDescription':
+      'Likes earned after a fight are doubled.',
   'c.pearl_terrier.passiveName': 'Luxury Likes',
-  'c.pearl_terrier.specialDescription': 'A mighty handbag swing straight ahead (11%).',
+  'c.pearl_terrier.specialDescription':
+      'A mighty handbag swing straight ahead (11%).',
   'c.pearl_terrier.specialName': 'Handbag Smack',
   'c.pearl_terrier.specialShout': 'HOW DARE YOU?!',
   'c.pearl_terrier.tagline': 'Bob, pearls and a sweater. A real lady.',
@@ -174,7 +195,8 @@ const trEn = <String, String>{
   'c.pietro_pigeon.name': 'Pietro',
   'c.pietro_pigeon.passiveDescription': 'Accelerates and stops on a dime.',
   'c.pietro_pigeon.passiveName': 'Converse Kicks',
-  'c.pietro_pigeon.specialDescription': 'Calls the opponent, who stops to answer (4%).',
+  'c.pietro_pigeon.specialDescription':
+      'Calls the opponent, who stops to answer (4%).',
   'c.pietro_pigeon.specialName': 'Pietro is calling...',
   'c.pietro_pigeon.specialShout': 'PIETRO IS CALLING...',
   'c.pietro_pigeon.tagline': 'He\'s calling you. Pick up.',
@@ -198,7 +220,8 @@ const trEn = <String, String>{
   'c.pink_monkey.name': 'Pink Monkey',
   'c.pink_monkey.passiveDescription': 'Three jumps in the air.',
   'c.pink_monkey.passiveName': 'Monkey Agility',
-  'c.pink_monkey.specialDescription': 'Throws the plushie: hits from afar (9%).',
+  'c.pink_monkey.specialDescription':
+      'Throws the plushie: hits from afar (9%).',
   'c.pink_monkey.specialName': 'Plushie Toss',
   'c.pink_monkey.specialShout': 'CATCH!',
   'c.pink_monkey.tagline': 'A pink cap and a plushie to protect.',
@@ -210,7 +233,8 @@ const trEn = <String, String>{
   'c.robber_dog.name': 'Robber Chihuahua',
   'c.robber_dog.passiveDescription': 'Runs faster than anyone.',
   'c.robber_dog.passiveName': 'Quick Getaway',
-  'c.robber_dog.specialDescription': 'A lightning-fast, invulnerable dash that bowls over the opponent (10%).',
+  'c.robber_dog.specialDescription':
+      'A lightning-fast, invulnerable dash that bowls over the opponent (10%).',
   'c.robber_dog.specialName': 'The Heist',
   'c.robber_dog.specialShout': 'THIS IS A ROBBERY!',
   'c.robber_dog.tagline': 'Balaclava, knife and zero regrets.',
@@ -232,9 +256,11 @@ const trEn = <String, String>{
   'c.rock_patrick.lore': 'The happiest starfish on the seabed, with a rock on his head as a helmet, two tufts of seaweed and a smile full of crooked teeth. He doesn\'t think. He rolls.',
   'c.rock_patrick.memeAlias': 'Patrick with the rock helmet and seaweed',
   'c.rock_patrick.name': 'Rock Patrick',
-  'c.rock_patrick.passiveDescription': 'Rock head: his up attack deals double damage.',
+  'c.rock_patrick.passiveDescription':
+      'Rock head: his up attack deals double damage.',
   'c.rock_patrick.passiveName': 'Rock Head',
-  'c.rock_patrick.specialDescription': 'Curls into a ball and rolls forward, flattening the opponent (12%).',
+  'c.rock_patrick.specialDescription':
+      'Curls into a ball and rolls forward, flattening the opponent (12%).',
   'c.rock_patrick.specialName': 'Rolling Rock',
   'c.rock_patrick.specialShout': 'I AM A ROCK!',
   'c.rock_patrick.tagline': 'Rock helmet, seaweed and a gap-toothed grin.',
@@ -244,9 +270,11 @@ const trEn = <String, String>{
   'c.shock_guy.lore': 'The guy in the white t-shirt grabbing his hair with his eyes popping out: the universal reaction to any news, from a series finale to the restaurant bill.',
   'c.shock_guy.memeAlias': 'Hands in the hair',
   'c.shock_guy.name': 'Shocked Guy',
-  'c.shock_guy.passiveDescription': 'When hit, he runs away faster for 2 seconds.',
+  'c.shock_guy.passiveDescription':
+      'When hit, he runs away faster for 2 seconds.',
   'c.shock_guy.passiveName': 'Panic!',
-  'c.shock_guy.specialDescription': 'A shocked scream that stuns anyone nearby (7%).',
+  'c.shock_guy.specialDescription':
+      'A shocked scream that stuns anyone nearby (7%).',
   'c.shock_guy.specialName': 'NO WAY!',
   'c.shock_guy.specialShout': 'NO WAAAY!!',
   'c.shock_guy.tagline': 'Wide eyes, open mouth: NO WAY.',
@@ -256,9 +284,11 @@ const trEn = <String, String>{
   'c.shrek_kid.lore': 'A chubby-cheeked green ogre with a black bowl cut, white shirt and blue tie. He\'s got the face of someone who just wants to go back to his swamp.',
   'c.shrek_kid.memeAlias': 'The green ogre with a bowl cut and tie',
   'c.shrek_kid.name': 'Baby Ogre',
-  'c.shrek_kid.passiveDescription': 'Onion layers: if not hit for 3 seconds, heals 1% every 2 seconds.',
+  'c.shrek_kid.passiveDescription':
+      'Onion layers: if not hit for 3 seconds, heals 1% every 2 seconds.',
   'c.shrek_kid.passiveName': 'Onion Layers',
-  'c.shrek_kid.specialDescription': 'Slams the ground with a shockwave (9%). In the air, he plummets down.',
+  'c.shrek_kid.specialDescription':
+      'Slams the ground with a shockwave (9%). In the air, he plummets down.',
   'c.shrek_kid.specialName': 'Get Out of My Swamp!',
   'c.shrek_kid.specialShout': 'GET OUT OF MY SWAMP!',
   'c.shrek_kid.tagline': 'Bowl cut, shirt and tie: first day of school.',
@@ -282,7 +312,8 @@ const trEn = <String, String>{
   'c.smile_dog.name': 'Smile Dog',
   'c.smile_dog.passiveDescription': 'Heavy: hard to launch.',
   'c.smile_dog.passiveName': 'Thick Skin',
-  'c.smile_dog.specialDescription': 'Smiles: the opponent gets scared and runs away for 2 seconds.',
+  'c.smile_dog.specialDescription':
+      'Smiles: the opponent gets scared and runs away for 2 seconds.',
   'c.smile_dog.specialName': 'Cursed Smile',
   'c.smile_dog.specialShout': 'SMILE :)',
   'c.smile_dog.tagline': 'A blurry smile you\'ll never forget.',
@@ -292,9 +323,11 @@ const trEn = <String, String>{
   'c.sneaker_hen.lore': 'A hen squatting on a brand-new pair of panda Dunks, with a hundred-dollar bill tucked in her feathers. She doesn\'t hatch eggs: she hatches hype.',
   'c.sneaker_hen.memeAlias': 'The hen on panda Dunks with dollars',
   'c.sneaker_hen.name': 'Hypebeast Hen',
-  'c.sneaker_hen.passiveDescription': 'Likes earned after a fight are worth one and a half times as much.',
+  'c.sneaker_hen.passiveDescription':
+      'Likes earned after a fight are worth one and a half times as much.',
   'c.sneaker_hen.passiveName': 'Hustler',
-  'c.sneaker_hen.specialDescription': 'Throws an egg that explodes, flooring anyone nearby (12%).',
+  'c.sneaker_hen.specialDescription':
+      'Throws an egg that explodes, flooring anyone nearby (12%).',
   'c.sneaker_hen.specialName': 'Egg Bomb',
   'c.sneaker_hen.specialShout': 'BAWK BAWK!',
   'c.sneaker_hen.tagline': 'Panda Dunks and a hundred bucks under her wing.',
@@ -304,7 +337,8 @@ const trEn = <String, String>{
   'c.snow_baby.lore': 'The chubby baby doll in a lilac onesie hugging its snowman and nibbling it a little. Never lets go. Never.',
   'c.snow_baby.memeAlias': 'The chubby baby doll with the snowman',
   'c.snow_baby.name': 'Snowman Baby',
-  'c.snow_baby.passiveDescription': 'Landing on the opponent\'s head makes him bounce off it (4%).',
+  'c.snow_baby.passiveDescription':
+      'Landing on the opponent\'s head makes him bounce off it (4%).',
   'c.snow_baby.passiveName': 'Bouncy Belly',
   'c.snow_baby.specialDescription': 'Heals 5% and puts anyone nearby to sleep.',
   'c.snow_baby.specialName': 'Lullaby',
@@ -328,19 +362,24 @@ const trEn = <String, String>{
   'c.stitch_shrek.lore': 'The little doll with a green ogre face dressed in a blue alien onesie, ears and all. Looks super cute, but when he jumps on you, he bites.',
   'c.stitch_shrek.memeAlias': 'The baby ogre in an alien onesie',
   'c.stitch_shrek.name': 'Blue Ogrelet',
-  'c.stitch_shrek.passiveDescription': 'The soft onesie cushions hits: gets launched 12% less.',
+  'c.stitch_shrek.passiveDescription':
+      'The soft onesie cushions hits: gets launched 12% less.',
   'c.stitch_shrek.passiveName': 'Big Onesie',
-  'c.stitch_shrek.specialDescription': 'Pounces on the opponent and bites (12%).',
+  'c.stitch_shrek.specialDescription':
+      'Pounces on the opponent and bites (12%).',
   'c.stitch_shrek.specialName': 'Alien Assault',
   'c.stitch_shrek.specialShout': 'GRRR!',
-  'c.stitch_shrek.tagline': 'Ogre face, big blue onesie. Failed experiment (in a good way).',
+  'c.stitch_shrek.tagline':
+      'Ogre face, big blue onesie. Failed experiment (in a good way).',
   'c.suit_dachshund.hurt0': 'My tie!',
   'c.suit_dachshund.hurt1': 'Ka-ouch!',
   'c.suit_dachshund.hurt2': 'Not the Crocs!',
   'c.suit_dachshund.lore': 'The dachshund puppy in a black suit, white shirt and tie... wearing red Lightning McQueen Crocs. Ready for a wedding and for the Piston Cup.',
-  'c.suit_dachshund.memeAlias': 'The dachshund in a suit and Lightning McQueen Crocs',
+  'c.suit_dachshund.memeAlias':
+      'The dachshund in a suit and Lightning McQueen Crocs',
   'c.suit_dachshund.name': 'Ka-Chow Dachshund',
-  'c.suit_dachshund.passiveDescription': 'Armored Crocs: takes 15% less damage.',
+  'c.suit_dachshund.passiveDescription':
+      'Armored Crocs: takes 15% less damage.',
   'c.suit_dachshund.passiveName': 'Armored Crocs',
   'c.suit_dachshund.specialDescription': 'Turbo for 2.5 seconds: super fast, the first one he rams goes flying (10%).',
   'c.suit_dachshund.specialName': 'Ka-Chow!',
@@ -354,7 +393,8 @@ const trEn = <String, String>{
   'c.timeout_man.name': 'Mister Time-Out',
   'c.timeout_man.passiveDescription': 'Super heavy: the hardest to launch.',
   'c.timeout_man.passiveName': 'Giant',
-  'c.timeout_man.specialDescription': 'Stops the game: the opponent freezes for a moment and he heals 4%.',
+  'c.timeout_man.specialDescription':
+      'Stops the game: the opponent freezes for a moment and he heals 4%.',
   'c.timeout_man.specialName': 'TIME-OUT!',
   'c.timeout_man.specialShout': 'TIME-OUT!',
   'c.timeout_man.tagline': 'Hands in a T, tired eyes: that\'s enough.',
@@ -364,9 +404,11 @@ const trEn = <String, String>{
   'c.tongue_cat.lore': 'The tabby cat staring into the camera with big eyes and sticking out a tongue twice as long as his face. Nobody knows how it all fits in there.',
   'c.tongue_cat.memeAlias': 'The cat with the giant tongue',
   'c.tongue_cat.name': 'Tongue Cat',
-  'c.tongue_cat.passiveDescription': 'His hits slow the opponent down for a moment.',
+  'c.tongue_cat.passiveDescription':
+      'His hits slow the opponent down for a moment.',
   'c.tongue_cat.passiveName': 'Drool',
-  'c.tongue_cat.specialDescription': 'His tongue shoots forward, grabs the opponent and pulls them in (8%).',
+  'c.tongue_cat.specialDescription':
+      'His tongue shoots forward, grabs the opponent and pulls them in (8%).',
   'c.tongue_cat.specialName': 'Tongue Lash',
   'c.tongue_cat.specialShout': 'BLEGH!',
   'c.tongue_cat.tagline': 'Wide eyes and a looong tongue.',
@@ -376,7 +418,8 @@ const trEn = <String, String>{
   'c.wig_dog.lore': 'The chihuahua with a brown bob and the look of someone about to leave a one-star review. Never wrong, and even when she is, she still wants to speak to the manager.',
   'c.wig_dog.memeAlias': 'The chihuahua in a wig',
   'c.wig_dog.name': 'Wig Dog',
-  'c.wig_dog.passiveDescription': 'Hold JUMP in the air to glide: super long recoveries.',
+  'c.wig_dog.passiveDescription':
+      'Hold JUMP in the air to glide: super long recoveries.',
   'c.wig_dog.passiveName': 'Wig-Parachute',
   'c.wig_dog.specialDescription': 'A scream of outrage: a shockwave that blasts away anyone near you (11%).',
   'c.wig_dog.specialName': 'I Want the Manager!',
@@ -390,7 +433,8 @@ const trEn = <String, String>{
   'c.wink_cat.name': 'Wink Cat',
   'c.wink_cat.passiveDescription': 'Sometimes dodges a hit with a wink (10%).',
   'c.wink_cat.passiveName': 'Wink',
-  'c.wink_cat.specialDescription': 'A nearby opponent is spellbound: walks toward him unable to attack.',
+  'c.wink_cat.specialDescription':
+      'A nearby opponent is spellbound: walks toward him unable to attack.',
   'c.wink_cat.specialName': 'Charmer',
   'c.wink_cat.specialShout': ';)',
   'c.wink_cat.tagline': 'Winks with his tongue out. Irresistible.',
@@ -437,7 +481,8 @@ const trEn = <String, String>{
   'howto.attackText': 'tap to hit: the right attack fires off toward the opponent on its own. Hold for a SMASH.',
   'howto.intro': 'The more damage (%) your opponent has, the farther they fly when hit: launch them off the screen!',
   'howto.joystick': 'Joystick',
-  'howto.joystickText': 'move; push up to jump. Down on a platform: drop through.',
+  'howto.joystickText':
+      'move; push up to jump. Down on a platform: drop through.',
   'howto.jumpText': 'you can jump again in the air; out of jumps, it launches you back toward the arena.',
   'howto.mash': 'Frozen, asleep or stunned? Mash the buttons to break free faster! (Expert controls: Settings > Assist: No.)',
   'howto.ok': 'Got it!',
@@ -458,7 +503,8 @@ const trEn = <String, String>{
   'name.anonymous': 'Anonymous',
   'number.decimal': '.',
   'pause.controls': 'Controls',
-  'pause.keys': 'Arrows/WASD move · Z/SPACE jump · X/J attack · C/K special · ESC pause',
+  'pause.keys':
+      'Arrows/WASD move · Z/SPACE jump · X/J attack · C/K special · ESC pause',
   'pause.quit': 'Quit',
   'pause.resume': 'Resume',
   'pause.title': 'Paused',

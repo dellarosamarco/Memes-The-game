@@ -208,8 +208,9 @@ class _Info extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = character;
-    const body = TextStyle(
+    final body = TextStyle(
       fontFamily: kPixelFont,
+      fontFamilyFallback: fontFallback,
       color: Color(0xFF6B5A78),
       fontSize: 13,
       height: 1.25,
@@ -384,8 +385,9 @@ class _Ability extends StatelessWidget {
                   TextSpan(text: text),
                 ],
               ),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: kPixelFont,
+                fontFamilyFallback: fontFallback,
                 fontSize: 13,
                 color: Color(0xFF6B5A78),
               ),

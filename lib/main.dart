@@ -91,6 +91,7 @@ class _MemesAppState extends State<MemesApp> with WidgetsBindingObserver {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: ThemeData(
         fontFamily: 'Pixelify',
+        fontFamilyFallback: fontFallback,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF4FA3),

@@ -536,8 +536,9 @@ class FightProjectile extends PositionComponent
   late final _ehm = TextPainter(
     text: TextSpan(
       text: tr('fx.ehm', 'EHM...'),
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'Pixelify',
+        fontFamilyFallback: fontFallback,
         fontSize: 9,
         fontWeight: FontWeight.w700,
         color: Color(0xFF3A2440),
