@@ -33,6 +33,12 @@ enum Difficulty {
 }
 
 /// Everything that defines a match.
+/// Newcomers start on Easy until their first win, then on Normal.
+Difficulty firstDifficulty() =>
+    LocalStore.ready && LocalStore.instance.stat('wins') >= 1
+    ? Difficulty.normal
+    : Difficulty.easy;
+
 class MatchConfig {
   const MatchConfig({
     required this.player,

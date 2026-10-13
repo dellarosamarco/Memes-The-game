@@ -103,6 +103,10 @@ decorazioni animate.
   al centro il tasto Attacco sceglie da solo il colpo che raggiunge l'avversario (in alto, in
   basso, in avanti); fuori dall'arena la Speciale fa partire il recupero verso l'arena senza
   dover tenere su; una spinta in su del joystick fa saltare.
+  In più: il meme si ferma sul bordo dell'arena (spingi ancora un attimo per scendere
+  apposta), fuori dall'arena torna verso il centro e, se cade senza che tu faccia niente,
+  si salva da solo con i salti e il recupero; un attacco che mancherebbe di poco fa un
+  passetto avanti. Chi non ha ancora vinto parte a difficoltà Facile.
 - **Tasti generosi**: tutta la parte destra dello schermo è dei tasti, e un tocco va al tasto
   più vicino, così anche un pollice impreciso colpisce.
 - **Joystick fluttuante**: appare dove appoggi il pollice nella metà sinistra dello schermo.

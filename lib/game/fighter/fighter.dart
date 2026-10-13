@@ -453,6 +453,7 @@ class Fighter extends PositionComponent
       final row = (position.y / kTile).floor();
       if (!game.level.isStandable(ahead, row)) x = 0;
     }
+    if (_assisted) x = _assistMove(x, dt);
     if (character.passive == Passive.momentum) {
       final dir = x.abs() > .3 ? x.sign.toInt() : 0;
       _pedal = dir != 0 && dir == _pedalDir && !hitWall ? _pedal + dt : 0;
@@ -546,6 +547,7 @@ class Fighter extends PositionComponent
     // Out of air jumps: the jump button triggers the recovery, so players
     // who don't know "up + special" (or are on a touch screen) can still
     // make it back.
+    if (_assisted && _safetyNet()) return;
     if (_bufJump > 0 &&
         _lag <= 0 &&
         _coyote <= 0 &&
@@ -676,6 +678,7 @@ class Fighter extends PositionComponent
     }
     if (x.abs() <= .5) _faceNearest(90);
     _startMove(m);
+    if (_assisted && x.abs() <= .5) _stepIn();
   }
 
   void _startAerial() {
@@ -703,6 +706,85 @@ class Fighter extends PositionComponent
   /// Tests: force the simple controls on or off.
   @visibleForTesting
   static bool? assistOverride;
+
+  double _edgeHold = 0;
+
+  /// The arena's middle, to head back to.
+  double get _home => (game.stage.left + game.stage.right + 1) * kTile / 2;
+
+  /// Nothing to stand on below [x] for a long way down.
+  bool _cliffAt(double x) {
+    final c = (x / kTile).floor();
+    final r = (position.y / kTile).floor();
+    for (var i = 0; i < 10; i++) {
+      if (game.level.isStandable(c, r + i)) return false;
+    }
+    return true;
+  }
+
+  /// Simple controls: running off the arena by mistake is the most common
+  /// way to lose a life on a phone. The meme stops at the edge (keep
+  /// pushing for a moment to step off on purpose), and off the arena it
+  /// drifts back toward the middle when the stick is let go.
+  double _assistMove(double x, double dt) {
+    if (onGround && x.abs() > .3) {
+      final lookAhead = bodyWidth / 2 + 2 + velocity.x.abs() * .06;
+      if (_cliffAt(position.x + x.sign * lookAhead)) {
+        _edgeHold += dt;
+        if (_edgeHold < .4) {
+          if (velocity.x * x > 0) velocity.x = 0;
+          return 0;
+        }
+        return x;
+      }
+    }
+    _edgeHold = 0;
+    if (!onGround &&
+        x.abs() < .2 &&
+        _offStage &&
+        state != FighterState.attack) {
+      return _home > position.x ? .8 : -.8;
+    }
+    return x;
+  }
+
+  /// Simple controls: knocked off the arena and falling past the edge with
+  /// nothing pressed, the meme saves itself (air jumps first, then the
+  /// recovery). Returns true when it used the recovery.
+  bool _safetyNet() {
+    if (onGround ||
+        _lag > 0 ||
+        velocity.y < 120 ||
+        position.y < game.stage.mainTop * kTile - 10 ||
+        !_offStage) {
+      return false;
+    }
+    final dir = _home > position.x ? 1.0 : -1.0;
+    if (airJumps > 0) {
+      airJumps--;
+      facingRight = dir > 0;
+      velocity.x = dir * _runSpeed * .85;
+      _jump(_jumpSpeed * .95);
+      _spinAngle = 2 * pi;
+      Sound.play('double_jump', volume: .4);
+      game.world.add(PoofEffect(position: position.clone()));
+      return false;
+    }
+    if (!usedRecovery) {
+      _recovery();
+      return true;
+    }
+    return false;
+  }
+
+  /// Simple controls: an attack that would whiff by a hair steps in.
+  void _stepIn() {
+    final t = _target(100);
+    if (t == null || t.dx < 34 || t.dx > 85 || t.dy.abs() > 40) return;
+    final dir = facingRight ? 1.0 : -1.0;
+    final v = ((t.dx - 26) * 5).clamp(0.0, 260.0);
+    if (velocity.x * dir < v) velocity.x = dir * v;
+  }
 
   /// No ground under us for a long way: we're off the arena.
   bool get _offStage {

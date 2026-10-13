@@ -314,6 +314,55 @@ void main() {
     expect(p.velocity.x, greaterThan(0)); // toward the arena
   });
 
+  testWidgets('simple controls: edge stop and safety net', (tester) async {
+    Fighter.assistOverride = true;
+    addTearDown(() => Fighter.assistOverride = null);
+    final game = await boot(
+      tester,
+      const MatchConfig(
+        player: MemeCharacter.wigDog,
+        cpu: MemeCharacter.stareCat,
+        stage: 0,
+        items: false,
+      ),
+    );
+    for (var i = 0; i < 4 * 60; i++) {
+      game.update(1 / 60);
+    }
+    game.cpuOff = true;
+    final p = game.player, c = game.cpu;
+    c.specialTimer = 99;
+    c.position.x = (game.stage.left + 3) * 24.0;
+    final edge = (game.stage.right + 1) * 24.0;
+    p.position.x = edge - 40;
+    p.frozen = p.dizzy = p.asleep = p.hitstun = 0;
+    p.state = FighterState.normal;
+    p.percent = 0;
+    for (var i = 0; i < 60 && !p.onGround; i++) {
+      game.update(1 / 60);
+    }
+    // A short push toward the edge: the meme stops on it.
+    for (var i = 0; i < 18; i++) {
+      p.input.x = 1;
+      game.update(1 / 60);
+    }
+    expect(p.onGround, isTrue);
+    expect(p.position.x, lessThan(edge));
+    // Keep pushing: it steps off on purpose.
+    for (var i = 0; i < 40; i++) {
+      p.input.x = 1;
+      game.update(1 / 60);
+    }
+    expect(p.position.x, greaterThan(edge));
+    // Then let go: falling past the edge, it saves itself.
+    p.input.x = 0;
+    for (var i = 0; i < 4 * 60 && !p.onGround; i++) {
+      game.update(1 / 60);
+    }
+    expect(p.onGround, isTrue);
+    expect(p.stocks, 3);
+  });
+
   testWidgets('mashing buttons breaks a freeze sooner', (tester) async {
     final game = await boot(
       tester,

@@ -19,7 +19,7 @@ class ArcadeScreen extends StatefulWidget {
 }
 
 class _ArcadeScreenState extends State<ArcadeScreen> {
-  Difficulty _difficulty = Difficulty.normal;
+  Difficulty _difficulty = firstDifficulty();
   late ArcadeRun _run = _newRun();
 
   ArcadeRun _newRun() =>

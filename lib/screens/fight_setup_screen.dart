@@ -24,7 +24,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
   // Remembered between visits (for this session).
   static String? _lastOpponent;
   static int _lastStage = -1;
-  static Difficulty _lastDifficulty = Difficulty.normal;
+  static Difficulty? _lastDifficulty;
   static bool _lastItems = true;
 
   final _rnd = Random();
@@ -39,7 +39,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
 
   /// -1 = random arena.
   late int _stage = _lastStage;
-  late Difficulty _difficulty = _lastDifficulty;
+  late Difficulty _difficulty = _lastDifficulty ?? firstDifficulty();
   late bool _items = _lastItems;
 
   void _fight() {
