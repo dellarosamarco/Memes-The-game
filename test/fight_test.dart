@@ -285,6 +285,12 @@ void main() {
     for (var i = 0; i < 120 && !p.onGround; i++) {
       game.update(1 / 60);
     }
+    // (The CPU may have stunned us with its opening special.)
+    p.frozen = p.dizzy = p.asleep = p.hitstun = 0;
+    p.state = FighterState.normal;
+    for (var i = 0; i < 120 && !p.onGround; i++) {
+      game.update(1 / 60);
+    }
     // The opponent right above: a neutral attack becomes the up attack.
     c.position.setValues(p.position.x + 4, p.position.y - 60);
     c.velocity.setZero();
