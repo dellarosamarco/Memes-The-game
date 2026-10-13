@@ -148,7 +148,8 @@ void main() {
       final before = c.percent;
       // No specials or statuses in the way.
       c.specialTimer = 99;
-      p.frozen = p.asleep = p.scared = p.dizzy = 0;
+      p.frozen = p.asleep = p.scared = p.dizzy = p.hitstun = 0;
+      p.state = FighterState.normal;
       c.invincible = 0;
       c.frozen = 5; // hold still (a hit unfreezes)
       c.state = FighterState.normal;
