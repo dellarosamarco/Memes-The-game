@@ -9,6 +9,7 @@ import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import 'character_select_screen.dart';
 import 'game_screen.dart';
+import '../l10n/l10n.dart';
 
 /// Free fight: pick the opponent, the arena and how tough the CPU is.
 class FightSetupScreen extends StatefulWidget {
@@ -75,7 +76,9 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final stageName = _stage < 0 ? 'Arena casuale' : Stage.all[_stage].name;
+    final stageName = _stage < 0
+        ? tr('setup.randomArena', 'Arena casuale')
+        : Stage.all[_stage].name;
     return Scaffold(
       body: PixelBackdrop(
         child: SafeArea(
@@ -92,7 +95,12 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    const Expanded(child: PixelText('Lotta libera', size: 24)),
+                    Expanded(
+                      child: PixelText(
+                        tr('menu.freeFight', 'Lotta libera'),
+                        size: 24,
+                      ),
+                    ),
                     const SizedBox(width: 56),
                   ],
                 ),
@@ -107,8 +115,8 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                           padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
                           child: Column(
                             children: [
-                              const PixelText(
-                                'Avversario',
+                              PixelText(
+                                tr('setup.opponent', 'Avversario'),
                                 size: 15,
                                 color: kPlum,
                                 outline: false,
@@ -201,7 +209,9 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 PixelButton(
-                                  label: _items ? 'Oggetti: Sì' : 'Oggetti: No',
+                                  label: _items
+                                      ? tr('setup.itemsOn', 'Oggetti: Sì')
+                                      : tr('setup.itemsOff', 'Oggetti: No'),
                                   height: 54,
                                   fontSize: 12,
                                   padding: const EdgeInsets.symmetric(
@@ -215,7 +225,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                                 ),
                                 const SizedBox(width: 6),
                                 PixelButton(
-                                  label: 'Combatti!',
+                                  label: tr('setup.fight', 'Combatti!'),
                                   icon: 'play',
                                   onPressed: _fight,
                                 ),

@@ -2,12 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'screens/home_screen.dart';
 import 'services/local_store.dart';
 import 'services/sound.dart';
 import 'widgets/pixel_ui.dart';
 import 'widgets/trophy_toasts.dart';
+import 'l10n/l10n.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +21,8 @@ Future<void> main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await PixelAssets.preload();
   await LocalStore.init();
+  // The device's language, unless the player picked one.
+  L10n.use(LocalStore.instance.language);
   await Sound.init();
   runApp(const MemesApp());
 }
@@ -35,12 +39,34 @@ class _MemesAppState extends State<MemesApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    L10n.current.addListener(_languageChanged);
   }
 
   @override
   void dispose() {
+    L10n.current.removeListener(_languageChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  /// New language: every widget rebuilds in place (no screen is reset, so
+  /// changing it from the pause menu keeps the fight going).
+  void _languageChanged() {
+    setState(() {});
+    void rebuild(Element e) {
+      e.markNeedsBuild();
+      e.visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
+  }
+
+  @override
+  void didChangeLocales(List<Locale>? locales) {
+    // Following the device: switch along with it.
+    if (LocalStore.ready && LocalStore.instance.language == null) {
+      L10n.use(null);
+    }
   }
 
   @override
@@ -60,6 +86,9 @@ class _MemesAppState extends State<MemesApp> with WidgetsBindingObserver {
     return MaterialApp(
       title: 'Memes: The fight',
       debugShowCheckedModeBanner: false,
+      locale: Locale(L10n.code),
+      supportedLocales: [for (final c in L10n.languages.keys) Locale(c)],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: ThemeData(
         fontFamily: 'Pixelify',
         brightness: Brightness.dark,

@@ -8,17 +8,14 @@ import '../game/fighter/fighter.dart';
 import '../models/meme_character.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
+import '../l10n/l10n.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
-  const CharacterSelectScreen({
-    super.key,
-    required this.onChosen,
-    this.title = 'Scegli il tuo meme',
-  });
+  const CharacterSelectScreen({super.key, required this.onChosen, this.title});
 
   /// What happens once the player picks a meme (opens the next screen).
   final void Function(BuildContext context, MemeCharacter character) onChosen;
-  final String title;
+  final String? title;
 
   @override
   State<CharacterSelectScreen> createState() => _CharacterSelectScreenState();
@@ -79,7 +76,13 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      Expanded(child: PixelText(widget.title, size: 24)),
+                      Expanded(
+                        child: PixelText(
+                          widget.title ??
+                              tr('select.title', 'Scegli il tuo meme'),
+                          size: 24,
+                        ),
+                      ),
                       const SizedBox(width: 56),
                     ],
                   ),
@@ -164,7 +167,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                       ),
                       const SizedBox(width: 8),
                       PixelButton(
-                        label: 'Scegli',
+                        label: tr('select.pick', 'Scegli'),
                         icon: 'play',
                         color: PixelColor.pink,
                         onPressed: () => widget.onChosen(context, c),
@@ -242,9 +245,15 @@ class _Info extends StatelessWidget {
                       spacing: 14,
                       runSpacing: 2,
                       children: [
-                        _Stat('Velocità', Fighter.speedRating(c)),
-                        _Stat('Salto', Fighter.jumpRating(c)),
-                        _Stat('Peso', Fighter.weightRating(c)),
+                        _Stat(
+                          tr('stat.speed', 'Velocità'),
+                          Fighter.speedRating(c),
+                        ),
+                        _Stat(tr('stat.jump', 'Salto'), Fighter.jumpRating(c)),
+                        _Stat(
+                          tr('stat.weight', 'Peso'),
+                          Fighter.weightRating(c),
+                        ),
                       ],
                     ),
                   ],
@@ -256,10 +265,13 @@ class _Info extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           if (c.isOfTheDay)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(bottom: 4),
               child: PixelText(
-                'Meme del giorno: like doppi nel portafoglio!',
+                tr(
+                  'select.memeOfTheDay',
+                  'Meme del giorno: like doppi nel portafoglio!',
+                ),
                 size: 12,
                 color: Color(0xFFFF82B4),
                 outline: false,
@@ -282,8 +294,11 @@ class _Info extends StatelessWidget {
 }
 
 /// 8 -> "8s", 4.5 -> "4,5s".
-String _secs(double v) =>
-    '${v == v.roundToDouble() ? v.round() : v.toString().replaceAll('.', ',')}s';
+String _secs(double v) => tr('select.seconds', '{n}s', {
+  'n': v == v.roundToDouble()
+      ? v.round()
+      : v.toString().replaceAll('.', tr('number.decimal', ',')),
+});
 
 /// The original meme photo: a tap shows it big.
 class _Photo extends StatelessWidget {

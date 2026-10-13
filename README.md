@@ -158,6 +158,30 @@ lotte da 1-3 minuti, i KO arrivano di solito tra il 90% e il 160%, e un torneo d
   attacco (tieni premuto per lo smash), `C`/`K` speciale,
   `ESC`/`P` pausa.
 
+## Lingue
+
+Il gioco parla **15 lingue**: italiano, inglese, spagnolo, francese, tedesco, portoghese,
+russo, ucraino, polacco, olandese, turco, indonesiano, giapponese, coreano e cinese
+(semplificato). All'avvio usa la lingua del telefono (se non è tra queste, l'inglese) e
+segue i cambi di lingua del sistema; dalle **Impostazioni** (o dal menu di pausa) si può
+scegliere una lingua a mano o tornare ad "Automatica". Il cambio è immediato, anche a
+metà incontro.
+
+Come funziona: ogni testo nel codice è scritto come `tr('chiave', 'Testo italiano')`;
+meme, cappelli, trofei e arene si traducono da soli in base al loro id. Le traduzioni
+stanno in `lib/l10n/tr_<lingua>.dart` (generate da JSON con `tool/l10n_to_dart.py`); se
+manca una chiave si usa l'inglese, poi l'italiano. Per aggiungere o cambiare testi:
+
+```sh
+flutter test test/l10n_source_test.dart --plain-name "writes the data"
+python3 tool/extract_strings.py      # aggiorna lib/l10n/source_it.json
+flutter test test/l10n_source_test.dart   # controlla chiavi e segnaposto di ogni lingua
+```
+
+Il font pixel copre l'alfabeto latino e il cirillico; per giapponese, coreano e cinese il
+telefono usa il proprio font di sistema. Le lingue da destra a sinistra (arabo, ebraico)
+non sono incluse: richiederebbero di specchiare l'interfaccia di gioco.
+
 ## Pubblicazione
 
 Il gioco è pronto per Play Store, App Store e web: icona, schermata di avvio, solo

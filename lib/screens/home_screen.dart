@@ -13,6 +13,7 @@ import 'character_select_screen.dart';
 import 'fight_setup_screen.dart';
 import 'shop_screen.dart';
 import 'trophies_screen.dart';
+import '../l10n/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,8 +56,8 @@ class _HomeScreenState extends State<HomeScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const PixelText(
-                'Il tuo nome',
+              PixelText(
+                tr('home.yourName', 'Il tuo nome'),
                 size: 22,
                 color: Color(0xFFFF82B4),
               ),
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   PixelButton(
-                    label: 'Annulla',
+                    label: tr('common.cancel', 'Annulla'),
                     color: PixelColor.grey,
                     height: 46,
                     fontSize: 15,
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   const SizedBox(width: 10),
                   PixelButton(
-                    label: 'Salva',
+                    label: tr('common.save', 'Salva'),
                     color: PixelColor.mint,
                     height: 46,
                     fontSize: 15,
@@ -103,8 +104,13 @@ class _HomeScreenState extends State<HomeScreen>
     if (trimmed.isEmpty || !mounted) return;
     if (!NameFilter.isClean(trimmed)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Questo nome non è consentito, scegline un altro.'),
+        SnackBar(
+          content: Text(
+            tr(
+              'home.nameRejected',
+              'Questo nome non è consentito, scegline un altro.',
+            ),
+          ),
         ),
       );
       return;
@@ -189,21 +195,24 @@ class _HomeScreenState extends State<HomeScreen>
                   alignment: WrapAlignment.center,
                   children: [
                     PixelButton(
-                      label: 'Lotta libera',
+                      label: tr('menu.freeFight', 'Lotta libera'),
                       icon: 'play',
                       width: 220,
                       onPressed: () => _pick(
-                        'Lotta libera: scegli il tuo meme',
+                        tr(
+                          'menu.freeFightPick',
+                          'Lotta libera: scegli il tuo meme',
+                        ),
                         (c) => FightSetupScreen(player: c),
                       ),
                     ),
                     PixelButton(
-                      label: 'Arcade',
+                      label: tr('menu.arcade', 'Arcade'),
                       icon: 'trophy',
                       width: 220,
                       color: PixelColor.purple,
                       onPressed: () => _pick(
-                        'Arcade: scegli il tuo meme',
+                        tr('menu.arcadePick', 'Arcade: scegli il tuo meme'),
                         (c) => ArcadeScreen(player: c),
                       ),
                     ),
@@ -248,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     PixelButton(
-                      label: 'Negozio',
+                      label: tr('menu.shop', 'Negozio'),
                       icon: 'like',
                       color: PixelColor.yellow,
                       height: 44,
@@ -263,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     const SizedBox(height: 8),
                     PixelButton(
-                      label: 'Trofei',
+                      label: tr('menu.trophies', 'Trofei'),
                       icon: 'trophy',
                       color: PixelColor.mint,
                       height: 44,
@@ -309,7 +318,9 @@ class _HomeScreenState extends State<HomeScreen>
                       const PixelIcon('trophy', scale: 1.5),
                       const SizedBox(width: 6),
                       PixelText(
-                        '${store.stat('wins')} vittorie',
+                        tr('home.wins', '{n} vittorie', {
+                          'n': store.stat('wins'),
+                        }),
                         size: 14,
                         color: kPlum,
                         outline: false,
@@ -367,7 +378,9 @@ class _DailyMeme extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         PixelText(
-          'Meme del giorno: ${character.name}',
+          tr('home.memeOfTheDay', 'Meme del giorno: {name}', {
+            'name': character.name,
+          }),
           size: 13,
           color: kPlum,
           outline: false,

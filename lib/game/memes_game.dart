@@ -22,14 +22,16 @@ import 'debug/debug_bridge.dart';
 import 'fighter/fighter.dart';
 import 'level.dart';
 import 'stages.dart';
+import '../l10n/l10n.dart';
 
 enum Difficulty {
   easy('Facile'),
   normal('Normale'),
   hard('Difficile');
 
-  const Difficulty(this.label);
-  final String label;
+  const Difficulty(this._label);
+  final String _label;
+  String get label => tr('difficulty.$name', _label);
 }
 
 /// Everything that defines a match.
@@ -501,7 +503,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     this.winner = winner;
     _slowMo = 1.2;
     _resultsIn = 2.2;
-    camera.viewport.add(_banner = BigBanner('GAME!'));
+    camera.viewport.add(_banner = BigBanner(tr('fx.game', 'GAME!')));
     for (final f in fighters) {
       f.input.clear();
     }

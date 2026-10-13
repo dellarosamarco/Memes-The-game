@@ -192,7 +192,7 @@ extension FighterSpecials on Fighter {
           game.world.add(
             FloatingText(
               position: o.mid - Vector2(0, 36),
-              text: 'Pronto?',
+              text: tr('fx.phone', 'Pronto?'),
               fontSize: 9,
               color: const Color(0xFF7CFFA0),
               duration: 1.3,
@@ -263,7 +263,7 @@ extension FighterSpecials on Fighter {
           game.world.add(
             FloatingText(
               position: o.mid - Vector2(0, 40),
-              text: 'PAUSA',
+              text: tr('fx.timeout', 'PAUSA'),
               fontSize: 10,
               color: const Color(0xFF9AD0FF),
               duration: 1.1,

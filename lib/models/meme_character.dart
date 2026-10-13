@@ -1,4 +1,10 @@
+// Named parameters can't be private: the texts go through the initializer
+// list so the getters can translate them.
+// ignore_for_file: prefer_initializing_formals
+
 import 'package:flutter/material.dart';
+
+import '../l10n/l10n.dart';
 
 /// Movement perk every meme has all the time.
 enum Passive {
@@ -76,30 +82,43 @@ enum SpecialType {
 class MemeCharacter {
   const MemeCharacter({
     required this.id,
-    required this.name,
-    required this.memeAlias,
-    required this.tagline,
-    required this.lore,
+    required String name,
+    required String memeAlias,
+    required String tagline,
+    required String lore,
     required this.color,
     required this.hearts,
     required this.runSpeed,
     required this.jumpSpeed,
     required this.passive,
-    required this.passiveName,
-    required this.passiveDescription,
+    required String passiveName,
+    required String passiveDescription,
     required this.specialType,
-    required this.specialName,
-    required this.specialDescription,
+    required String specialName,
+    required String specialDescription,
     required this.specialCooldown,
-    required this.specialShout,
-    required this.hurtLines,
-  });
+    required String specialShout,
+    required List<String> hurtLines,
+  }) : _name = name,
+       _memeAlias = memeAlias,
+       _tagline = tagline,
+       _lore = lore,
+       _passiveName = passiveName,
+       _passiveDescription = passiveDescription,
+       _specialName = specialName,
+       _specialDescription = specialDescription,
+       _specialShout = specialShout,
+       _hurtLines = hurtLines;
 
   final String id;
-  final String name;
-  final String memeAlias;
-  final String tagline;
-  final String lore;
+  final String _name;
+  String get name => tr('c.$id.name', _name);
+  final String _memeAlias;
+  String get memeAlias => tr('c.$id.memeAlias', _memeAlias);
+  final String _tagline;
+  String get tagline => tr('c.$id.tagline', _tagline);
+  final String _lore;
+  String get lore => tr('c.$id.lore', _lore);
   final Color color;
 
   final int hearts;
@@ -107,19 +126,44 @@ class MemeCharacter {
   final double jumpSpeed;
 
   final Passive passive;
-  final String passiveName;
-  final String passiveDescription;
+  final String _passiveName;
+  String get passiveName => tr('c.$id.passiveName', _passiveName);
+  final String _passiveDescription;
+  String get passiveDescription =>
+      tr('c.$id.passiveDescription', _passiveDescription);
 
   final SpecialType specialType;
-  final String specialName;
-  final String specialDescription;
+  final String _specialName;
+  String get specialName => tr('c.$id.specialName', _specialName);
+  final String _specialDescription;
+  String get specialDescription =>
+      tr('c.$id.specialDescription', _specialDescription);
   final double specialCooldown;
 
   /// Big caption shown on screen when the special is used.
-  final String specialShout;
+  final String _specialShout;
+  String get specialShout => tr('c.$id.specialShout', _specialShout);
 
   /// Random lines shown when the character gets hit.
-  final List<String> hurtLines;
+  final List<String> _hurtLines;
+  List<String> get hurtLines => [
+    for (var i = 0; i < _hurtLines.length; i++)
+      tr('c.$id.hurt$i', _hurtLines[i]),
+  ];
+
+  /// Italian source texts, by translation key (for the translators).
+  Map<String, String> get sourceTexts => {
+    'c.$id.name': _name,
+    'c.$id.memeAlias': _memeAlias,
+    'c.$id.tagline': _tagline,
+    'c.$id.lore': _lore,
+    'c.$id.passiveName': _passiveName,
+    'c.$id.passiveDescription': _passiveDescription,
+    'c.$id.specialName': _specialName,
+    'c.$id.specialDescription': _specialDescription,
+    'c.$id.specialShout': _specialShout,
+    for (var i = 0; i < _hurtLines.length; i++) 'c.$id.hurt$i': _hurtLines[i],
+  };
 
   /// Where hats sit, relative to the feet (sprite frame: feet at y=58,
   /// centered at x=30), facing right.

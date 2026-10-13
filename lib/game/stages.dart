@@ -1,20 +1,31 @@
+// Named parameters can't be private: the texts go through the initializer
+// list so the getters can translate them.
+// ignore_for_file: prefer_initializing_formals
+
 import 'level.dart';
+import '../l10n/l10n.dart';
 
 /// An arena: a floating island (or islands) with platforms, built from a
 /// small description instead of hand-drawn ASCII so every arena is
 /// consistent: the island tapers underneath, spawns sit on the ground.
 class Stage {
   const Stage({
-    required this.name,
+    required String name,
     required this.theme,
     required this.islands,
     this.platforms = const [],
     this.blocks = const [],
     this.moving = const [],
     this.music = 'level',
-  });
+  }) : _name = name;
 
-  final String name;
+  final String _name;
+  String get name => tr('stage.${theme.name}', _name);
+
+  /// Italian source texts, by translation key (for the translators).
+  static Map<String, String> get sourceTexts => {
+    for (final s in all) 'stage.${s.theme.name}': s._name,
+  };
   final LevelTheme theme;
 
   /// Solid islands: (top row, first col, last col).

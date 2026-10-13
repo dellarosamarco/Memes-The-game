@@ -1,3 +1,5 @@
+import '../l10n/l10n.dart';
+
 /// Keeps player names on the public leaderboard clean (store requirement for
 /// user-generated content). Checks Italian and English swear words, also
 /// written with numbers/symbols in place of letters.
@@ -55,5 +57,6 @@ class NameFilter {
   }
 
   /// What the leaderboard shows for [name].
-  static String display(String name) => isClean(name) ? name : 'Anonimo';
+  static String display(String name) =>
+      isClean(name) ? name : tr('name.anonymous', 'Anonimo');
 }

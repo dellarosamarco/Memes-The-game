@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../screens/about_screen.dart';
 import '../services/local_store.dart';
 import '../services/sound.dart';
+import '../l10n/l10n.dart';
 
 /// The cute pixel-art UI kit: font, icons, 9-slice panels and buttons
 /// (all drawn by tool/pixel_world.py).
@@ -110,6 +111,7 @@ class PixelIcon extends StatelessWidget {
     'dice': (12, 10),
     'fist': (11, 9),
     'shield': (10, 10),
+    'globe': (12, 12),
   };
 
   @override
@@ -634,10 +636,92 @@ class _BouncyTextState extends State<BouncyText>
 
 /// Music / sound effects / vibration switches.
 class SettingsPanel extends StatefulWidget {
-  const SettingsPanel({super.key});
+  const SettingsPanel({super.key, this.language = true});
+
+  /// Show the language picker too (the pause menu has its own).
+  final bool language;
 
   @override
   State<SettingsPanel> createState() => _SettingsPanelState();
+}
+
+/// The language picker: shows the language in use, opens the list.
+class LanguageButton extends StatelessWidget {
+  const LanguageButton({super.key, this.width});
+
+  final double? width;
+
+  static Future<void> pick(BuildContext context) => showDialog<void>(
+    context: context,
+    builder: (ctx) {
+      Future<void> choose(String? code) async {
+        if (LocalStore.ready) await LocalStore.instance.setLanguage(code);
+        L10n.use(code);
+        if (ctx.mounted) Navigator.pop(ctx);
+      }
+
+      final saved = LocalStore.ready ? LocalStore.instance.language : null;
+      Widget option(String? code, String label) {
+        final on = code == saved;
+        return PixelButton(
+          label: label,
+          height: 38,
+          width: 168,
+          fontSize: 13,
+          color: on ? PixelColor.mint : PixelColor.purple,
+          onPressed: () => choose(code),
+        );
+      }
+
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(12),
+        child: PixelPanel(
+          width: 560,
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PixelText(
+                tr('settings.language', 'Lingua'),
+                size: 20,
+                color: const Color(0xFFFF82B4),
+              ),
+              const SizedBox(height: 6),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      option(null, tr('settings.languageAuto', 'Automatica')),
+                      for (final e in L10n.languages.entries)
+                        option(e.key, e.value),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<String>(
+    valueListenable: L10n.current,
+    builder: (context, code, _) => PixelButton(
+      label: L10n.languages[code],
+      icon: 'globe',
+      color: PixelColor.blue,
+      height: 40,
+      width: width,
+      fontSize: 13,
+      onPressed: () => pick(context),
+    ),
+  );
 }
 
 class _SettingsPanelState extends State<SettingsPanel> {
@@ -667,7 +751,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               ),
             ),
             PixelButton(
-              label: on ? 'Sì' : 'No',
+              label: on ? tr('common.yes', 'Sì') : tr('common.no', 'No'),
               height: 40,
               width: 76,
               fontSize: 14,
@@ -685,10 +769,35 @@ class _SettingsPanelState extends State<SettingsPanel> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        row('music', 'Musica', store.musicOn, Sound.setMusicOn),
-        row('sound', 'Effetti', store.sfxOn, store.setSfxOn),
-        row('vibrate', 'Vibrazione', store.hapticsOn, store.setHapticsOn),
-        row('fist', 'Assistito', store.assistOn, store.setAssistOn),
+        row(
+          'music',
+          tr('settings.music', 'Musica'),
+          store.musicOn,
+          Sound.setMusicOn,
+        ),
+        row(
+          'sound',
+          tr('settings.sfx', 'Effetti'),
+          store.sfxOn,
+          store.setSfxOn,
+        ),
+        row(
+          'vibrate',
+          tr('settings.haptics', 'Vibrazione'),
+          store.hapticsOn,
+          store.setHapticsOn,
+        ),
+        row(
+          'fist',
+          tr('settings.assist', 'Assistito'),
+          store.assistOn,
+          store.setAssistOn,
+        ),
+        if (widget.language)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: LanguageButton(width: 216),
+          ),
       ],
     );
   }
@@ -703,7 +812,11 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const PixelText('Impostazioni', size: 22, color: Color(0xFFFF82B4)),
+          PixelText(
+            tr('settings.title', 'Impostazioni'),
+            size: 22,
+            color: Color(0xFFFF82B4),
+          ),
           const SizedBox(height: 8),
           const SettingsPanel(),
           const SizedBox(height: 10),
@@ -711,7 +824,7 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
             spacing: 10,
             children: [
               PixelButton(
-                label: 'Info',
+                label: tr('settings.info', 'Info'),
                 color: PixelColor.grey,
                 height: 44,
                 onPressed: () {
@@ -722,7 +835,7 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
                 },
               ),
               PixelButton(
-                label: 'Ok',
+                label: tr('common.ok', 'OK'),
                 color: PixelColor.pink,
                 height: 44,
                 onPressed: () => Navigator.pop(ctx),

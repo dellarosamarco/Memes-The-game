@@ -11,6 +11,7 @@ import '../services/achievements.dart';
 import '../services/local_store.dart';
 import '../services/sound.dart';
 import '../widgets/pixel_ui.dart';
+import '../l10n/l10n.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.config, this.arcade});
@@ -118,8 +119,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             },
           },
           initialActiveOverlays: const [MemesGame.overlayHud],
-          loadingBuilder: (_) =>
-              const Center(child: PixelText('Caricamento...', size: 22)),
+          loadingBuilder: (_) => Center(
+            child: PixelText(tr('common.loading', 'Caricamento...'), size: 22),
+          ),
         ),
       ),
     );

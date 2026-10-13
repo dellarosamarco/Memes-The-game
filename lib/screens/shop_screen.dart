@@ -7,6 +7,7 @@ import '../services/local_store.dart';
 import '../services/sound.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
+import '../l10n/l10n.dart';
 
 /// Spend the likes you collected on cute hats.
 class ShopScreen extends StatefulWidget {
@@ -57,7 +58,9 @@ class _ShopScreenState extends State<ShopScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    const Expanded(child: PixelText('Negozio', size: 26)),
+                    Expanded(
+                      child: PixelText(tr('menu.shop', 'Negozio'), size: 26),
+                    ),
                     PixelPanel(
                       px: 1.5,
                       padding: const EdgeInsets.fromLTRB(12, 6, 14, 9),
@@ -178,9 +181,9 @@ class _HatCard extends StatelessWidget {
             ),
             PixelButton(
               label: equipped
-                  ? 'Togli'
+                  ? tr('shop.takeOff', 'Togli')
                   : owned
-                  ? 'Indossa'
+                  ? tr('shop.wear', 'Indossa')
                   : '${hat.price}',
               icon: owned ? null : 'like',
               height: 38,

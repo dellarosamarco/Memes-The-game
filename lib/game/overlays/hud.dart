@@ -7,6 +7,7 @@ import '../../services/sound.dart';
 import '../../widgets/pixel_ui.dart';
 import '../fighter/fighter.dart';
 import '../memes_game.dart';
+import '../../l10n/l10n.dart';
 
 /// In-fight HUD: both fighters' cards on top, touch controls at the bottom.
 class Hud extends StatelessWidget {
@@ -138,7 +139,7 @@ class FighterCard extends StatelessWidget {
                     ),
                   const SizedBox(width: 4),
                   PixelText(
-                    f.isCpu ? 'CPU' : 'TU',
+                    f.isCpu ? tr('hud.cpu', 'CPU') : tr('hud.you', 'TU'),
                     size: 10,
                     color: kPlum,
                     outline: false,
@@ -327,7 +328,7 @@ class _ButtonPadState extends State<_ButtonPad> {
                     builder: (_, _, _) => _PadButton(
                       key: _keys[_special],
                       icon: 'bolt',
-                      label: 'Speciale',
+                      label: tr('btn.special', 'Speciale'),
                       size: 64,
                       color: game.player.specialReady ? 'yellow' : 'grey',
                       progress: game.player.specialProgress,
@@ -341,7 +342,7 @@ class _ButtonPadState extends State<_ButtonPad> {
                   child: _PadButton(
                     key: _keys[_attack],
                     icon: 'fist',
-                    label: 'Attacco',
+                    label: tr('btn.attack', 'Attacco'),
                     size: 78,
                     color: 'pink',
                     down: _down[_attack],
@@ -353,7 +354,7 @@ class _ButtonPadState extends State<_ButtonPad> {
                   child: _PadButton(
                     key: _keys[_jump],
                     icon: 'up',
-                    label: 'Salto',
+                    label: tr('btn.jump', 'Salto'),
                     size: 70,
                     color: 'blue',
                     down: _down[_jump],

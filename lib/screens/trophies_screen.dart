@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/achievements.dart';
 import '../services/local_store.dart';
 import '../widgets/pixel_ui.dart';
+import '../l10n/l10n.dart';
 
 class TrophiesScreen extends StatelessWidget {
   const TrophiesScreen({super.key});
@@ -31,7 +32,10 @@ class TrophiesScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: PixelText(
-                        'Trofei  ${got.length}/${Achievements.all.length}',
+                        tr('trophies.title', 'Trofei  {n}/{total}', {
+                          'n': got.length,
+                          'total': Achievements.all.length,
+                        }),
                         size: 24,
                       ),
                     ),

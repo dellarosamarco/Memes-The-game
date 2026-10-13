@@ -18,6 +18,7 @@ import '../physics.dart';
 import '../pixel.dart';
 import '../stages.dart';
 import 'moves.dart';
+import '../../l10n/l10n.dart';
 
 part 'specials.dart';
 
@@ -975,7 +976,7 @@ class Fighter extends PositionComponent
       game.world.add(
         FloatingText(
           position: mid - Vector2(0, 34),
-          text: ';) Mancato!',
+          text: tr('fx.winkDodge', ';) Mancato!'),
           fontSize: 9,
           color: const Color(0xFFFF9ECF),
         ),
@@ -984,7 +985,11 @@ class Fighter extends PositionComponent
     }
     if (projectile && character.passive == Passive.helmet) {
       game.world.add(
-        FloatingText(position: mid - Vector2(0, 30), text: 'TOC!', fontSize: 9),
+        FloatingText(
+          position: mid - Vector2(0, 30),
+          text: tr('fx.helmet', 'TOC!'),
+          fontSize: 9,
+        ),
       );
       return;
     }
@@ -1002,7 +1007,7 @@ class Fighter extends PositionComponent
       game.world.add(
         FloatingText(
           position: mid - Vector2(0, 34),
-          text: 'Piumino KO!',
+          text: tr('fx.puffer', 'Piumino KO!'),
           color: const Color(0xFF8CC8FF),
         ),
       );
@@ -1100,7 +1105,7 @@ class Fighter extends PositionComponent
       game.world.add(
         FloatingText(
           position: mid - Vector2(0, 30),
-          text: 'ARMOR',
+          text: tr('fx.armor', 'ARMOR'),
           fontSize: 8,
         ),
       );
@@ -1136,7 +1141,7 @@ class Fighter extends PositionComponent
       game.world.add(
         _comboText = FloatingText(
           position: mid - Vector2(0, 60),
-          text: '$_comboHits HIT!',
+          text: tr('fx.combo', '{n} HIT!', {'n': _comboHits}),
           fontSize: 9 + min(_comboHits, 7).toDouble(),
           color: attacker.slot == 0
               ? const Color(0xFFFF82B4)

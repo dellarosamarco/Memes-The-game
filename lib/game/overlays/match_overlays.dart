@@ -8,6 +8,7 @@ import '../../widgets/pixel_ui.dart';
 import '../../widgets/sprite_view.dart';
 import '../fighter/fighter.dart';
 import '../memes_game.dart';
+import '../../l10n/l10n.dart';
 
 /// "3, 2, 1, VIA!" before the fight (with the arena name first).
 class CountdownOverlay extends StatelessWidget {
@@ -26,13 +27,15 @@ class CountdownOverlay extends StatelessWidget {
           final String text;
           final double size;
           if (c > 3) {
-            text = round != null ? 'Round $round' : game.stage.name;
+            text = round != null
+                ? tr('countdown.round', 'Round {n}', {'n': round})
+                : game.stage.name;
             size = 30;
           } else if (c > 0) {
             text = '${c.ceil()}';
             size = 80;
           } else {
-            text = 'VIA!';
+            text = tr('countdown.go', 'VIA!');
             size = 80;
           }
           // Up in the sky (not where the fighters meet); "VIA!" fades out.
@@ -95,11 +98,11 @@ class ResultsOverlay extends StatelessWidget {
     final round = game.config.arcadeRound;
     final String title;
     if (arcadeChampion) {
-      title = 'CAMPIONE!';
+      title = tr('results.champion', 'CAMPIONE!');
     } else if (won) {
-      title = 'VITTORIA!';
+      title = tr('results.victory', 'VITTORIA!');
     } else {
-      title = 'SCONFITTA';
+      title = tr('results.defeat', 'SCONFITTA');
     }
     final winner = game.winner?.character ?? game.player.character;
     return Container(
@@ -124,8 +127,12 @@ class ResultsOverlay extends StatelessWidget {
                 _Winner(character: winner),
                 PixelText(
                   won
-                      ? '${winner.name} vince!'
-                      : '${winner.name} ti ha battuto',
+                      ? tr('results.wins', '{name} vince!', {
+                          'name': winner.name,
+                        })
+                      : tr('results.beatYou', '{name} ti ha battuto', {
+                          'name': winner.name,
+                        }),
                   size: 15,
                 ),
               ],
@@ -139,7 +146,9 @@ class ResultsOverlay extends StatelessWidget {
                 children: [
                   if (round != null)
                     PixelText(
-                      'Arcade · round $round/8',
+                      tr('results.arcadeRound', 'Arcade · round {n}/8', {
+                        'n': round,
+                      }),
                       size: 13,
                       color: kPlum,
                       outline: false,
@@ -152,7 +161,9 @@ class ResultsOverlay extends StatelessWidget {
                       const PixelIcon('like', scale: 2),
                       const SizedBox(width: 6),
                       PixelText(
-                        '+${game.likesEarned} like',
+                        tr('results.likes', '+{n} like', {
+                          'n': game.likesEarned,
+                        }),
                         size: 20,
                         color: const Color(0xFFFF82B4),
                       ),
@@ -166,7 +177,7 @@ class ResultsOverlay extends StatelessWidget {
                     children: [
                       if (onNext != null)
                         PixelButton(
-                          label: 'Prossimo round',
+                          label: tr('results.nextRound', 'Prossimo round'),
                           icon: 'play',
                           color: PixelColor.mint,
                           height: 46,
@@ -175,7 +186,9 @@ class ResultsOverlay extends StatelessWidget {
                         )
                       else if (!arcadeChampion)
                         PixelButton(
-                          label: round != null ? 'Riprova' : 'Rivincita',
+                          label: round != null
+                              ? tr('results.retry', 'Riprova')
+                              : tr('results.rematch', 'Rivincita'),
                           icon: 'replay',
                           color: PixelColor.mint,
                           height: 46,
@@ -184,7 +197,7 @@ class ResultsOverlay extends StatelessWidget {
                         ),
                       if (round == null)
                         PixelButton(
-                          label: 'Cambia',
+                          label: tr('results.change', 'Cambia'),
                           icon: 'left',
                           color: PixelColor.purple,
                           height: 46,
@@ -193,7 +206,7 @@ class ResultsOverlay extends StatelessWidget {
                         ),
                       if (!won) const _PayRespects(),
                       PixelButton(
-                        label: 'Menu',
+                        label: tr('results.menu', 'Menu'),
                         icon: 'home',
                         color: PixelColor.grey,
                         height: 46,
@@ -253,12 +266,20 @@ class _StatsTable extends StatelessWidget {
         2: FlexColumnWidth(),
       },
       children: [
-        row('', 'TU', 'CPU'),
-        row('KO', '${p.kos}', '${c.kos}'),
-        row('Cadute', '${p.falls}', '${c.falls}'),
-        row('Danni inflitti', dmg(p), dmg(c)),
-        row('Combo migliore', '${p.bestCombo}', '${c.bestCombo}'),
-        row('Speciali', '${p.specialsUsed}', '${c.specialsUsed}'),
+        row('', tr('hud.you', 'TU'), tr('hud.cpu', 'CPU')),
+        row(tr('results.kos', 'KO'), '${p.kos}', '${c.kos}'),
+        row(tr('results.falls', 'Cadute'), '${p.falls}', '${c.falls}'),
+        row(tr('results.damage', 'Danni inflitti'), dmg(p), dmg(c)),
+        row(
+          tr('results.bestCombo', 'Combo migliore'),
+          '${p.bestCombo}',
+          '${c.bestCombo}',
+        ),
+        row(
+          tr('results.specials', 'Speciali'),
+          '${p.specialsUsed}',
+          '${c.specialsUsed}',
+        ),
       ],
     );
   }
@@ -287,7 +308,7 @@ class _PayRespectsState extends State<_PayRespects> {
 
   @override
   Widget build(BuildContext context) => PixelButton(
-    label: _paid ? 'F' : 'Premi F',
+    label: _paid ? 'F' : tr('results.payRespects', 'Premi F'),
     color: _paid ? PixelColor.grey : PixelColor.yellow,
     height: 46,
     fontSize: 15,

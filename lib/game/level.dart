@@ -1,5 +1,7 @@
 import 'package:flame/components.dart';
 
+import '../l10n/l10n.dart';
+
 /// Tile size in world units (= pixels of the pixel art).
 const double kTile = 24;
 
@@ -16,8 +18,9 @@ enum LevelTheme {
   clouds('Nuvole Virali'),
   server('Il Server');
 
-  const LevelTheme(this.worldName);
-  final String worldName;
+  const LevelTheme(this._worldName);
+  final String _worldName;
+  String get worldName => tr('world.$name', _worldName);
 }
 
 /// Something placed in the level by a letter in the ASCII map.

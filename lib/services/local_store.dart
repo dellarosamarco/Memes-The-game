@@ -38,6 +38,11 @@ class LocalStore {
   Future<void> setSfxOn(bool v) => _prefs.setBool('sfx', v);
   Future<void> setHapticsOn(bool v) => _prefs.setBool('haptics', v);
 
+  /// The player's language (null: follow the device).
+  String? get language => _prefs.getString('lang');
+  Future<void> setLanguage(String? code) =>
+      code == null ? _prefs.remove('lang') : _prefs.setString('lang', code);
+
   /// Simple controls: smart attacks and automatic recovery.
   bool get assistOn => _prefs.getBool('assist') ?? true;
   Future<void> setAssistOn(bool v) => _prefs.setBool('assist', v);

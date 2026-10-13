@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
 import 'how_to_play.dart';
+import '../../l10n/l10n.dart';
 
 class PauseOverlay extends StatelessWidget {
   const PauseOverlay({super.key, required this.game});
@@ -32,8 +33,8 @@ class PauseOverlay extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const PixelText(
-                      'Pausa',
+                    PixelText(
+                      tr('pause.title', 'Pausa'),
                       size: 34,
                       color: Color(0xFFFF82B4),
                     ),
@@ -50,13 +51,13 @@ class PauseOverlay extends StatelessWidget {
                       alignment: WrapAlignment.center,
                       children: [
                         PixelButton(
-                          label: 'Riprendi',
+                          label: tr('pause.resume', 'Riprendi'),
                           icon: 'play',
                           color: PixelColor.mint,
                           onPressed: game.togglePause,
                         ),
                         PixelButton(
-                          label: 'Comandi',
+                          label: tr('pause.controls', 'Comandi'),
                           icon: 'gear',
                           color: PixelColor.blue,
                           onPressed: () => showDialog<void>(
@@ -71,17 +72,21 @@ class PauseOverlay extends StatelessWidget {
                           ),
                         ),
                         PixelButton(
-                          label: 'Esci',
+                          label: tr('pause.quit', 'Esci'),
                           icon: 'home',
                           color: PixelColor.grey,
                           onPressed: () => Navigator.of(context).pop(),
                         ),
+                        const LanguageButton(),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
-                      'C/K speciale · ESC pausa',
+                    Text(
+                      tr(
+                        'pause.keys',
+                        'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
+                            'C/K speciale · ESC pausa',
+                      ),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: kPixelFont,
@@ -97,7 +102,7 @@ class PauseOverlay extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SettingsPanel(),
+                    const SettingsPanel(language: false),
                     const SizedBox(height: 8),
                     Text(
                       '${c.passiveName}: ${c.passiveDescription}\n'

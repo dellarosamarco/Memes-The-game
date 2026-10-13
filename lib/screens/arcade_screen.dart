@@ -7,6 +7,7 @@ import '../services/local_store.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import 'game_screen.dart';
+import '../l10n/l10n.dart';
 
 /// Arcade: eight CPU fights in a row. Shows the ladder before starting.
 class ArcadeScreen extends StatefulWidget {
@@ -60,15 +61,23 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    const Expanded(child: PixelText('Arcade', size: 24)),
+                    Expanded(
+                      child: PixelText(tr('menu.arcade', 'Arcade'), size: 24),
+                    ),
                     const SizedBox(width: 56),
                   ],
                 ),
                 const SizedBox(height: 4),
                 PixelText(
                   best >= ArcadeRun.rounds
-                      ? 'Campione con ${widget.player.name}!'
-                      : 'Record con ${widget.player.name}: $best/${ArcadeRun.rounds}',
+                      ? tr('arcade.champion', 'Campione con {name}!', {
+                          'name': widget.player.name,
+                        })
+                      : tr('arcade.record', 'Record con {name}: {n}/{total}', {
+                          'name': widget.player.name,
+                          'n': best,
+                          'total': ArcadeRun.rounds,
+                        }),
                   size: 14,
                   color: const Color(0xFFFFE07A),
                 ),
@@ -85,8 +94,11 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const PixelText(
-                                '8 avversari, sempre più forti',
+                              PixelText(
+                                tr(
+                                  'arcade.ladder',
+                                  '8 avversari, sempre più forti',
+                                ),
                                 size: 14,
                                 color: kPlum,
                                 outline: false,
@@ -123,7 +135,7 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                       ),
                     const SizedBox(width: 14),
                     PixelButton(
-                      label: 'Inizia',
+                      label: tr('arcade.start', 'Inizia'),
                       icon: 'play',
                       width: 180,
                       onPressed: _start,
@@ -214,7 +226,7 @@ class _Rung extends StatelessWidget {
                 ),
         ),
         PixelText(
-          beaten ? 'OK' : '$number',
+          beaten ? tr('common.ok', 'OK') : '$number',
           size: 10,
           color: beaten ? const Color(0xFF7CFFA0) : Colors.white,
         ),

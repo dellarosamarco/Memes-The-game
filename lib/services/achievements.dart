@@ -4,12 +4,21 @@ import '../models/meme_character.dart';
 
 import 'local_store.dart';
 import 'sound.dart';
+import '../l10n/l10n.dart';
 
 class Trophy {
-  const Trophy(this.id, this.name, this.description);
+  const Trophy(this.id, this._name, this._description);
   final String id;
-  final String name;
-  final String description;
+  final String _name;
+  final String _description;
+  String get name => tr('trophy.$id.name', _name);
+  String get description => tr('trophy.$id.description', _description);
+
+  /// Italian source texts, by translation key (for the translators).
+  Map<String, String> get sourceTexts => {
+    'trophy.$id.name': _name,
+    'trophy.$id.description': _description,
+  };
 }
 
 /// Unlockable trophies. Unlocking one shows a toast anywhere in the app.

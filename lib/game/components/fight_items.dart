@@ -9,6 +9,7 @@ import '../memes_game.dart';
 import '../pixel.dart';
 import 'body.dart';
 import 'effects.dart';
+import '../../l10n/l10n.dart';
 
 /// Frames of `sprites/powerups.png`, in order.
 enum ItemKind {
@@ -18,8 +19,9 @@ enum ItemKind {
   coffee('Caffè!'),
   bomb('');
 
-  const ItemKind(this.label);
-  final String label;
+  const ItemKind(this._label);
+  final String _label;
+  String get label => tr('item.$name', _label);
 
   /// Good for whoever grabs it (the bomb is a hazard).
   bool get pickup => this != ItemKind.bomb;

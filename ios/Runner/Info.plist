@@ -6,6 +6,24 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>it</string>
+		<string>en</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>de</string>
+		<string>pt</string>
+		<string>ru</string>
+		<string>uk</string>
+		<string>pl</string>
+		<string>nl</string>
+		<string>tr</string>
+		<string>id</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>zh-Hans</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Memes: The fight</string>
 	<key>CFBundleExecutable</key>

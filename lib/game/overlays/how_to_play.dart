@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/pixel_ui.dart';
 import '../memes_game.dart';
+import '../../l10n/l10n.dart';
 
 /// "How to fight": the controls in one card. Shown before the first fight
 /// ever (holding the countdown) and from the pause menu.
@@ -66,15 +67,18 @@ class HowToPlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const PixelText(
-                'Come si combatte',
+              PixelText(
+                tr('howto.title', 'Come si combatte'),
                 size: 20,
                 color: Color(0xFFFF82B4),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Più danni (%) ha l\'avversario, più vola lontano quando lo '
-                'colpisci: scaraventalo fuori dallo schermo!',
+              Text(
+                tr(
+                  'howto.intro',
+                  'Più danni (%) ha l\'avversario, più vola lontano quando lo '
+                      'colpisci: scaraventalo fuori dallo schermo!',
+                ),
                 textAlign: TextAlign.center,
                 style: _body,
               ),
@@ -103,41 +107,56 @@ class HowToPlay extends StatelessWidget {
                         ),
                       ),
                     ),
-                    'Joystick',
-                    'muoviti; spingi in su per saltare. Giù su una '
-                        'piattaforma: scendi.',
+                    tr('howto.joystick', 'Joystick'),
+                    tr(
+                      'howto.joystickText',
+                      'muoviti; spingi in su per saltare. Giù su una '
+                          'piattaforma: scendi.',
+                    ),
                   ),
                   _row(
                     _button('fist', 'pink'),
-                    'Attacco',
-                    'tocca per colpire: il colpo giusto parte da solo verso '
-                        "l'avversario. Tieni premuto per lo SMASH.",
+                    tr('btn.attack', 'Attacco'),
+                    tr(
+                      'howto.attackText',
+                      'tocca per colpire: il colpo giusto parte da solo verso '
+                          "l'avversario. Tieni premuto per lo SMASH.",
+                    ),
                   ),
                   _row(
                     _button('bolt', 'yellow'),
-                    'Speciale',
-                    'la mossa del tuo meme. Fuori dall\'arena ti riporta '
-                        'su da sola.',
+                    tr('btn.special', 'Speciale'),
+                    tr(
+                      'howto.specialText',
+                      'la mossa del tuo meme. Fuori dall\'arena ti riporta '
+                          'su da sola.',
+                    ),
                   ),
                   _row(
                     _button('up', 'blue'),
-                    'Salto',
-                    'puoi saltare ancora in aria; finiti i salti, ti rilancia '
-                        'verso l\'arena.',
+                    tr('btn.jump', 'Salto'),
+                    tr(
+                      'howto.jumpText',
+                      'puoi saltare ancora in aria; finiti i salti, ti rilancia '
+                          'verso l\'arena.',
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Congelato, addormentato o stordito? Premi i tasti a raffica '
-                'per liberarti prima! (Comandi esperti: Impostazioni > '
-                'Assistito: No.)',
+              Text(
+                tr(
+                  'howto.mash',
+                  'Congelato, addormentato o stordito? Premi i tasti a raffica '
+                      'per liberarti prima! (Comandi esperti: Impostazioni > '
+                      'Assistito: No.)',
+                ),
                 textAlign: TextAlign.center,
                 style: _body,
               ),
               const SizedBox(height: 10),
               PixelButton(
-                label: 'Ho capito!',
+                label: tr('howto.ok', 'Ho capito!'),
                 icon: 'play',
                 color: PixelColor.mint,
                 height: 48,

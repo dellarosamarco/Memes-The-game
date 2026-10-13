@@ -8,6 +8,7 @@ import '../fighter/fighter.dart';
 import '../memes_game.dart';
 import 'body.dart';
 import 'effects.dart';
+import '../../l10n/l10n.dart';
 
 Paint _p(int c) => Paint()..color = Color(c);
 
@@ -532,10 +533,10 @@ class FightProjectile extends PositionComponent
     );
   }
 
-  static final _ehm = TextPainter(
-    text: const TextSpan(
-      text: 'EHM...',
-      style: TextStyle(
+  late final _ehm = TextPainter(
+    text: TextSpan(
+      text: tr('fx.ehm', 'EHM...'),
+      style: const TextStyle(
         fontFamily: 'Pixelify',
         fontSize: 9,
         fontWeight: FontWeight.w700,

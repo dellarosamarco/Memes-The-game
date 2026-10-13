@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/achievements.dart';
 import 'pixel_ui.dart';
+import '../l10n/l10n.dart';
 
 /// Shows "Trofeo sbloccato!" toasts on top of every screen.
 class TrophyToasts extends StatelessWidget {
@@ -73,8 +74,8 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const PixelText(
-                    'Trofeo sbloccato!',
+                  PixelText(
+                    tr('trophy.unlocked', 'Trofeo sbloccato!'),
                     size: 12,
                     color: Color(0xFF9A8FB0),
                     outline: false,

@@ -1,9 +1,17 @@
+import '../l10n/l10n.dart';
+
 /// Cosmetic hats, bought with the likes you collect.
 class Hat {
-  const Hat(this.id, this.name, this.price, this.index);
+  const Hat(this.id, this._name, this.price, this.index);
 
   final String id;
-  final String name;
+  final String _name;
+  String get name => tr('hat.$id', _name);
+
+  /// Italian source texts, by translation key (for the translators).
+  static Map<String, String> get sourceTexts => {
+    for (final h in all) 'hat.${h.id}': h._name,
+  };
   final int price;
 
   /// Frame in assets/images/sprites/hats.png (24x18 each).
