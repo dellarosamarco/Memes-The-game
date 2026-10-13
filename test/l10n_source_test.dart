@@ -32,13 +32,19 @@ void main() {
     File('build/l10n_data.json').writeAsStringSync(jsonEncode(dataTexts()));
   });
 
+  test('every language has a table', () {
+    expect(
+      translations.keys.toSet(),
+      L10n.languages.keys.where((c) => c != 'it').toSet(),
+    );
+  });
+
   test('every table has the source keys and keeps the placeholders', () {
     final source = (jsonDecode(
       File('lib/l10n/source_it.json').readAsStringSync(),
     ) as Map).cast<String, String>();
     final holes = RegExp(r'\{\w+\}');
     for (final MapEntry(key: code, value: table) in translations.entries) {
-      if (table.isEmpty) continue; // not translated yet
       final missing = source.keys.where((k) => !table.containsKey(k));
       expect(missing, isEmpty, reason: '$code is missing $missing');
       for (final MapEntry(:key, :value) in source.entries) {
