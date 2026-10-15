@@ -270,9 +270,13 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
     super.update(dt);
     if (isLoaded) {
-      _resolveHits();
+      // Once the match is decided nothing can change the result (the winner
+      // drifting off during the slow-mo must not count as a fall).
+      if (!matchOver) {
+        _resolveHits();
+        _checkBlastZones();
+      }
       _separate(dt);
-      _checkBlastZones();
       for (final f in fighters) {
         f.input.endFrame();
       }

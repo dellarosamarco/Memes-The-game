@@ -42,7 +42,10 @@ class PixelText extends StatelessWidget {
       fontFamily: kPixelFont,
       fontFamilyFallback: fontFallback,
       fontSize: size,
-      fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
+      // The bold weight's thick strokes close the small gaps of letters
+      // like C, e, 6 at small sizes (C reads O, 6 reads 8): small text is
+      // regular.
+      fontWeight: bold && size >= 16 ? FontWeight.w700 : FontWeight.w400,
       height: 1.1,
       letterSpacing: size * 0.03,
     );
@@ -63,7 +66,8 @@ class PixelText extends StatelessWidget {
           style: style.copyWith(
             foreground: Paint()
               ..style = PaintingStyle.stroke
-              ..strokeWidth = (size / 5).clamp(2.5, 7)
+              // Thin enough not to fill the letters' openings.
+              ..strokeWidth = (size / 7).clamp(1.5, 6)
               ..strokeJoin = StrokeJoin.miter
               ..color = kPlum,
           ),
