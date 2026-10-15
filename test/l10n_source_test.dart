@@ -45,16 +45,10 @@ void main() {
     ) as Map).cast<String, String>();
     final holes = RegExp(r'\{\w+\}');
     for (final MapEntry(key: code, value: table) in translations.entries) {
-      // English is the fallback of every other language: it must be
-      // complete. The others may lag behind for new texts (they show the
-      // English until translated).
       final missing = source.keys.where((k) => !table.containsKey(k));
-      if (code == 'en') {
-        expect(missing, isEmpty, reason: '$code is missing $missing');
-      }
+      expect(missing, isEmpty, reason: '$code is missing $missing');
       for (final MapEntry(:key, :value) in source.entries) {
         final want = holes.allMatches(value).map((m) => m[0]).toSet();
-        if (!table.containsKey(key)) continue;
         final got = holes.allMatches(table[key]!).map((m) => m[0]).toSet();
         expect(got, want, reason: '$code $key placeholders');
       }
