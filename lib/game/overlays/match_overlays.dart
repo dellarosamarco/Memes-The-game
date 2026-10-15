@@ -169,6 +169,15 @@ class ResultsOverlay extends StatelessWidget {
                       ),
                     ],
                   ),
+                  for (final m in game.missionsDone)
+                    PixelText(
+                      tr('results.missionDone', 'Missione completata: {text}', {
+                        'text': m.text,
+                      }),
+                      size: 11,
+                      color: const Color(0xFF2E9E6E),
+                      outline: false,
+                    ),
                   const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,

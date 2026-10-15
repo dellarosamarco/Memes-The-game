@@ -14,6 +14,9 @@ import 'fight_setup_screen.dart';
 import 'shop_screen.dart';
 import 'trophies_screen.dart';
 import '../l10n/l10n.dart';
+import '../services/missions.dart';
+import '../widgets/daily_reward.dart';
+import 'missions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,6 +40,13 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     Sound.music('menu');
+    // Once a day: the login reward.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Missions.refresh();
+      if (!mounted) return;
+      await showDailyReward(context);
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -257,6 +267,24 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    _Badge(
+                      count: Missions.claimable,
+                      child: PixelButton(
+                        label: tr('menu.missions', 'Missioni'),
+                        icon: 'star',
+                        color: PixelColor.pink,
+                        height: 44,
+                        fontSize: 14,
+                        onPressed: () => Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => const MissionsScreen(),
+                              ),
+                            )
+                            .then((_) => setState(() {})),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     PixelButton(
                       label: tr('menu.shop', 'Negozio'),
                       icon: 'like',
@@ -397,4 +425,38 @@ class _DailyMeme extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// A red count in the corner of a button (rewards waiting).
+class _Badge extends StatelessWidget {
+  const _Badge({required this.count, required this.child});
+
+  final int count;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (count <= 0) return child;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        Positioned(
+          right: -6,
+          top: -6,
+          child: Container(
+            width: 22,
+            height: 22,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF4D5E),
+              shape: BoxShape.circle,
+              border: Border.all(color: kPlum, width: 2),
+            ),
+            child: PixelText('$count', size: 12),
+          ),
+        ),
+      ],
+    );
+  }
 }

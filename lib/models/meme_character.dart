@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../services/local_store.dart';
 
 /// Movement perk every meme has all the time.
 enum Passive {
@@ -225,6 +226,27 @@ class MemeCharacter {
   }
 
   bool get isOfTheDay => id == ofTheDay().id;
+
+  /// The first [freeCount] memes are free; the others are unlocked with
+  /// likes, a bit pricier the further down the list.
+  static const freeCount = 12;
+  int get price {
+    final i = all.indexOf(this);
+    return i < freeCount ? 0 : 150 + (i - freeCount) * 20;
+  }
+
+  /// Playable: free, bought, or today's meme of the day (a free try).
+  bool get isUnlocked {
+    if (price == 0 || LocalStore.unlockAll || !LocalStore.ready) return true;
+    final s = LocalStore.instance;
+    return s.ownedMemes.contains(id) || isOfTheDay;
+  }
+
+  /// Bought or free for good (unlike the meme of the day's free try).
+  bool get isOwned {
+    if (price == 0 || LocalStore.unlockAll || !LocalStore.ready) return true;
+    return LocalStore.instance.ownedMemes.contains(id);
+  }
 
   static MemeCharacter byId(String id) =>
       all.firstWhere((c) => c.id == id, orElse: () => all.first);

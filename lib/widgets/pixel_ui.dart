@@ -896,3 +896,24 @@ class SheetIcon extends StatelessWidget {
     );
   }
 }
+
+/// The likes you have, as a little panel (shop, missions...).
+class WalletChip extends StatelessWidget {
+  const WalletChip({super.key, required this.likes});
+
+  final int likes;
+
+  @override
+  Widget build(BuildContext context) => PixelPanel(
+    px: 1.5,
+    padding: const EdgeInsets.fromLTRB(12, 6, 14, 9),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const PixelIcon('like', scale: 2),
+        const SizedBox(width: 6),
+        PixelText('$likes', size: 16, color: kPlum, outline: false),
+      ],
+    ),
+  );
+}

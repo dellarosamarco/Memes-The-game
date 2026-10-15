@@ -23,6 +23,7 @@ import 'fighter/fighter.dart';
 import 'level.dart';
 import 'stages.dart';
 import '../l10n/l10n.dart';
+import '../services/missions.dart';
 
 enum Difficulty {
   easy('Facile'),
@@ -550,7 +551,21 @@ class MemesGame extends FlameGame with KeyboardEvents {
     if (player.smashKos > 0) Achievements.unlock('smash_ko');
     if (player.bestCombo >= 5) Achievements.unlock('combo5');
     Achievements.checkStats();
+    Missions.recordMatch(
+      won: won,
+      kos: player.kos,
+      bestCombo: player.bestCombo,
+      specials: player.specialsUsed,
+      damage: player.damageDealt.round(),
+      smashKos: player.smashKos,
+      normalOrHard: config.difficulty != Difficulty.easy,
+      ofTheDay: config.player.isOfTheDay,
+      arcade: config.arcadeRound != null,
+    ).then((done) => missionsDone = done);
   }
+
+  /// Daily missions this match completed (shown in the results).
+  List<Mission> missionsDone = const [];
 
   // ----------------------------------------------------------------- camera
 

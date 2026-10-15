@@ -9,6 +9,8 @@ import '../models/meme_character.dart';
 import '../widgets/pixel_ui.dart';
 import '../widgets/sprite_view.dart';
 import '../l10n/l10n.dart';
+import '../services/local_store.dart';
+import '../services/sound.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
   const CharacterSelectScreen({super.key, required this.onChosen, this.title});
@@ -31,6 +33,41 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   void dispose() {
     _thumbs.dispose();
     super.dispose();
+  }
+
+  /// A random playable meme (never the one already shown).
+  void _random() {
+    final n = MemeCharacter.all.length;
+    final options = [
+      for (var i = 0; i < n; i++)
+        if (i != _index && MemeCharacter.all[i].isUnlocked) i,
+    ];
+    if (options.isEmpty) return;
+    _select(options[Random().nextInt(options.length)] - _index);
+  }
+
+  Future<void> _buy(MemeCharacter c) async {
+    if (await LocalStore.instance.buyMeme(c.id, c.price)) {
+      Sound.play('finish');
+      setState(() {});
+      return;
+    }
+    Sound.play('hurt', volume: .4);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: kPlum,
+        duration: const Duration(seconds: 2),
+        content: PixelText(
+          tr(
+            'select.needLikes',
+            'Ti servono ancora {n} like: vinci incontri e completa le missioni!',
+            {'n': c.price - LocalStore.instance.wallet},
+          ),
+          size: 14,
+        ),
+      ),
+    );
   }
 
   /// Next/previous meme, keeping its thumbnail in view.
@@ -83,7 +120,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                           size: 24,
                         ),
                       ),
-                      const SizedBox(width: 56),
+                      WalletChip(likes: LocalStore.instance.wallet),
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -148,6 +185,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                               itemBuilder: (_, i) => Center(
                                 child: MemeThumb(
                                   character: chars[i],
+                                  showLock: true,
                                   selected: i == _index,
                                   onTap: () => setState(() => _index = i),
                                 ),
@@ -161,17 +199,28 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                         icon: 'dice',
                         color: PixelColor.mint,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        onPressed: () => _select(
-                          1 + Random().nextInt(MemeCharacter.all.length - 1),
-                        ),
+                        onPressed: _random,
                       ),
                       const SizedBox(width: 8),
-                      PixelButton(
-                        label: tr('select.pick', 'Scegli'),
-                        icon: 'play',
-                        color: PixelColor.pink,
-                        onPressed: () => widget.onChosen(context, c),
-                      ),
+                      if (c.isUnlocked)
+                        PixelButton(
+                          label: tr('select.pick', 'Scegli'),
+                          icon: 'play',
+                          color: PixelColor.pink,
+                          onPressed: () => widget.onChosen(context, c),
+                        )
+                      else
+                        PixelButton(
+                          label: tr('select.unlock', 'Sblocca {n}', {
+                            'n': c.price,
+                          }),
+                          icon: 'like',
+                          color: LocalStore.instance.wallet >= c.price
+                              ? PixelColor.yellow
+                              : PixelColor.grey,
+                          fontSize: 16,
+                          onPressed: () => _buy(c),
+                        ),
                     ],
                   ),
                 ],
@@ -265,6 +314,20 @@ class _Info extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+          if (c.isOfTheDay && !c.isOwned)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: PixelText(
+                tr(
+                  'select.freeTry',
+                  'Prova gratis solo oggi, poi sbloccalo con i like!',
+                ),
+                size: 12,
+                color: const Color(0xFF2E9E6E),
+                outline: false,
+                align: TextAlign.left,
+              ),
+            ),
           if (c.isOfTheDay)
             Padding(
               padding: EdgeInsets.only(bottom: 4),
@@ -407,8 +470,11 @@ class MemeThumb extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.size = 54,
+    this.showLock = false,
   });
 
+  /// Grey out memes not unlocked yet (character select only).
+  final bool showLock;
   final MemeCharacter character;
   final bool selected;
   final VoidCallback onTap;
@@ -439,6 +505,12 @@ class MemeThumb extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
+            if (showLock && !character.isUnlocked) ...[
+              Positioned.fill(
+                child: ColoredBox(color: const Color(0x993A2440)),
+              ),
+              const Center(child: PixelIcon('lock', scale: 2)),
+            ],
             // Meme of the day: double likes.
             if (character.isOfTheDay)
               const Positioned(

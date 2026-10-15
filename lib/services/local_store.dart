@@ -16,6 +16,15 @@ class LocalStore {
     if (instance.playerName.isEmpty) {
       await instance.setPlayerName('Anon${Random().nextInt(9000) + 1000}');
     }
+    // Saves from before memes had to be unlocked keep every meme they
+    // already played with.
+    if (!instance.getBool('memes_migrated')) {
+      await instance._prefs.setStringList('memes', [
+        ...instance.ownedMemes,
+        ...instance.playedWith,
+      ]);
+      await instance.setBool('memes_migrated', true);
+    }
   }
 
   /// Forgets everything: progress, stars, likes, hats, trophies, settings.
@@ -73,6 +82,24 @@ class LocalStore {
     await _prefs.setStringList('hats', [...ownedHats, id]);
     return true;
   }
+
+  /// Memes bought with likes (the first ones are free, see
+  /// [MemeCharacter.price]).
+  Set<String> get ownedMemes => (_prefs.getStringList('memes') ?? []).toSet();
+
+  /// Returns false when you can't afford it.
+  Future<bool> buyMeme(String id, int price) async {
+    if (wallet < price || ownedMemes.contains(id)) return false;
+    await _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) - price);
+    await _prefs.setStringList('memes', [...ownedMemes, id]);
+    return true;
+  }
+
+  // Small typed accessors for the daily systems (rewards, missions).
+  int getInt(String key, [int fallback = 0]) => _prefs.getInt(key) ?? fallback;
+  Future<void> setInt(String key, int value) => _prefs.setInt(key, value);
+  bool getBool(String key) => _prefs.getBool(key) ?? false;
+  Future<void> setBool(String key, bool value) => _prefs.setBool(key, value);
 
   // --------------------------------------------------- stats & trophies
 
