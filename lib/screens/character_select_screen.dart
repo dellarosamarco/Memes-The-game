@@ -13,7 +13,15 @@ import '../services/local_store.dart';
 import '../services/sound.dart';
 
 class CharacterSelectScreen extends StatefulWidget {
-  const CharacterSelectScreen({super.key, required this.onChosen, this.title});
+  const CharacterSelectScreen({
+    super.key,
+    required this.onChosen,
+    this.title,
+    this.initial,
+  });
+
+  /// Shown first (otherwise the last meme picked).
+  final MemeCharacter? initial;
 
   /// What happens once the player picks a meme (opens the next screen).
   final void Function(BuildContext context, MemeCharacter character) onChosen;
@@ -24,10 +32,26 @@ class CharacterSelectScreen extends StatefulWidget {
 }
 
 class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
-  int _index = 0;
-  final _thumbs = ScrollController();
+  late int _index = _startIndex();
+  late final _thumbs = ScrollController(
+    initialScrollOffset: max(0, _index * _thumbStride - 200),
+  );
 
   static const _thumbStride = 60.0;
+
+  int _startIndex() {
+    const all = MemeCharacter.all;
+    final id =
+        widget.initial?.id ??
+        (LocalStore.ready ? LocalStore.instance.lastMeme : null);
+    final i = all.indexWhere((c) => c.id == id);
+    return i < 0 ? 0 : i;
+  }
+
+  void _choose(MemeCharacter c) {
+    LocalStore.instance.setLastMeme(c.id);
+    widget.onChosen(context, c);
+  }
 
   @override
   void dispose() {
@@ -47,7 +71,21 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   }
 
   Future<void> _buy(MemeCharacter c) async {
-    if (await LocalStore.instance.buyMeme(c.id, c.price)) {
+    final store = LocalStore.instance;
+    if (store.wallet >= c.price &&
+        !await confirmDialog(
+          context,
+          title: tr('select.unlockAsk', 'Sbloccare {name}?', {'name': c.name}),
+          text: tr('select.unlockCost', 'Costa {n} like (ne hai {have}).', {
+            'n': c.price,
+            'have': store.wallet,
+          }),
+          ok: tr('select.unlock', 'Sblocca {n}', {'n': c.price}),
+          okColor: PixelColor.yellow,
+        )) {
+      return;
+    }
+    if (await store.buyMeme(c.id, c.price)) {
       Sound.play('finish');
       setState(() {});
       return;
@@ -140,11 +178,18 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                                     icon: 'left',
                                     onTap: () => _select(-1),
                                   ),
-                                  CharacterSpriteView(
-                                    key: ValueKey(c.id),
-                                    character: c,
-                                    scale: 3.2,
-                                    running: true,
+                                  // Shrinks to fit: the arrows always
+                                  // stay visible and tappable.
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: CharacterSpriteView(
+                                        key: ValueKey(c.id),
+                                        character: c,
+                                        scale: 3.2,
+                                        running: true,
+                                      ),
+                                    ),
                                   ),
                                   _Arrow(
                                     icon: 'right',
@@ -207,7 +252,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                           label: tr('select.pick', 'Scegli'),
                           icon: 'play',
                           color: PixelColor.pink,
-                          onPressed: () => widget.onChosen(context, c),
+                          onPressed: () => _choose(c),
                         )
                       else
                         PixelButton(
@@ -264,94 +309,108 @@ class _Info extends StatelessWidget {
       fontSize: 13,
       height: 1.25,
     );
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PixelText(
-                      c.name,
-                      size: 24,
-                      color: const Color(0xFFFF82B4),
-                      align: TextAlign.left,
-                    ),
-                    PixelText(
-                      c.memeAlias,
-                      size: 13,
-                      color: kPlum,
-                      outline: false,
-                      align: TextAlign.left,
-                    ),
-                    const SizedBox(height: 6),
-                    // The stats sit next to the photo, so the bigger
-                    // photo doesn't push the abilities down.
-                    Wrap(
-                      spacing: 14,
-                      runSpacing: 2,
-                      children: [
-                        _Stat(
-                          tr('stat.speed', 'Velocità'),
-                          Fighter.speedRating(c),
-                        ),
-                        _Stat(tr('stat.jump', 'Salto'), Fighter.jumpRating(c)),
-                        _Stat(
-                          tr('stat.weight', 'Peso'),
-                          Fighter.weightRating(c),
-                        ),
-                      ],
-                    ),
-                  ],
+    // The bottom fades out: there is more to read below.
+    return ShaderMask(
+      shaderCallback: (r) => const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Colors.white, Colors.white, Colors.transparent],
+        stops: [0, .86, 1],
+      ).createShader(r),
+      blendMode: BlendMode.dstIn,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PixelText(
+                        c.name,
+                        size: 24,
+                        color: const Color(0xFFFF82B4),
+                        align: TextAlign.left,
+                      ),
+                      PixelText(
+                        c.memeAlias,
+                        size: 13,
+                        color: kPlum,
+                        outline: false,
+                        align: TextAlign.left,
+                      ),
+                      const SizedBox(height: 6),
+                      // The stats sit next to the photo, so the bigger
+                      // photo doesn't push the abilities down.
+                      Wrap(
+                        spacing: 14,
+                        runSpacing: 2,
+                        children: [
+                          _Stat(
+                            tr('stat.speed', 'Velocità'),
+                            Fighter.speedRating(c),
+                          ),
+                          _Stat(
+                            tr('stat.jump', 'Salto'),
+                            Fighter.jumpRating(c),
+                          ),
+                          _Stat(
+                            tr('stat.weight', 'Peso'),
+                            Fighter.weightRating(c),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              _Photo(character: c),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (c.isOfTheDay && !c.isOwned)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: PixelText(
-                tr(
-                  'select.freeTry',
-                  'Prova gratis solo oggi, poi sbloccalo con i like!',
-                ),
-                size: 12,
-                color: const Color(0xFF2E9E6E),
-                outline: false,
-                align: TextAlign.left,
-              ),
+                const SizedBox(width: 8),
+                _Photo(character: c),
+              ],
             ),
-          if (c.isOfTheDay)
-            Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: PixelText(
-                tr(
-                  'select.memeOfTheDay',
-                  'Meme del giorno: like doppi nel portafoglio!',
+            const SizedBox(height: 8),
+            if (c.isOfTheDay && !c.isOwned)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: PixelText(
+                  tr(
+                    'select.freeTry',
+                    'Prova gratis solo oggi, poi sbloccalo con i like!',
+                  ),
+                  size: 12,
+                  color: const Color(0xFF2E9E6E),
+                  outline: false,
+                  align: TextAlign.left,
                 ),
-                size: 12,
-                color: Color(0xFFFF82B4),
-                outline: false,
-                align: TextAlign.left,
               ),
+            if (c.isOfTheDay)
+              Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: PixelText(
+                  tr(
+                    'select.memeOfTheDay',
+                    'Meme del giorno: like doppi nel portafoglio!',
+                  ),
+                  size: 12,
+                  color: Color(0xFFFF82B4),
+                  outline: false,
+                  align: TextAlign.left,
+                ),
+              ),
+            _Ability(title: c.passiveName, text: c.passiveDescription),
+            _Ability(
+              title: '${c.specialName} (${_secs(c.specialCooldown)})',
+              text: c.specialDescription,
+              special: true,
             ),
-          _Ability(title: c.passiveName, text: c.passiveDescription),
-          _Ability(
-            title: '${c.specialName} (${_secs(c.specialCooldown)})',
-            text: c.specialDescription,
-            special: true,
-          ),
-          // The lore last: what matters for picking comes first.
-          const SizedBox(height: 8),
-          Text(c.lore, style: body),
-        ],
+            // The lore last: what matters for picking comes first.
+            const SizedBox(height: 8),
+            Text(c.lore, style: body),
+          ],
+        ),
       ),
     );
   }

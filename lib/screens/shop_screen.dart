@@ -26,6 +26,19 @@ class _ShopScreenState extends State<ShopScreen> {
     if (store.ownedHats.contains(hat.id)) {
       final equipped = store.equippedHat == hat.id;
       await store.equipHat(equipped ? null : hat.id);
+    } else if (store.wallet >= hat.price &&
+        !await confirmDialog(
+          context,
+          title: tr('shop.buyAsk', 'Comprare {name}?', {'name': hat.name}),
+          text: tr('select.unlockCost', 'Costa {n} like (ne hai {have}).', {
+            'n': hat.price,
+            'have': store.wallet,
+          }),
+          ok: tr('shop.buy', 'Compra'),
+          okColor: PixelColor.yellow,
+        )) {
+      setState(() => _preview = hat);
+      return;
     } else if (await store.buyHat(hat.id, hat.price)) {
       await store.equipHat(hat.id);
       Sound.play('finish');
@@ -164,6 +177,13 @@ class _HatCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            if (equipped)
+              PixelText(
+                tr('shop.equipped', 'Indossato'),
+                size: 10,
+                color: const Color(0xFF2E9E6E),
+                outline: false,
+              ),
             SheetIcon(
               asset: 'assets/images/${Hat.sheet}',
               index: hat.index,

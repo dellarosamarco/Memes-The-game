@@ -605,7 +605,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
     // touch controls (bottom), so the floor isn't hidden under the thumbs.
     final padTop = size.y * .08, padBottom = size.y * .15;
     final band = size.y - padTop - padBottom;
-    final fit = min(size.x / (maxX - minX), band / (maxY - minY));
+    // The action buttons sit bottom right: frame a bit to their left.
+    final padRight = min(size.x * .1, 90.0);
+    final fit = min((size.x - padRight) / (maxX - minX), band / (maxY - minY));
     var zoom = fit.clamp(_wideZoom, _closeZoom);
     final vf = camera.viewfinder;
     var k = min(1.0, dt * 4);
@@ -617,7 +619,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
     }
     vf.zoom += (zoom - vf.zoom) * k;
     final shift = (size.y / 2 - (padTop + band / 2)) / vf.zoom;
-    var target = Vector2((minX + maxX) / 2, (minY + maxY) / 2 + shift);
+    var target = Vector2(
+      (minX + maxX) / 2 + padRight / 2 / vf.zoom,
+      (minY + maxY) / 2 + shift,
+    );
     if (punch > 0) target += (_punchAt - target) * (.6 * punch);
     // Can't fit both? The human player always stays in the shot.
     if (player.alive) {

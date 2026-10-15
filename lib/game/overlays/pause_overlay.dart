@@ -76,7 +76,29 @@ class PauseOverlay extends StatelessWidget {
                           label: tr('pause.quit', 'Esci'),
                           icon: 'home',
                           color: PixelColor.grey,
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () async {
+                            final arcade = game.config.arcadeRound != null;
+                            final quit = await confirmDialog(
+                              context,
+                              title: tr(
+                                'pause.quitAsk',
+                                'Uscire dalla partita?',
+                              ),
+                              text: arcade
+                                  ? tr(
+                                      'pause.quitArcade',
+                                      'La scalata Arcade ricomincerà da capo.',
+                                    )
+                                  : tr(
+                                      'pause.quitFree',
+                                      'Questo incontro non verrà contato.',
+                                    ),
+                              ok: tr('pause.quit', 'Esci'),
+                            );
+                            if (quit && context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          },
                         ),
                         const LanguageButton(),
                       ],

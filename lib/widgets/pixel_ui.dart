@@ -134,8 +134,8 @@ class PixelIcon extends StatelessWidget {
 
 /// 9-slice decoration from a 24x24 pixel frame, drawn at [px] screen
 /// pixels per art pixel. Frames are preloaded by [PixelAssets.preload].
-Decoration pixelFrame(String asset, {double px = 3}) =>
-    _NineSliceDecoration(asset, px);
+Decoration pixelFrame(String asset, {double px = 3, double alpha = 1}) =>
+    _NineSliceDecoration(asset, px, alpha);
 
 /// Preloads the UI frames so they can be painted synchronously.
 class PixelAssets {
@@ -159,28 +159,35 @@ class PixelAssets {
 }
 
 class _NineSliceDecoration extends Decoration {
-  const _NineSliceDecoration(this.asset, this.px);
+  const _NineSliceDecoration(this.asset, this.px, this.alpha);
 
   final String asset;
   final double px;
+
+  /// See-through frames (touch buttons over the stage).
+  final double alpha;
 
   @override
   BoxPainter createBoxPainter([VoidCallback? onChanged]) =>
-      _NineSlicePainter(asset, px);
+      _NineSlicePainter(asset, px, alpha);
 
   @override
   bool operator ==(Object other) =>
-      other is _NineSliceDecoration && other.asset == asset && other.px == px;
+      other is _NineSliceDecoration &&
+      other.asset == asset &&
+      other.px == px &&
+      other.alpha == alpha;
 
   @override
-  int get hashCode => Object.hash(asset, px);
+  int get hashCode => Object.hash(asset, px, alpha);
 }
 
 class _NineSlicePainter extends BoxPainter {
-  _NineSlicePainter(this.asset, this.px);
+  _NineSlicePainter(this.asset, this.px, this.alpha);
 
   final String asset;
   final double px;
+  final double alpha;
 
   /// Border of the 24px frames, in art pixels.
   static const _b = 7.0;
@@ -193,7 +200,9 @@ class _NineSlicePainter extends BoxPainter {
     final w = img.width.toDouble();
     final h = img.height.toDouble();
     final b = (_b * px).clamp(0.0, size.shortestSide / 2).floorToDouble();
-    final paint = Paint()..filterQuality = FilterQuality.none;
+    final paint = Paint()
+      ..filterQuality = FilterQuality.none
+      ..color = Color.fromRGBO(0, 0, 0, alpha);
     final xs = [0.0, _b, w - _b, w];
     final ys = [0.0, _b, h - _b, h];
     final dx = [0.0, b, size.width - b, size.width];
@@ -700,12 +709,24 @@ class LanguageButton extends StatelessWidget {
                     runSpacing: 6,
                     alignment: WrapAlignment.center,
                     children: [
-                      option(null, tr('settings.languageAuto', 'Automatica')),
+                      option(
+                        null,
+                        '${tr('settings.languageAuto', 'Automatica')} '
+                        '(${L10n.languages[L10n.deviceLanguage()]})',
+                      ),
                       for (final e in L10n.languages.entries)
                         option(e.key, e.value),
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 8),
+              PixelButton(
+                label: tr('common.ok', 'OK'),
+                color: PixelColor.pink,
+                height: 40,
+                fontSize: 14,
+                onPressed: () => Navigator.pop(ctx),
               ),
             ],
           ),
@@ -744,9 +765,9 @@ class _SettingsPanelState extends State<SettingsPanel> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(width: 30, child: PixelIcon(icon, scale: 2)),
+            SizedBox(width: 42, child: PixelIcon(icon, scale: 2)),
             SizedBox(
-              width: 110,
+              width: 112,
               child: PixelText(
                 label,
                 size: 15,
@@ -813,7 +834,7 @@ Future<void> showSettings(BuildContext context) => showDialog<void>(
   builder: (ctx) => Dialog(
     backgroundColor: Colors.transparent,
     child: PixelPanel(
-      width: 330,
+      width: 350,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -920,4 +941,56 @@ class WalletChip extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// A yes/no question in a pixel panel; true when [ok] is pressed.
+Future<bool> confirmDialog(
+  BuildContext context, {
+  required String title,
+  String? text,
+  required String ok,
+  PixelColor okColor = PixelColor.pink,
+}) async {
+  final r = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: PixelPanel(
+        width: 380,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PixelText(title, size: 20, color: const Color(0xFFFF82B4)),
+            if (text != null) ...[
+              const SizedBox(height: 6),
+              PixelText(text, size: 14, color: kPlum, outline: false),
+            ],
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                PixelButton(
+                  label: tr('common.cancel', 'Annulla'),
+                  color: PixelColor.grey,
+                  height: 46,
+                  fontSize: 15,
+                  onPressed: () => Navigator.pop(ctx, false),
+                ),
+                PixelButton(
+                  label: ok,
+                  color: okColor,
+                  height: 46,
+                  fontSize: 15,
+                  onPressed: () => Navigator.pop(ctx, true),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  return r ?? false;
 }

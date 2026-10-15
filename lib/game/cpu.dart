@@ -33,19 +33,19 @@ class CpuBrain {
 
   double get _reaction => switch (difficulty) {
     Difficulty.easy => .42,
-    Difficulty.normal => .2,
+    Difficulty.normal => .11,
     Difficulty.hard => .07,
   };
 
   double get _aggression => switch (difficulty) {
     Difficulty.easy => .45,
-    Difficulty.normal => .65,
+    Difficulty.normal => .86,
     Difficulty.hard => .95,
   };
 
   double get _evadeChance => switch (difficulty) {
     Difficulty.easy => .05,
-    Difficulty.normal => .32,
+    Difficulty.normal => .4,
     Difficulty.hard => .5,
   };
 

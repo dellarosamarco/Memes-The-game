@@ -537,6 +537,8 @@ class _PadButton extends StatelessWidget {
             padding: EdgeInsets.only(top: down ? 5 : 0, bottom: down ? 0 : 5),
             decoration: pixelFrame(
               'assets/images/ui/button_$color${down ? '_down' : ''}.png',
+              // See-through at rest: the stage behind stays readable.
+              alpha: down ? 1 : .6,
             ),
             child: Stack(
               alignment: Alignment.center,

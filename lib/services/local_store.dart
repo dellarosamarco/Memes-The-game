@@ -53,6 +53,10 @@ class LocalStore {
       code == null ? _prefs.remove('lang') : _prefs.setString('lang', code);
 
   /// Simple controls: smart attacks and automatic recovery.
+  /// The meme picked last time (character select starts there).
+  String? get lastMeme => _prefs.getString('last_meme');
+  Future<void> setLastMeme(String id) => _prefs.setString('last_meme', id);
+
   bool get assistOn => _prefs.getBool('assist') ?? true;
   Future<void> setAssistOn(bool v) => _prefs.setBool('assist', v);
 

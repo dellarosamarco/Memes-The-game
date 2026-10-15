@@ -180,29 +180,32 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                               ],
                             ),
                             const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                for (final d in Difficulty.values)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 3,
-                                    ),
-                                    child: PixelButton(
-                                      label: d.label,
-                                      height: 38,
-                                      fontSize: 12,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  for (final d in Difficulty.values)
+                                    Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
+                                        horizontal: 3,
                                       ),
-                                      color: d == _difficulty
-                                          ? PixelColor.purple
-                                          : PixelColor.grey,
-                                      onPressed: () =>
-                                          setState(() => _difficulty = d),
+                                      child: PixelButton(
+                                        label: d.label,
+                                        height: 46,
+                                        fontSize: 14,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                        ),
+                                        color: d == _difficulty
+                                            ? PixelColor.purple
+                                            : PixelColor.grey,
+                                        onPressed: () =>
+                                            setState(() => _difficulty = d),
+                                      ),
                                     ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Row(

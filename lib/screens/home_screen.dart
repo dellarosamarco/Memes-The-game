@@ -131,12 +131,17 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   /// Character select, then [next] (fight setup or Arcade ladder).
-  void _pick(String title, Widget Function(MemeCharacter) next) {
+  void _pick(
+    String title,
+    Widget Function(MemeCharacter) next, {
+    MemeCharacter? initial,
+  }) {
     Navigator.of(context)
         .push(
           MaterialPageRoute(
             builder: (_) => CharacterSelectScreen(
               title: title,
+              initial: initial,
               onChosen: (ctx, c) =>
                   Navigator.of(ctx)
                       .push(MaterialPageRoute(builder: (_) => next(c))),
@@ -235,7 +240,19 @@ class _HomeScreenState extends State<HomeScreen>
                 left: 0,
                 right: 0,
                 bottom: 10,
-                child: Center(child: _DailyMeme(MemeCharacter.ofTheDay())),
+                child: Center(
+                  child: _DailyMeme(
+                    MemeCharacter.ofTheDay(),
+                    onTap: () => _pick(
+                      tr(
+                        'menu.freeFightPick',
+                        'Lotta libera: scegli il tuo meme',
+                      ),
+                      (c) => FightSetupScreen(player: c),
+                      initial: MemeCharacter.ofTheDay(),
+                    ),
+                  ),
+                ),
               ),
               Positioned(
                 left: 12,
@@ -389,40 +406,46 @@ class _Hopper extends StatelessWidget {
 }
 
 class _DailyMeme extends StatelessWidget {
-  const _DailyMeme(this.character);
+  const _DailyMeme(this.character, {required this.onTap});
 
   final MemeCharacter character;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => PixelPanel(
-    px: 1.5,
-    padding: const EdgeInsets.fromLTRB(10, 4, 14, 8),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Image.asset(
-          character.portraitAsset,
-          height: 26,
-          filterQuality: FilterQuality.none,
-        ),
-        const SizedBox(width: 8),
-        PixelText(
-          tr('home.memeOfTheDay', 'Meme del giorno: {name}', {
-            'name': character.name,
-          }),
-          size: 13,
-          color: kPlum,
-          outline: false,
-        ),
-        const SizedBox(width: 8),
-        const PixelIcon('like', scale: 1.4),
-        const PixelText(
-          ' x2',
-          size: 13,
-          color: Color(0xFFFF82B4),
-          outline: false,
-        ),
-      ],
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: PixelPanel(
+      px: 1.5,
+      padding: const EdgeInsets.fromLTRB(10, 4, 14, 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            character.portraitAsset,
+            height: 26,
+            filterQuality: FilterQuality.none,
+          ),
+          const SizedBox(width: 8),
+          PixelText(
+            tr('home.memeOfTheDay', 'Meme del giorno: {name}', {
+              'name': character.name,
+            }),
+            size: 13,
+            color: kPlum,
+            outline: false,
+          ),
+          const SizedBox(width: 8),
+          const PixelIcon('like', scale: 1.4),
+          PixelText(
+            tr('home.doubleLikes', ' x2 like'),
+            size: 13,
+            color: const Color(0xFFFF82B4),
+            outline: false,
+          ),
+          const SizedBox(width: 6),
+          const PixelIcon('play', scale: 1.4),
+        ],
+      ),
     ),
   );
 }

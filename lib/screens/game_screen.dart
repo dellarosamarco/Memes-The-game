@@ -7,6 +7,7 @@ import '../game/overlays/how_to_play.dart';
 import '../game/overlays/hud.dart';
 import '../game/overlays/match_overlays.dart';
 import '../game/overlays/pause_overlay.dart';
+import '../models/meme_character.dart';
 import '../services/achievements.dart';
 import '../services/local_store.dart';
 import '../services/sound.dart';
@@ -52,10 +53,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  /// Arcade champion: a locked meme joins the roster for free.
+  MemeCharacter? _reward;
+
   void _matchEnded(bool won) {
     final run = widget.arcade;
     final round = _round;
     if (run == null || round == null || !LocalStore.ready) return;
+    if (won && _lastRound) {
+      final locked = [
+        for (final c in MemeCharacter.all)
+          if (c.price > 0 && !c.isOwned) c,
+      ];
+      if (locked.isNotEmpty) {
+        _reward = locked.first;
+        LocalStore.instance.buyMeme(_reward!.id, 0);
+      }
+    }
     final cleared = won ? round : round - 1;
     LocalStore.instance.recordArcade(widget.config.player.id, cleared).then((
       _,
@@ -109,6 +123,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               return ResultsOverlay(
                 game: g,
                 arcadeChampion: won && _lastRound,
+                rewardMeme: _reward,
                 onNext: run != null && round != null && won && !_lastRound
                     ? () => _replace(run.configFor(round + 1))
                     : null,

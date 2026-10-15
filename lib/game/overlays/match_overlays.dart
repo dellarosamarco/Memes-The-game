@@ -77,7 +77,11 @@ class ResultsOverlay extends StatelessWidget {
     required this.onMenu,
     this.onNext,
     this.arcadeChampion = false,
+    this.rewardMeme,
   });
+
+  /// Unlocked for clearing the Arcade.
+  final MemeCharacter? rewardMeme;
 
   final MemesGame game;
   final VoidCallback onRematch;
@@ -145,13 +149,16 @@ class ResultsOverlay extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (round != null)
-                    PixelText(
-                      tr('results.arcadeRound', 'Arcade · round {n}/8', {
-                        'n': round,
-                      }),
-                      size: 13,
-                      color: kPlum,
-                      outline: false,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 2),
+                      child: PixelText(
+                        tr('results.arcadeRound', 'Arcade · round {n}/8', {
+                          'n': round,
+                        }),
+                        size: 13,
+                        color: kPlum,
+                        outline: false,
+                      ),
                     ),
                   _StatsTable(game: game),
                   const SizedBox(height: 8),
@@ -169,6 +176,17 @@ class ResultsOverlay extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (rewardMeme != null)
+                    PixelText(
+                      tr('results.unlocked', 'Nuovo meme sbloccato: {name}!', {
+                        'name': rewardMeme!.name,
+                      }),
+                      size: 13,
+                      color: const Color(0xFFE08A00),
+                      outline: false,
+                    )
+                  else
+                    const _NextUnlock(),
                   for (final m in game.missionsDone)
                     PixelText(
                       tr('results.missionDone', 'Missione completata: {text}', {
@@ -230,6 +248,34 @@ class ResultsOverlay extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The cheapest locked meme and how far the wallet is from it.
+class _NextUnlock extends StatelessWidget {
+  const _NextUnlock();
+
+  @override
+  Widget build(BuildContext context) {
+    if (!LocalStore.ready) return const SizedBox.shrink();
+    final locked = [
+      for (final c in MemeCharacter.all)
+        if (!c.isUnlocked) c,
+    ]..sort((a, b) => a.price.compareTo(b.price));
+    if (locked.isEmpty) return const SizedBox.shrink();
+    final c = locked.first;
+    final missing = c.price - LocalStore.instance.wallet;
+    return PixelText(
+      missing <= 0
+          ? tr('results.canUnlock', 'Puoi sbloccare {name}!', {'name': c.name})
+          : tr('results.nextUnlock', '{name} si sblocca tra {n} like', {
+              'name': c.name,
+              'n': missing,
+            }),
+      size: 12,
+      color: kPlum,
+      outline: false,
     );
   }
 }
@@ -317,7 +363,9 @@ class _PayRespectsState extends State<_PayRespects> {
 
   @override
   Widget build(BuildContext context) => PixelButton(
-    label: _paid ? 'F' : tr('results.payRespects', 'Premi F'),
+    label: _paid
+        ? tr('results.respectsPaid', 'F: rispetto dato')
+        : tr('results.payRespects', 'Premi F'),
     color: _paid ? PixelColor.grey : PixelColor.yellow,
     height: 46,
     fontSize: 15,
