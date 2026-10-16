@@ -84,49 +84,58 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                 const SizedBox(height: 6),
                 Expanded(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      CharacterSpriteView(character: widget.player, scale: 2.4),
+                      // On the grass, while the panel sits in the middle.
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CharacterSpriteView(
+                          character: widget.player,
+                          scale: 2.4,
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: PixelPanel(
-                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              PixelText(
-                                tr(
-                                  'arcade.ladder',
-                                  '8 avversari, sempre più forti',
-                                ),
-                                size: 14,
-                                color: kPlum,
-                                outline: false,
-                              ),
-                              const SizedBox(height: 8),
-                              ArcadeLadder(run: _run, round: 1),
-                              const SizedBox(height: 8),
-                              // What the whole ladder is worth.
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const PixelIcon('trophy', scale: 1.5),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: PixelText(
-                                      tr(
-                                        'arcade.reward',
-                                        'Premio: +{n} like e un meme sbloccato!',
-                                        {'n': arcadePrize(_difficulty)},
-                                      ),
-                                      size: 13,
-                                      color: const Color(0xFFE08A00),
-                                      outline: false,
-                                    ),
+                        child: Center(
+                          child: PixelPanel(
+                            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                PixelText(
+                                  tr(
+                                    'arcade.ladder',
+                                    '8 avversari, sempre più forti',
                                   ),
-                                ],
-                              ),
-                            ],
+                                  size: 14,
+                                  color: kPlum,
+                                  outline: false,
+                                ),
+                                const SizedBox(height: 8),
+                                ArcadeLadder(run: _run, round: 1),
+                                const SizedBox(height: 8),
+                                // What the whole ladder is worth.
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const PixelIcon('trophy', scale: 1.5),
+                                    const SizedBox(width: 6),
+                                    Flexible(
+                                      child: PixelText(
+                                        tr(
+                                          'arcade.reward',
+                                          'Premio: +{n} like e un meme sbloccato!',
+                                          {'n': arcadePrize(_difficulty)},
+                                        ),
+                                        size: 13,
+                                        color: const Color(0xFFE08A00),
+                                        outline: false,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -224,38 +233,42 @@ class _Rung extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = current ? 56.0 : 46.0;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: size,
-          height: size,
-          padding: const EdgeInsets.all(5),
-          decoration: pixelFrame(
-            current
-                ? 'assets/images/ui/button_yellow.png'
-                : 'assets/images/ui/panel_dark.png',
-            px: 2,
-          ),
-          child: hidden
-              ? const Center(
-                  child: PixelText('?', size: 22, color: Color(0xFFFF82B4)),
-                )
-              : Opacity(
-                  opacity: beaten ? .35 : 1,
-                  child: Image.asset(
-                    character.portraitAsset,
-                    filterQuality: FilterQuality.none,
-                    fit: BoxFit.contain,
+    // Same height for every rung: the numbers line up.
+    return SizedBox(
+      height: 74,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: size,
+            height: size,
+            padding: const EdgeInsets.all(5),
+            decoration: pixelFrame(
+              current
+                  ? 'assets/images/ui/button_yellow.png'
+                  : 'assets/images/ui/panel_dark.png',
+              px: 2,
+            ),
+            child: hidden
+                ? const Center(
+                    child: PixelText('?', size: 22, color: Color(0xFFFF82B4)),
+                  )
+                : Opacity(
+                    opacity: beaten ? .35 : 1,
+                    child: Image.asset(
+                      character.portraitAsset,
+                      filterQuality: FilterQuality.none,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-        ),
-        PixelText(
-          beaten ? tr('common.ok', 'OK') : '$number',
-          size: 10,
-          color: beaten ? const Color(0xFF7CFFA0) : Colors.white,
-        ),
-      ],
+          ),
+          PixelText(
+            beaten ? tr('common.ok', 'OK') : '$number',
+            size: 10,
+            color: beaten ? const Color(0xFF7CFFA0) : Colors.white,
+          ),
+        ],
+      ),
     );
   }
 }

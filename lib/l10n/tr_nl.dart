@@ -27,11 +27,14 @@ const trNl = <String, String>{
   'c.bike_dog.hurt1': 'Au!',
   'c.bike_dog.hurt2': 'Mijn rugzak!',
   'c.bike_dog.lore': 'Een hond die met een rugzak om door het verkeer fietst, alsof hij naar school gaat. Achter hem een auto van de POLIS. Niemand weet wie wie achtervolgt.',
-  'c.bike_dog.memeAlias': 'De fietsende hond met rugzak, achtervolgd door de Polis',
+  'c.bike_dog.memeAlias':
+      'De fietsende hond met rugzak, achtervolgd door de Polis',
   'c.bike_dog.name': 'Fietshond',
-  'c.bike_dog.passiveDescription': 'Hoe langer hij dezelfde kant op trapt, hoe sneller hij gaat.',
+  'c.bike_dog.passiveDescription':
+      'Hoe langer hij dezelfde kant op trapt, hoe sneller hij gaat.',
   'c.bike_dog.passiveName': 'Doortrappen',
-  'c.bike_dog.specialDescription': 'Belt de politie: een politieauto scheurt op de tegenstander af (14%).',
+  'c.bike_dog.specialDescription':
+      'Belt de politie: een politieauto scheurt op de tegenstander af (14%).',
   'c.bike_dog.specialName': 'POLIS!',
   'c.bike_dog.specialShout': 'TATOE-TATA TATOE-TATA!',
   'c.bike_dog.tagline': 'Rugzak om, en de politie op z\'n hielen.',
@@ -41,9 +44,11 @@ const trNl = <String, String>{
   'c.bottle_patrick.lore': 'Patrick met het puntje van zijn hoofd in een omgekeerde waterkoelerfles, blij als altijd. Niemand heeft hem verteld dat het zo niet werkt.',
   'c.bottle_patrick.memeAlias': 'Patrick met zijn hoofd in de waterkoelerfles',
   'c.bottle_patrick.name': 'Patrick Waterfles',
-  'c.bottle_patrick.passiveDescription': 'Zijn speciale aanval laadt twee keer zo snel op.',
+  'c.bottle_patrick.passiveDescription':
+      'Zijn speciale aanval laadt twee keer zo snel op.',
   'c.bottle_patrick.passiveName': 'Altijd Gehydrateerd',
-  'c.bottle_patrick.specialDescription': 'Een straal uit de fles die de tegenstander wegduwt.',
+  'c.bottle_patrick.specialDescription':
+      'Een straal uit de fles die de tegenstander wegduwt.',
   'c.bottle_patrick.specialName': 'Waterstraal',
   'c.bottle_patrick.specialShout': 'GLUG GLUG!',
   'c.bottle_patrick.tagline': 'Altijd gehydrateerd. Helaas.',
@@ -53,9 +58,11 @@ const trNl = <String, String>{
   'c.bowl_chick.lore': 'Een geel kuikentje met een zwart bloempotkapsel, strak langs de liniaal geknipt, en een waardige blik van opzij. Zijn kapper is een genie.',
   'c.bowl_chick.memeAlias': 'Het kuikentje met het zwarte bloempotkapsel',
   'c.bowl_chick.name': 'Bloempotkuiken',
-  'c.bowl_chick.passiveDescription': 'Superlicht: lange, trage sprongen, maar vliegt makkelijk weg.',
+  'c.bowl_chick.passiveDescription':
+      'Superlicht: lange, trage sprongen, maar vliegt makkelijk weg.',
   'c.bowl_chick.passiveName': 'Lichtgewicht',
-  'c.bowl_chick.specialDescription': 'Drie kuikentjes rennen op de tegenstander af (elk 9%).',
+  'c.bowl_chick.specialDescription':
+      'Drie kuikentjes rennen op de tegenstander af (elk 9%).',
   'c.bowl_chick.specialName': 'Piep Piep!',
   'c.bowl_chick.specialShout': 'PIEP PIEP PIEP!',
   'c.bowl_chick.tagline': 'Een kuiken. Met een bloempotkapsel. Perfect.',
@@ -65,21 +72,27 @@ const trNl = <String, String>{
   'c.cheeks_dachshund.lore': 'De teckel met wangen zo bol als een hamster en een onschuldige blik. Niemand weet wat erin zit. Hij praat niet: dat kan hij niet.',
   'c.cheeks_dachshund.memeAlias': 'De teckel met volle wangen',
   'c.cheeks_dachshund.name': 'Hamsterteckel',
-  'c.cheeks_dachshund.passiveDescription': 'Elke rake klap haalt 1% van zijn schade af.',
+  'c.cheeks_dachshund.passiveDescription':
+      'Elke rake klap haalt 1% van zijn schade af.',
   'c.cheeks_dachshund.passiveName': 'Hamsterwangen',
-  'c.cheeks_dachshund.specialDescription': 'Blaast zijn wangen op: duwt wie dichtbij is weg (9%) en zweeft omhoog.',
+  'c.cheeks_dachshund.specialDescription':
+      'Blaast zijn wangen op: duwt wie dichtbij is weg (9%) en zweeft omhoog.',
   'c.cheeks_dachshund.specialName': 'Wangen Opblazen',
   'c.cheeks_dachshund.specialShout': '*PFFFFF*',
-  'c.cheeks_dachshund.tagline': 'Hij heeft iets in zijn wangen verstopt. Alles.',
+  'c.cheeks_dachshund.tagline':
+      'Hij heeft iets in zijn wangen verstopt. Alles.',
   'c.chill_dog.hurt0': 'Wat een stress.',
   'c.chill_dog.hurt1': 'Je verpest mijn chill.',
   'c.chill_dog.hurt2': 'Hé, rustig.',
   'c.chill_dog.lore': 'De blonde chihuahua languit op een kussen, pootjes achter zijn hoofd en benen over elkaar, als een baas op vakantie. Stress weet niet eens waar hij woont.',
-  'c.chill_dog.memeAlias': 'De chihuahua die ligt met zijn pootjes achter zijn hoofd',
+  'c.chill_dog.memeAlias':
+      'De chihuahua die ligt met zijn pootjes achter zijn hoofd',
   'c.chill_dog.name': 'Chill Chihuahua',
-  'c.chill_dog.passiveDescription': 'Als hij stilstaat, ontspant hij en herstelt hij 1% per seconde.',
+  'c.chill_dog.passiveDescription':
+      'Als hij stilstaat, ontspant hij en herstelt hij 1% per seconde.',
   'c.chill_dog.passiveName': 'Totale Chill',
-  'c.chill_dog.specialDescription': 'De tegenstander gaat 2 seconden in slow motion.',
+  'c.chill_dog.specialDescription':
+      'De tegenstander gaat 2 seconden in slow motion.',
   'c.chill_dog.specialName': 'Vakantiemodus',
   'c.chill_dog.specialShout': 'IK BEN OP VAKANTIE',
   'c.chill_dog.tagline': 'Pootjes achter het hoofd, benen over elkaar. Zen.',
@@ -89,9 +102,11 @@ const trNl = <String, String>{
   'c.drip_pig.lore': 'Een varken met een strakke fade van de kapper, AirPods in en een gouden ketting van hier tot Tokio. Hij heeft meer stijl dan jij en dat weet hij heel goed.',
   'c.drip_pig.memeAlias': 'Het varken met fade, AirPods en ketting',
   'c.drip_pig.name': 'Drip Varken',
-  'c.drip_pig.passiveDescription': 'Zijn speciale aanvallen doen 20% meer schade.',
+  'c.drip_pig.passiveDescription':
+      'Zijn speciale aanvallen doen 20% meer schade.',
   'c.drip_pig.passiveName': 'Gouden Ketting',
-  'c.drip_pig.specialDescription': '4 seconden lang hoort hij niks: klappen verplaatsen hem niet.',
+  'c.drip_pig.specialDescription':
+      '4 seconden lang hoort hij niks: klappen verplaatsen hem niet.',
   'c.drip_pig.specialName': 'Noise Cancelling',
   'c.drip_pig.specialShout': 'IK HOOR JE NIET, IK HEB AIRPODS IN',
   'c.drip_pig.tagline': 'Verse fade, AirPods en een gouden ketting.',
@@ -115,7 +130,8 @@ const trNl = <String, String>{
   'c.gta_bean.name': 'Mr. San Andreas',
   'c.gta_bean.passiveDescription': 'Na elke KO is hij 4 seconden onkwetsbaar.',
   'c.gta_bean.passiveName': 'Respawn in het Ziekenhuis',
-  'c.gta_bean.specialDescription': 'De bekendste cheat: wist 25% van zijn schade.',
+  'c.gta_bean.specialDescription':
+      'De bekendste cheat: wist 25% van zijn schade.',
   'c.gta_bean.specialName': 'HESOYAM',
   'c.gta_bean.specialShout': 'CHEAT ACTIVATED',
   'c.gta_bean.tagline': 'Opgetrokken wenkbrauw en PS2-graphics.',
@@ -125,7 +141,8 @@ const trNl = <String, String>{
   'c.helmet_pigeon.lore': 'Een stadsduif met een rubberen kapje op zijn kop waarvan niemand weet hoe het daar kwam. Hij geeft geen krimp: hij loopt trots rond als een ridder met helm.',
   'c.helmet_pigeon.memeAlias': 'De duif met de rare helm op',
   'c.helmet_pigeon.name': 'Helmduif',
-  'c.helmet_pigeon.passiveDescription': 'De helm maakt hem immuun voor projectielen en dempt klappen (-10%).',
+  'c.helmet_pigeon.passiveDescription':
+      'De helm maakt hem immuun voor projectielen en dempt klappen (-10%).',
   'c.helmet_pigeon.passiveName': 'Valhelm',
   'c.helmet_pigeon.specialDescription': 'Stijgt op met een vleugelslag (8%) en vliegt 2,5 seconden: houd SPRONG ingedrukt om te stijgen.',
   'c.helmet_pigeon.specialName': 'Stadsvlucht',
@@ -137,7 +154,8 @@ const trNl = <String, String>{
   'c.masha_man.lore': 'Ze heeft de roze hoofddoek en het jurkje van Masha, maar het gezicht van een volwassen man met snor en een vermoeide blik. Zelfs Beer is bang voor haar.',
   'c.masha_man.memeAlias': 'Masha met een mannenkop',
   'c.masha_man.name': 'Snor-Masha',
-  'c.masha_man.passiveDescription': 'Zware handen: smash-aanvallen slingeren 25% verder.',
+  'c.masha_man.passiveDescription':
+      'Zware handen: smash-aanvallen slingeren 25% verder.',
   'c.masha_man.passiveName': 'Zware Handen',
   'c.masha_man.specialDescription': 'Enorme sprong die iedereen dichtbij raakt (10%). Perfect om terug te komen in de arena.',
   'c.masha_man.specialName': 'Masha-Sprong',
@@ -149,21 +167,26 @@ const trNl = <String, String>{
   'c.nerd_cat.lore': 'De kat met zwarte bril, bevertanden en opgestoken vingertje: het gezicht van iemand die je gaat vertellen dat je, ehm, eigenlijk, ongelijk hebt. Hij heeft altijd een correctie klaar.',
   'c.nerd_cat.memeAlias': '"Ehm, eigenlijk..."',
   'c.nerd_cat.name': 'Nerdkat',
-  'c.nerd_cat.passiveDescription': 'Na een klap te hebben gekregen doet zijn volgende klap 25% meer.',
+  'c.nerd_cat.passiveDescription':
+      'Na een klap te hebben gekregen doet zijn volgende klap 25% meer.',
   'c.nerd_cat.passiveName': 'Correctie',
-  'c.nerd_cat.specialDescription': 'Een wolkje correcties dat iedereen die het raakt in de war brengt (6%).',
+  'c.nerd_cat.specialDescription':
+      'Een wolkje correcties dat iedereen die het raakt in de war brengt (6%).',
   'c.nerd_cat.specialName': 'Ehm, eigenlijk...',
   'c.nerd_cat.specialShout': 'EHM, EIGENLIJK...',
-  'c.nerd_cat.tagline': 'Bril, bevertanden en opgestoken vinger: hij gaat je verbeteren.',
+  'c.nerd_cat.tagline':
+      'Bril, bevertanden en opgestoken vinger: hij gaat je verbeteren.',
   'c.pearl_terrier.hurt0': 'Wat onbeschoft!',
   'c.pearl_terrier.hurt1': 'Mijn parels!',
   'c.pearl_terrier.hurt2': 'In mijn tijd...',
   'c.pearl_terrier.lore': 'De bullterriër met bobpruik, parelketting en groen truitje. Ze kijkt je aan als een tante bij het kerstdiner die vraagt wanneer je eindelijk gaat trouwen.',
   'c.pearl_terrier.memeAlias': 'De bullterriër met bob en parels',
   'c.pearl_terrier.name': 'Lady Terrier',
-  'c.pearl_terrier.passiveDescription': 'Likes die je na een gevecht verdient, tellen dubbel.',
+  'c.pearl_terrier.passiveDescription':
+      'Likes die je na een gevecht verdient, tellen dubbel.',
   'c.pearl_terrier.passiveName': 'Luxe Likes',
-  'c.pearl_terrier.specialDescription': 'Een loeiharde tasmep recht vooruit (11%).',
+  'c.pearl_terrier.specialDescription':
+      'Een loeiharde tasmep recht vooruit (11%).',
   'c.pearl_terrier.specialName': 'Tasmep',
   'c.pearl_terrier.specialShout': 'WAT DENKT U WEL?!',
   'c.pearl_terrier.tagline': 'Bob, parels en truitje. Een dame.',
@@ -175,7 +198,8 @@ const trNl = <String, String>{
   'c.pietro_pigeon.name': 'Pietro',
   'c.pietro_pigeon.passiveDescription': 'Versnelt en remt in een oogwenk.',
   'c.pietro_pigeon.passiveName': 'Converse Aan',
-  'c.pietro_pigeon.specialDescription': 'Belt de tegenstander, die stopt om op te nemen (4%).',
+  'c.pietro_pigeon.specialDescription':
+      'Belt de tegenstander, die stopt om op te nemen (4%).',
   'c.pietro_pigeon.specialName': 'Pietro is calling...',
   'c.pietro_pigeon.specialShout': 'PIETRO IS CALLING...',
   'c.pietro_pigeon.tagline': 'Hij belt je. Neem op.',
@@ -211,7 +235,8 @@ const trNl = <String, String>{
   'c.robber_dog.name': 'Robber Chihuahua',
   'c.robber_dog.passiveDescription': 'Rent het snelst van iedereen.',
   'c.robber_dog.passiveName': 'Snelle Vlucht',
-  'c.robber_dog.specialDescription': 'Bliksemsnelle, onkwetsbare uitval die de tegenstander omverwalst (10%).',
+  'c.robber_dog.specialDescription':
+      'Bliksemsnelle, onkwetsbare uitval die de tegenstander omverwalst (10%).',
   'c.robber_dog.specialName': 'De Overval',
   'c.robber_dog.specialShout': 'DIT IS EEN OVERVAL!',
   'c.robber_dog.tagline': 'Bivakmuts, mes en nul spijt.',
@@ -221,7 +246,8 @@ const trNl = <String, String>{
   'c.rock_monkey.lore': 'Een kapucijnaapje met de schattigste oogjes ter wereld en een steen boven zijn hoofd. Hij kijkt je aan alsof hij wil zeggen: "zeg dat nog eens". Liever niet.',
   'c.rock_monkey.memeAlias': 'Het kapucijnaapje dat dreigt met een steen',
   'c.rock_monkey.name': 'Steenaap',
-  'c.rock_monkey.passiveDescription': 'Zwakke klappen krijgen hem geen millimeter van zijn plek.',
+  'c.rock_monkey.passiveDescription':
+      'Zwakke klappen krijgen hem geen millimeter van zijn plek.',
   'c.rock_monkey.passiveName': 'Stevige Grip',
   'c.rock_monkey.specialDescription': 'Gooit een steen in een boog (11%).',
   'c.rock_monkey.specialName': 'Steenworp',
@@ -233,9 +259,11 @@ const trNl = <String, String>{
   'c.rock_patrick.lore': 'De vrolijkste zeester van de zeebodem, met een steen als helm, twee plukjes zeewier en een glimlach vol scheve tanden. Hij denkt niet na. Hij rolt.',
   'c.rock_patrick.memeAlias': 'Patrick met stenen helm en zeewier',
   'c.rock_patrick.name': 'Patrick Steen',
-  'c.rock_patrick.passiveDescription': 'Stenen kop: de aanval omhoog doet dubbele schade.',
+  'c.rock_patrick.passiveDescription':
+      'Stenen kop: de aanval omhoog doet dubbele schade.',
   'c.rock_patrick.passiveName': 'Stenen Kop',
-  'c.rock_patrick.specialDescription': 'Rolt zich op en rolt vooruit, dwars door de tegenstander heen (12%).',
+  'c.rock_patrick.specialDescription':
+      'Rolt zich op en rolt vooruit, dwars door de tegenstander heen (12%).',
   'c.rock_patrick.specialName': 'Rollende Steen',
   'c.rock_patrick.specialShout': 'IK BEN EEN STEEN!',
   'c.rock_patrick.tagline': 'Stenen helm, zeewier en een tandeloze lach.',
@@ -245,9 +273,11 @@ const trNl = <String, String>{
   'c.shock_guy.lore': 'De jongen in het witte T-shirt met zijn handen in zijn haar en ogen die uit hun kassen puilen: de universele reactie op elk nieuwtje, van een seriefinale tot de rekening in het restaurant.',
   'c.shock_guy.memeAlias': 'Handen in het haar',
   'c.shock_guy.name': 'Geschokte Gast',
-  'c.shock_guy.passiveDescription': 'Als hij geraakt wordt, rent hij 2 seconden sneller weg.',
+  'c.shock_guy.passiveDescription':
+      'Als hij geraakt wordt, rent hij 2 seconden sneller weg.',
   'c.shock_guy.passiveName': 'Paniek!',
-  'c.shock_guy.specialDescription': 'Een geschokte schreeuw die iedereen dichtbij verdooft (7%).',
+  'c.shock_guy.specialDescription':
+      'Een geschokte schreeuw die iedereen dichtbij verdooft (7%).',
   'c.shock_guy.specialName': 'NIET TE GELOVEN!',
   'c.shock_guy.specialShout': 'NIET TE GELOVEN!!',
   'c.shock_guy.tagline': 'Ogen wijd open, mond open: NIET TE GELOVEN.',
@@ -259,10 +289,12 @@ const trNl = <String, String>{
   'c.shrek_kid.name': 'Baby Oger',
   'c.shrek_kid.passiveDescription': 'Uienlagen: als hij 3 seconden niet geraakt wordt, herstelt hij elke 2 seconden 1%.',
   'c.shrek_kid.passiveName': 'Uienlagen',
-  'c.shrek_kid.specialDescription': 'Knalt op de grond met een schokgolf (9%). In de lucht duikt hij omlaag.',
+  'c.shrek_kid.specialDescription':
+      'Knalt op de grond met een schokgolf (9%). In de lucht duikt hij omlaag.',
   'c.shrek_kid.specialName': 'Uit Mijn Moeras!',
   'c.shrek_kid.specialShout': 'UIT MIJN MOERAS!',
-  'c.shrek_kid.tagline': 'Bloempotkapsel, overhemd en stropdas: eerste schooldag.',
+  'c.shrek_kid.tagline':
+      'Bloempotkapsel, overhemd en stropdas: eerste schooldag.',
   'c.sky_man.hurt0': 'Waarom?',
   'c.sky_man.hurt1': 'De hemel haat me.',
   'c.sky_man.hurt2': 'Ach, het leven...',
@@ -283,7 +315,8 @@ const trNl = <String, String>{
   'c.smile_dog.name': 'Smile Dog',
   'c.smile_dog.passiveDescription': 'Zwaar: lastig om weg te slingeren.',
   'c.smile_dog.passiveName': 'Taaie Huid',
-  'c.smile_dog.specialDescription': 'Lacht: de tegenstander schrikt en vlucht 2 seconden weg.',
+  'c.smile_dog.specialDescription':
+      'Lacht: de tegenstander schrikt en vlucht 2 seconden weg.',
   'c.smile_dog.specialName': 'Vervloekte Glimlach',
   'c.smile_dog.specialShout': 'LACHEN :)',
   'c.smile_dog.tagline': 'Een wazige glimlach die je nooit vergeet.',
@@ -293,9 +326,11 @@ const trNl = <String, String>{
   'c.sneaker_hen.lore': 'Een kip die gehurkt zit op een paar gloednieuwe panda Dunks, met een briefje van honderd dollar tussen haar veren. Ze broedt geen eieren uit: ze broedt hype uit.',
   'c.sneaker_hen.memeAlias': 'De kip op panda Dunks met dollars',
   'c.sneaker_hen.name': 'Hypebeast Kip',
-  'c.sneaker_hen.passiveDescription': 'Likes die je na een gevecht verdient, zijn anderhalf keer zoveel waard.',
+  'c.sneaker_hen.passiveDescription':
+      'Likes die je na een gevecht verdient, zijn anderhalf keer zoveel waard.',
   'c.sneaker_hen.passiveName': 'Hustler',
-  'c.sneaker_hen.specialDescription': 'Gooit een ei dat ontploft en iedereen dichtbij neerlegt (12%).',
+  'c.sneaker_hen.specialDescription':
+      'Gooit een ei dat ontploft en iedereen dichtbij neerlegt (12%).',
   'c.sneaker_hen.specialName': 'Eierbom',
   'c.sneaker_hen.specialShout': 'TOK TOK TOK!',
   'c.sneaker_hen.tagline': 'Panda Dunks en honderd dollar onder de vleugel.',
@@ -305,9 +340,11 @@ const trNl = <String, String>{
   'c.snow_baby.lore': 'Het mollige poppetje in een lila pakje dat zijn sneeuwpop vastklemt en er een beetje op knabbelt. Hij laat hem nooit los. Nooit.',
   'c.snow_baby.memeAlias': 'Het mollige babypoppetje met sneeuwpop',
   'c.snow_baby.name': 'Sneeuwpopbaby',
-  'c.snow_baby.passiveDescription': 'Als hij op het hoofd van de tegenstander landt, stuitert hij erop (4%).',
+  'c.snow_baby.passiveDescription':
+      'Als hij op het hoofd van de tegenstander landt, stuitert hij erop (4%).',
   'c.snow_baby.passiveName': 'Rubberbuikje',
-  'c.snow_baby.specialDescription': 'Geneest 5% en laat iedereen dichtbij in slaap vallen.',
+  'c.snow_baby.specialDescription':
+      'Geneest 5% en laat iedereen dichtbij in slaap vallen.',
   'c.snow_baby.specialName': 'Slaapliedje',
   'c.snow_baby.specialShout': 'SLAAP KINDJE SLAAP~',
   'c.snow_baby.tagline': 'Mollig, zacht en met een vriendje van sneeuw.',
@@ -317,7 +354,8 @@ const trNl = <String, String>{
   'c.stare_cat.lore': 'De rode kat op een paar centimeter van de camera, met wijd open ogen en de blik van iemand die je zoekgeschiedenis heeft gezien. Hij zegt niks. Hoeft ook niet.',
   'c.stare_cat.memeAlias': 'De kat die je aanstaart',
   'c.stare_cat.name': 'Stare Cat',
-  'c.stare_cat.passiveDescription': 'Twee sprongen in de lucht in plaats van één.',
+  'c.stare_cat.passiveDescription':
+      'Twee sprongen in de lucht in plaats van één.',
   'c.stare_cat.passiveName': 'Kattenreflexen',
   'c.stare_cat.specialDescription': 'Staart de tegenstander aan: als die dichtbij is, verstijft hij even van ongemak (5%).',
   'c.stare_cat.specialName': 'De Staarder',
@@ -329,19 +367,23 @@ const trNl = <String, String>{
   'c.stitch_shrek.lore': 'Het poppetje met een groen ogergezicht in een blauwe alien-onesie, oren inbegrepen. Ziet er superschattig uit, maar als hij op je springt, bijt hij.',
   'c.stitch_shrek.memeAlias': 'De baby-oger in alien-onesie',
   'c.stitch_shrek.name': 'Blauwe Oger',
-  'c.stitch_shrek.passiveDescription': 'De zachte onesie dempt klappen: vliegt 12% minder ver.',
+  'c.stitch_shrek.passiveDescription':
+      'De zachte onesie dempt klappen: vliegt 12% minder ver.',
   'c.stitch_shrek.passiveName': 'Onesie',
-  'c.stitch_shrek.specialDescription': 'Springt op de tegenstander en bijt (12%).',
+  'c.stitch_shrek.specialDescription':
+      'Springt op de tegenstander en bijt (12%).',
   'c.stitch_shrek.specialName': 'Alienaanval',
   'c.stitch_shrek.specialShout': 'GRRR!',
-  'c.stitch_shrek.tagline': 'Ogersnoetje, blauwe onesie. Experiment (goed) mislukt.',
+  'c.stitch_shrek.tagline':
+      'Ogersnoetje, blauwe onesie. Experiment (goed) mislukt.',
   'c.suit_dachshund.hurt0': 'Mijn stropdas!',
   'c.suit_dachshund.hurt1': 'Ka-au!',
   'c.suit_dachshund.hurt2': 'Niet mijn Crocs!',
   'c.suit_dachshund.lore': 'De teckelpup in zwart pak, wit overhemd en stropdas... met de rode Crocs van Bliksem McQueen aan zijn pootjes. Klaar voor een bruiloft én de Piston Cup.',
   'c.suit_dachshund.memeAlias': 'De teckel in pak met Bliksem McQueen-Crocs',
   'c.suit_dachshund.name': 'Ka-Chow Teckel',
-  'c.suit_dachshund.passiveDescription': 'Gepantserde Crocs: krijgt 15% minder schade.',
+  'c.suit_dachshund.passiveDescription':
+      'Gepantserde Crocs: krijgt 15% minder schade.',
   'c.suit_dachshund.passiveName': 'Pantsercrocs',
   'c.suit_dachshund.specialDescription': 'Turbo voor 2,5 seconden: supersnel, wie hij als eerste raakt vliegt weg (10%).',
   'c.suit_dachshund.specialName': 'Ka-Chow!',
@@ -353,9 +395,11 @@ const trNl = <String, String>{
   'c.timeout_man.lore': 'De reus in lichtblauwe polo die met zijn handen het time-outteken maakt: het perfecte antwoord op elke discussie die te lang duurt. Als hij om pauze vraagt, komt er pauze.',
   'c.timeout_man.memeAlias': 'De reus die om een time-out vraagt',
   'c.timeout_man.name': 'Mister Time-Out',
-  'c.timeout_man.passiveDescription': 'Superzwaar: het lastigst om weg te slingeren.',
+  'c.timeout_man.passiveDescription':
+      'Superzwaar: het lastigst om weg te slingeren.',
   'c.timeout_man.passiveName': 'Reus',
-  'c.timeout_man.specialDescription': 'Legt het spel stil: de tegenstander staat even vast en hij herstelt 4%.',
+  'c.timeout_man.specialDescription':
+      'Legt het spel stil: de tegenstander staat even vast en hij herstelt 4%.',
   'c.timeout_man.specialName': 'TIME-OUT!',
   'c.timeout_man.specialShout': 'TIME-OUT!',
   'c.timeout_man.tagline': 'Handen in een T, vermoeide blik: genoeg zo.',
@@ -365,7 +409,8 @@ const trNl = <String, String>{
   'c.tongue_cat.lore': 'De gestreepte kat die met grote ogen in de camera kijkt en een tong uitsteekt die twee keer zo lang is als zijn kop. Niemand snapt hoe die erin past.',
   'c.tongue_cat.memeAlias': 'De kat met de megatong',
   'c.tongue_cat.name': 'Tongkat',
-  'c.tongue_cat.passiveDescription': 'Zijn klappen vertragen de tegenstander even.',
+  'c.tongue_cat.passiveDescription':
+      'Zijn klappen vertragen de tegenstander even.',
   'c.tongue_cat.passiveName': 'Kwijl',
   'c.tongue_cat.specialDescription': 'De tong schiet naar voren, grijpt de tegenstander en trekt hem naar zich toe (8%).',
   'c.tongue_cat.specialName': 'Tonglik',
@@ -377,7 +422,8 @@ const trNl = <String, String>{
   'c.wig_dog.lore': 'De chihuahua met het bruine bobkapsel en de blik van iemand die op het punt staat een recensie van één ster achter te laten. Hij heeft nooit ongelijk, en als het wel zo is, wil hij alsnog de manager spreken.',
   'c.wig_dog.memeAlias': 'De chihuahua met pruik',
   'c.wig_dog.name': 'Wig Dog',
-  'c.wig_dog.passiveDescription': 'Houd SPRONG ingedrukt in de lucht om te zweven: superlange recovery\'s.',
+  'c.wig_dog.passiveDescription':
+      'Houd SPRONG ingedrukt in de lucht om te zweven: superlange recovery\'s.',
   'c.wig_dog.passiveName': 'Pruikparachute',
   'c.wig_dog.specialDescription': 'Een verontwaardigde schreeuw: een schokgolf die iedereen dichtbij wegblaast (11%).',
   'c.wig_dog.specialName': 'Ik Wil de Manager!',
@@ -389,7 +435,8 @@ const trNl = <String, String>{
   'c.wink_cat.lore': 'De grijs-witte kat die op de bank ligt en naar je knipoogt met zijn tong uit zijn mond, alsof hij iets weet wat jij niet weet. Niemand kan zijn charme weerstaan.',
   'c.wink_cat.memeAlias': 'Knipoog en tong uit',
   'c.wink_cat.name': 'Knipoogkat',
-  'c.wink_cat.passiveDescription': 'Ontwijkt soms een klap met een knipoog (10%).',
+  'c.wink_cat.passiveDescription':
+      'Ontwijkt soms een klap met een knipoog (10%).',
   'c.wink_cat.passiveName': 'Knipoog',
   'c.wink_cat.specialDescription': 'Een tegenstander dichtbij raakt betoverd: hij loopt naar hem toe zonder te kunnen aanvallen.',
   'c.wink_cat.specialName': 'Betoverend',
@@ -447,7 +494,8 @@ const trNl = <String, String>{
   'howto.jumpText': 'je kunt in de lucht nog een keer springen; zijn je sprongen op, dan lanceert hij je terug naar de arena.',
   'howto.mash': 'Bevroren, in slaap of verdoofd? Ram op de knoppen om sneller los te komen! (Expertbesturing: Instellingen > Hulp: Nee.)',
   'howto.ok': 'Snap ik!',
-  'howto.specialText': 'de move van jouw meme. Buiten de arena brengt hij je vanzelf terug.',
+  'howto.specialText':
+      'de move van jouw meme. Buiten de arena brengt hij je vanzelf terug.',
   'howto.title': 'Zo vecht je',
   'hud.cpu': 'CPU',
   'hud.you': 'JIJ',
@@ -512,9 +560,11 @@ const trNl = <String, String>{
   'results.unlocked': 'Nieuwe meme ontgrendeld: {name}!',
   'results.victory': 'GEWONNEN!',
   'results.wins': '{name} wint!',
-  'select.freeTry': 'Alleen vandaag gratis proberen, ontgrendel hem daarna met likes!',
+  'select.freeTry':
+      'Alleen vandaag gratis proberen, ontgrendel hem daarna met likes!',
   'select.memeOfTheDay': 'Meme van de dag: dubbele likes in je portemonnee!',
-  'select.needLikes': 'Je hebt nog {n} likes nodig: win gevechten en voltooi missies!',
+  'select.needLikes':
+      'Je hebt nog {n} likes nodig: win gevechten en voltooi missies!',
   'select.pick': 'Kies',
   'select.seconds': '{n}s',
   'select.title': 'Kies je meme',
