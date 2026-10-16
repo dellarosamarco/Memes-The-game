@@ -110,7 +110,7 @@ class ResultsOverlay extends StatelessWidget {
     }
     final winner = game.winner?.character ?? game.player.character;
     return Container(
-      color: const Color(0xAA3A2440),
+      color: const Color(0xD03A2440),
       alignment: Alignment.center,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
@@ -128,7 +128,7 @@ class ResultsOverlay extends StatelessWidget {
                       : const Color(0xFF9AB4FF),
                 ),
                 const SizedBox(height: 4),
-                _Winner(character: winner),
+                _Winner(character: winner, hat: won),
                 PixelText(
                   won
                       ? tr('results.wins', '{name} vince!', {
@@ -281,14 +281,22 @@ class _NextUnlock extends StatelessWidget {
 }
 
 class _Winner extends StatelessWidget {
-  const _Winner({required this.character});
+  const _Winner({required this.character, required this.hat});
 
   final MemeCharacter character;
+
+  /// Only the player wears the hat bought in the shop.
+  final bool hat;
 
   @override
   Widget build(BuildContext context) => SizedBox(
     height: 150,
-    child: CharacterSpriteView(character: character, scale: 2.4, running: true),
+    child: CharacterSpriteView(
+      character: character,
+      scale: 2.4,
+      running: true,
+      showHat: hat,
+    ),
   );
 }
 

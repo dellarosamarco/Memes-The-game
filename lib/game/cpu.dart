@@ -32,13 +32,13 @@ class CpuBrain {
   bool _wasInHitstun = false;
 
   double get _reaction => switch (difficulty) {
-    Difficulty.easy => .42,
+    Difficulty.easy => .34,
     Difficulty.normal => .11,
     Difficulty.hard => .07,
   };
 
   double get _aggression => switch (difficulty) {
-    Difficulty.easy => .45,
+    Difficulty.easy => .55,
     Difficulty.normal => .86,
     Difficulty.hard => .95,
   };

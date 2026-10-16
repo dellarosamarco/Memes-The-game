@@ -112,7 +112,14 @@ class _Day extends StatelessWidget {
             state == _DayState.taken ? 'star' : 'like',
             scale: big ? 2.6 : 2,
           ),
-          PixelText('+$likes', size: 13, color: kPlum, outline: false),
+          state == _DayState.taken
+              ? PixelText(
+                  tr('common.ok', 'OK'),
+                  size: 13,
+                  color: const Color(0xFF2E9E6E),
+                  outline: false,
+                )
+              : PixelText('+$likes', size: 13, color: kPlum, outline: false),
         ],
       ),
     );

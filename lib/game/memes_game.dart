@@ -37,6 +37,20 @@ enum Difficulty {
 
 /// Everything that defines a match.
 /// Newcomers start on Easy until their first win, then on Normal.
+/// The difficulty picked last time (Free fight and Arcade share it).
+Difficulty savedDifficulty() {
+  final i = LocalStore.ready
+      ? LocalStore.instance.getInt('difficulty', -1)
+      : -1;
+  return i >= 0 && i < Difficulty.values.length
+      ? Difficulty.values[i]
+      : firstDifficulty();
+}
+
+void saveDifficulty(Difficulty d) {
+  if (LocalStore.ready) LocalStore.instance.setInt('difficulty', d.index);
+}
+
 Difficulty firstDifficulty() =>
     LocalStore.ready && LocalStore.instance.stat('wins') >= 1
     ? Difficulty.normal
@@ -225,7 +239,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   // ----------------------------------------------------------------- update
 
   @override
+  // ignore: must_call_super
   void update(double dt) {
+    // (super.update runs in each [_step].)
     if (debugBridge) {
       _frames++;
       _fpsT += dt;
@@ -236,7 +252,16 @@ class MemesGame extends FlameGame with KeyboardEvents {
         _fpsT = 0;
       }
     }
-    dt = min(dt, 1 / 30) * _debugTimeScale;
+    // A slow phone still plays at full speed: long frames are split in
+    // steps no longer than 1/30 s (the physics stays stable).
+    dt = min(dt, 1 / 10) * _debugTimeScale;
+    final steps = (dt * 30).ceil().clamp(1, 3);
+    for (var i = 0; i < steps; i++) {
+      _step(dt / steps);
+    }
+  }
+
+  void _step(double dt) {
     if (_hitStop > 0) {
       _hitStop -= dt;
       _updateShake(dt);
@@ -577,10 +602,19 @@ class MemesGame extends FlameGame with KeyboardEvents {
   double get _wideZoom => size.y / (kTile * 14);
 
   void _updateCamera(double dt) {
-    final pts = [
-      for (final f in fighters)
-        if (f.alive) f.mid,
-    ];
+    final w = winner;
+    final pts = matchOver && w != null
+        // The match is decided: settle on the winner, over the arena.
+        ? [
+            Vector2(
+              w.mid.x.clamp(stage.left * kTile, (stage.right + 1) * kTile),
+              min(w.mid.y, stage.mainTop * kTile),
+            ),
+          ]
+        : [
+            for (final f in fighters)
+              if (f.alive) f.mid,
+          ];
     if (pts.isEmpty) return;
     var minX = pts.map((p) => p.x).reduce(min) - 100;
     var maxX = pts.map((p) => p.x).reduce(max) + 100;

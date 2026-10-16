@@ -88,25 +88,66 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
     if (await store.buyMeme(c.id, c.price)) {
       Sound.play('finish');
       setState(() {});
+      if (mounted) await _celebrate(c);
       return;
     }
     Sound.play('hurt', volume: .4);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: kPlum,
-        duration: const Duration(seconds: 2),
-        content: PixelText(
-          tr(
-            'select.needLikes',
-            'Ti servono ancora {n} like: vinci incontri e completa le missioni!',
-            {'n': c.price - LocalStore.instance.wallet},
-          ),
-          size: 14,
-        ),
+    showToast(
+      context,
+      tr(
+        'select.needLikes',
+        'Ti servono ancora {n} like: vinci incontri e completa le missioni!',
+        {'n': c.price - LocalStore.instance.wallet},
       ),
     );
   }
+
+  /// The new meme pops in, dancing.
+  Future<void> _celebrate(MemeCharacter c) => showDialog<void>(
+    context: context,
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: GestureDetector(
+        onTap: () => Navigator.pop(ctx),
+        child: PixelPanel(
+          width: 360,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BouncyText(
+                tr('select.unlocked', 'Sbloccato!'),
+                size: 30,
+                color: const Color(0xFFFFE07A),
+              ),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: .2, end: 1),
+                duration: const Duration(milliseconds: 450),
+                curve: Curves.elasticOut,
+                builder: (_, v, child) =>
+                    Transform.scale(scale: v, child: child),
+                child: CharacterSpriteView(
+                  character: c,
+                  scale: 2.2,
+                  running: true,
+                ),
+              ),
+              PixelText(c.name, size: 20, color: const Color(0xFFFF82B4)),
+              const SizedBox(height: 10),
+              PixelButton(
+                label: tr('select.pick', 'Scegli'),
+                icon: 'play',
+                color: PixelColor.pink,
+                height: 46,
+                fontSize: 15,
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 
   /// Next/previous meme, keeping its thumbnail in view.
   void _select(int delta) {
@@ -318,102 +359,139 @@ class _Info extends StatelessWidget {
         stops: [0, .86, 1],
       ).createShader(r),
       blendMode: BlendMode.dstIn,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PixelText(
-                        c.name,
-                        size: 24,
-                        color: const Color(0xFFFF82B4),
-                        align: TextAlign.left,
-                      ),
-                      PixelText(
-                        c.memeAlias,
-                        size: 13,
-                        color: kPlum,
-                        outline: false,
-                        align: TextAlign.left,
-                      ),
-                      const SizedBox(height: 6),
-                      // The stats sit next to the photo, so the bigger
-                      // photo doesn't push the abilities down.
-                      Wrap(
-                        spacing: 14,
-                        runSpacing: 2,
-                        children: [
-                          _Stat(
-                            tr('stat.speed', 'Velocità'),
-                            Fighter.speedRating(c),
-                          ),
-                          _Stat(
-                            tr('stat.jump', 'Salto'),
-                            Fighter.jumpRating(c),
-                          ),
-                          _Stat(
-                            tr('stat.weight', 'Peso'),
-                            Fighter.weightRating(c),
-                          ),
-                        ],
-                      ),
-                    ],
+      child: _Scrolled(
+        builder: (ctrl) => SingleChildScrollView(
+          controller: ctrl,
+          padding: const EdgeInsets.only(bottom: 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        PixelText(
+                          c.name,
+                          size: 24,
+                          color: const Color(0xFFFF82B4),
+                          align: TextAlign.left,
+                        ),
+                        PixelText(
+                          c.memeAlias,
+                          size: 13,
+                          color: kPlum,
+                          outline: false,
+                          align: TextAlign.left,
+                        ),
+                        const SizedBox(height: 6),
+                        // The stats sit next to the photo, so the bigger
+                        // photo doesn't push the abilities down.
+                        Wrap(
+                          spacing: 14,
+                          runSpacing: 2,
+                          children: [
+                            _Stat(
+                              tr('stat.speed', 'Velocità'),
+                              Fighter.speedRating(c),
+                            ),
+                            _Stat(
+                              tr('stat.jump', 'Salto'),
+                              Fighter.jumpRating(c),
+                            ),
+                            _Stat(
+                              tr('stat.weight', 'Peso'),
+                              Fighter.weightRating(c),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                _Photo(character: c),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (c.isOfTheDay && !c.isOwned)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: PixelText(
-                  tr(
-                    'select.freeTry',
-                    'Prova gratis solo oggi, poi sbloccalo con i like!',
-                  ),
-                  size: 12,
-                  color: const Color(0xFF2E9E6E),
-                  outline: false,
-                  align: TextAlign.left,
-                ),
+                  const SizedBox(width: 8),
+                  _Photo(character: c),
+                ],
               ),
-            if (c.isOfTheDay)
-              Padding(
-                padding: EdgeInsets.only(bottom: 4),
-                child: PixelText(
-                  tr(
-                    'select.memeOfTheDay',
-                    'Meme del giorno: like doppi nel portafoglio!',
+              const SizedBox(height: 8),
+              if (c.isOfTheDay && !c.isOwned)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: PixelText(
+                    tr(
+                      'select.freeTry',
+                      'Prova gratis solo oggi, poi sbloccalo con i like!',
+                    ),
+                    size: 12,
+                    color: const Color(0xFF2E9E6E),
+                    outline: false,
+                    align: TextAlign.left,
                   ),
-                  size: 12,
-                  color: Color(0xFFFF82B4),
-                  outline: false,
-                  align: TextAlign.left,
                 ),
+              if (c.isOfTheDay)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 4),
+                  child: PixelText(
+                    tr(
+                      'select.memeOfTheDay',
+                      'Meme del giorno: like doppi nel portafoglio!',
+                    ),
+                    size: 12,
+                    color: Color(0xFFFF82B4),
+                    outline: false,
+                    align: TextAlign.left,
+                  ),
+                ),
+              _Ability(title: c.passiveName, text: c.passiveDescription),
+              _Ability(
+                title: '${c.specialName} (${_secs(c.specialCooldown)})',
+                text: c.specialDescription,
+                special: true,
               ),
-            _Ability(title: c.passiveName, text: c.passiveDescription),
-            _Ability(
-              title: '${c.specialName} (${_secs(c.specialCooldown)})',
-              text: c.specialDescription,
-              special: true,
-            ),
-            // The lore last: what matters for picking comes first.
-            const SizedBox(height: 8),
-            Text(c.lore, style: body),
-          ],
+              // The lore last: what matters for picking comes first.
+              const SizedBox(height: 8),
+              Text(c.lore, style: body),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+/// A scroll view with a scrollbar that's always visible (there's more
+/// below) and mouse-wheel friendly.
+class _Scrolled extends StatefulWidget {
+  const _Scrolled({required this.builder});
+
+  final Widget Function(ScrollController) builder;
+
+  @override
+  State<_Scrolled> createState() => _ScrolledState();
+}
+
+class _ScrolledState extends State<_Scrolled> {
+  final _ctrl = ScrollController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scrollbar(
+    controller: _ctrl,
+    thumbVisibility: true,
+    child: ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: PointerDeviceKind.values.toSet(),
+        scrollbars: false,
+      ),
+      child: widget.builder(_ctrl),
+    ),
+  );
 }
 
 /// 8 -> "8s", 4.5 -> "4,5s".

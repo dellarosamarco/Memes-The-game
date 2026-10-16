@@ -801,7 +801,7 @@ class Fighter extends PositionComponent
 
   /// The opponent close enough to aim at, and where it is (dx > 0: ahead
   /// in any direction, dy < 0: above).
-  ({double dx, double dy})? _target(double range) {
+  ({double dx, double dy, double percent})? _target(double range) {
     Fighter? best;
     var bestD = range;
     for (final o in opponents) {
@@ -812,7 +812,11 @@ class Fighter extends PositionComponent
       }
     }
     if (best == null) return null;
-    return (dx: (best.position.x - position.x).abs(), dy: best.mid.y - mid.y);
+    return (
+      dx: (best.position.x - position.x).abs(),
+      dy: best.mid.y - mid.y,
+      percent: best.percent,
+    );
   }
 
   Move? _smartGround() {
@@ -821,6 +825,9 @@ class Fighter extends PositionComponent
     if (t == null) return null;
     if (t.dy < -34 && t.dx < 50) return Moves.up;
     if (t.dx > 30 && t.dy.abs() < 40) return Moves.forward;
+    // A battered opponent right here: the strong hit that can finish them
+    // (jabs alone never KO).
+    if (t.percent >= 90 && t.dy.abs() < 40) return Moves.forward;
     return null;
   }
 

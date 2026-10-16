@@ -20,7 +20,7 @@ class ArcadeScreen extends StatefulWidget {
 }
 
 class _ArcadeScreenState extends State<ArcadeScreen> {
-  Difficulty _difficulty = firstDifficulty();
+  Difficulty _difficulty = savedDifficulty();
   late ArcadeRun _run = _newRun();
 
   ArcadeRun _newRun() =>
@@ -105,6 +105,27 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                               ),
                               const SizedBox(height: 8),
                               ArcadeLadder(run: _run, round: 1),
+                              const SizedBox(height: 8),
+                              // What the whole ladder is worth.
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const PixelIcon('trophy', scale: 1.5),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: PixelText(
+                                      tr(
+                                        'arcade.reward',
+                                        'Premio: +{n} like e un meme sbloccato!',
+                                        {'n': 150},
+                                      ),
+                                      size: 13,
+                                      color: const Color(0xFFE08A00),
+                                      outline: false,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -129,6 +150,7 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                               : PixelColor.grey,
                           onPressed: () => setState(() {
                             _difficulty = d;
+                            saveDifficulty(d);
                             _run = _newRun();
                           }),
                         ),

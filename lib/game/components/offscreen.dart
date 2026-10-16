@@ -16,6 +16,8 @@ class OffscreenMarkers extends Component with HasGameReference<MemesGame> {
 
   @override
   void render(Canvas canvas) {
+    // (Not over the results.)
+    if (game.matchOver) return;
     final view = game.camera.visibleWorldRect;
     final size = game.size;
     for (final f in game.fighters) {

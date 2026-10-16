@@ -25,7 +25,6 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
   // Remembered between visits (for this session).
   static String? _lastOpponent;
   static int _lastStage = -1;
-  static Difficulty? _lastDifficulty;
   static bool _lastItems = true;
 
   final _rnd = Random();
@@ -40,13 +39,12 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
 
   /// -1 = random arena.
   late int _stage = _lastStage;
-  late Difficulty _difficulty = _lastDifficulty ?? firstDifficulty();
+  late Difficulty _difficulty = savedDifficulty();
   late bool _items = _lastItems;
 
   void _fight() {
     _lastOpponent = _opponent?.id;
     _lastStage = _stage;
-    _lastDifficulty = _difficulty;
     _lastItems = _items;
     final others = MemeCharacter.all
         .where((c) => c.id != widget.player.id)

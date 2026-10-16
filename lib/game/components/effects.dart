@@ -439,7 +439,8 @@ class BigBanner extends PositionComponent with HasGameReference<FlameGame> {
   @override
   void update(double dt) {
     _t += dt;
-    position.setValues(game.size.x / 2, game.size.y * .42);
+    // High up: the winner stays visible below it.
+    position.setValues(game.size.x / 2, game.size.y * .22);
   }
 
   @override

@@ -765,7 +765,14 @@ class _SettingsPanelState extends State<SettingsPanel> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(width: 42, child: PixelIcon(icon, scale: 2)),
+            SizedBox(
+              width: 38,
+              // (Aligned: a tight box would stretch the icon.)
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: PixelIcon(icon, scale: 2),
+              ),
+            ),
             SizedBox(
               width: 112,
               child: PixelText(
@@ -993,4 +1000,40 @@ Future<bool> confirmDialog(
     ),
   );
   return r ?? false;
+}
+
+/// A short message at the top of the screen that never blocks taps.
+void showToast(BuildContext context, String text) {
+  final overlay = Overlay.of(context);
+  late final OverlayEntry entry;
+  entry = OverlayEntry(
+    builder: (_) => Positioned(
+      top: 12,
+      left: 0,
+      right: 0,
+      child: IgnorePointer(
+        child: Center(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 200),
+            builder: (_, v, child) => Transform.translate(
+              offset: Offset(0, -20 * (1 - v)),
+              child: child,
+            ),
+            child: PixelPanel(
+              dark: true,
+              px: 1.5,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 11),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 520),
+                child: PixelText(text, size: 14),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  overlay.insert(entry);
+  Future<void>.delayed(const Duration(milliseconds: 2400), entry.remove);
 }

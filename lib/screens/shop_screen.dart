@@ -21,6 +21,9 @@ class _ShopScreenState extends State<ShopScreen> {
   late Hat? _preview =
       Hat.byId(LocalStore.instance.equippedHat) ?? Hat.all.first;
 
+  /// Cheapest first.
+  static final _hats = [...Hat.all]..sort((a, b) => a.price.compareTo(b.price));
+
   Future<void> _act(Hat hat) async {
     final store = LocalStore.instance;
     if (store.ownedHats.contains(hat.id)) {
@@ -101,8 +104,11 @@ class _ShopScreenState extends State<ShopScreen> {
                       SizedBox(
                         width: 300,
                         child: SingleChildScrollView(
+                          padding: const EdgeInsets.only(top: 16),
                           child: Wrap(
                             alignment: WrapAlignment.center,
+                            // Room for the hats above the heads.
+                            runSpacing: 18,
                             children: [
                               for (final c in MemeCharacter.all)
                                 CharacterSpriteView(
@@ -123,13 +129,13 @@ class _ShopScreenState extends State<ShopScreen> {
                                 crossAxisSpacing: 8,
                                 childAspectRatio: .82,
                               ),
-                          itemCount: Hat.all.length,
+                          itemCount: _hats.length,
                           itemBuilder: (_, i) => _HatCard(
-                            hat: Hat.all[i],
-                            selected: _preview?.id == Hat.all[i].id,
+                            hat: _hats[i],
+                            selected: _preview?.id == _hats[i].id,
                             onPreview: () =>
-                                setState(() => _preview = Hat.all[i]),
-                            onAct: () => _act(Hat.all[i]),
+                                setState(() => _preview = _hats[i]),
+                            onAct: () => _act(_hats[i]),
                           ),
                         ),
                       ),
@@ -167,7 +173,7 @@ class _HatCard extends StatelessWidget {
     return GestureDetector(
       onTap: onPreview,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(6, 8, 6, 10),
+        padding: const EdgeInsets.fromLTRB(6, 10, 6, 10),
         decoration: pixelFrame(
           selected
               ? 'assets/images/ui/button_yellow.png'

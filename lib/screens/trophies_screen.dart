@@ -11,6 +11,11 @@ class TrophiesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final got = LocalStore.instance.trophies;
+    // Earned ones first.
+    final sorted = [
+      ...Achievements.all.where((t) => got.contains(t.id)),
+      ...Achievements.all.where((t) => !got.contains(t.id)),
+    ];
     return Scaffold(
       body: PixelBackdrop(
         top: const Color(0xFFFFE08C),
@@ -52,12 +57,12 @@ class TrophiesScreen extends StatelessWidget {
                           crossAxisSpacing: 8,
                           childAspectRatio: 3.2,
                         ),
-                    itemCount: Achievements.all.length,
+                    itemCount: sorted.length,
                     itemBuilder: (_, i) {
-                      final t = Achievements.all[i];
+                      final t = sorted[i];
                       final on = got.contains(t.id);
                       return Opacity(
-                        opacity: on ? 1 : .55,
+                        opacity: on ? 1 : .8,
                         child: PixelPanel(
                           px: 2,
                           padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),

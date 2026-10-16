@@ -57,6 +57,10 @@ class Move {
   double get total => startup + active + recovery;
 
   /// Speed (px/s) a target is launched at, given its damage after the hit.
+  /// Global knockback growth: KOs land around 100-140%, so a stock
+  /// doesn't drag on (mobile matches should be short).
+  static const kbScale = 1.15;
+
   static double launchSpeed({
     required double base,
     required double growth,
@@ -64,7 +68,7 @@ class Move {
     required double targetPercent,
     double weight = 1,
   }) {
-    final v = base + growth * targetPercent * (0.6 + damage / 20);
+    final v = base + growth * kbScale * targetPercent * (0.6 + damage / 20);
     return v / weight;
   }
 

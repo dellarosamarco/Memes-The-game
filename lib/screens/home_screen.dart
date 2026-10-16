@@ -290,6 +290,7 @@ class _HomeScreenState extends State<HomeScreen>
                         label: tr('menu.missions', 'Missioni'),
                         icon: 'star',
                         color: PixelColor.pink,
+                        width: 176,
                         height: 44,
                         fontSize: 14,
                         onPressed: () => Navigator.of(context)
@@ -306,6 +307,7 @@ class _HomeScreenState extends State<HomeScreen>
                       label: tr('menu.shop', 'Negozio'),
                       icon: 'like',
                       color: PixelColor.yellow,
+                      width: 176,
                       height: 44,
                       fontSize: 14,
                       onPressed: () => Navigator.of(context)
@@ -321,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen>
                       label: tr('menu.trophies', 'Trofei'),
                       icon: 'trophy',
                       color: PixelColor.mint,
+                      width: 176,
                       height: 44,
                       fontSize: 14,
                       onPressed: () => Navigator.of(context).push(

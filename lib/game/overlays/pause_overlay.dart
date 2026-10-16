@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/pixel_ui.dart';
@@ -103,21 +104,25 @@ class PauseOverlay extends StatelessWidget {
                         const LanguageButton(),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      tr(
-                        'pause.keys',
-                        'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
-                            'C/K speciale · ESC pausa',
+                    // Keyboard keys: not on a phone.
+                    if (defaultTargetPlatform != TargetPlatform.android &&
+                        defaultTargetPlatform != TargetPlatform.iOS) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        tr(
+                          'pause.keys',
+                          'Frecce/WASD muoviti · Z/SPAZIO salta · X/J attacco · '
+                              'C/K speciale · ESC pausa',
+                        ),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: kPixelFont,
+                          fontFamilyFallback: fontFallback,
+                          fontSize: 11,
+                          color: Color(0xFF9A8FB0),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: kPixelFont,
-                        fontFamilyFallback: fontFallback,
-                        fontSize: 11,
-                        color: Color(0xFF9A8FB0),
-                      ),
-                    ),
+                    ],
                   ],
                 ),
               ),
