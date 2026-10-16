@@ -66,6 +66,26 @@ class Achievements {
     toasts.value = [...toasts.value]..remove(t);
   }
 
+  /// How far along a counting trophy is: (done, target), or null.
+  static (int, int)? progress(String id) {
+    if (!LocalStore.ready) return null;
+    final s = LocalStore.instance;
+    final n = MemeCharacter.all.length;
+    final (int, int)? p = switch (id) {
+      'wins10' => (s.stat('wins'), 10),
+      'wins50' => (s.stat('wins'), 50),
+      'kos100' => (s.stat('kos'), 100),
+      'specials100' => (s.stat('specials'), 100),
+      'damage5000' => (s.stat('damage'), 5000),
+      'respects' => (s.stat('respects'), 10),
+      'all_memes' => (s.playedWith.length, n),
+      'all_wins' => (s.wonWith.length, n),
+      _ => null,
+    };
+    if (p == null) return null;
+    return (p.$1.clamp(0, p.$2), p.$2);
+  }
+
   /// Checks the cumulative stats.
   static void checkStats() {
     if (!LocalStore.ready) return;

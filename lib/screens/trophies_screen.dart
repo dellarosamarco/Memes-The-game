@@ -55,7 +55,7 @@ class TrophiesScreen extends StatelessWidget {
                           maxCrossAxisExtent: 270,
                           mainAxisSpacing: 8,
                           crossAxisSpacing: 8,
-                          childAspectRatio: 3.2,
+                          childAspectRatio: 2.7,
                         ),
                     itemCount: sorted.length,
                     itemBuilder: (_, i) {
@@ -93,6 +93,39 @@ class TrophiesScreen extends StatelessWidget {
                                       align: TextAlign.left,
                                       maxLines: 2,
                                     ),
+                                    if (!on)
+                                      if (Achievements.progress(t.id) case (
+                                        final done,
+                                        final target,
+                                      ))
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 3,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: LinearProgressIndicator(
+                                                  value: done / target,
+                                                  minHeight: 5,
+                                                  color: const Color(
+                                                    0xFFFF82B4,
+                                                  ),
+                                                  backgroundColor: const Color(
+                                                    0xFFE6DCE8,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              PixelText(
+                                                '$done/$target',
+                                                size: 10,
+                                                color: kPlum,
+                                                outline: false,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                   ],
                                 ),
                               ),
