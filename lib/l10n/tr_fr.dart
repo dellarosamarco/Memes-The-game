@@ -439,7 +439,6 @@ const trFr = <String, String>{
   'home.memeOfTheDay': 'Meme du jour : {name}',
   'home.nameRejected': 'Ce nom n\'est pas autorisé, choisis-en un autre.',
   'home.streak': '{n} jours d’affilée',
-  'home.wins': '{n} victoires',
   'home.yourName': 'Ton pseudo',
   'howto.attackText': 'touche pour frapper : le bon coup part tout seul vers l\'adversaire. Maintiens pour un SMASH.',
   'howto.intro': 'Plus l\'adversaire a de dégâts (%), plus il vole loin quand tu le frappes : éjecte-le de l\'écran !',

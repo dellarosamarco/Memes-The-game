@@ -439,7 +439,6 @@ const trUk = <String, String>{
   'home.memeOfTheDay': 'Мем дня: {name}',
   'home.nameRejected': 'Це ім\'я не можна, обери інше.',
   'home.streak': 'Днів поспіль: {n}',
-  'home.wins': 'Перемог: {n}',
   'home.yourName': 'Твоє ім\'я',
   'howto.attackText': 'тапни, щоб ударити: потрібний удар сам полетить у суперника. Утримуй для SMASH.',
   'howto.intro': 'Що більше шкоди (%) у суперника, то далі він летить від удару: виший його за екран!',

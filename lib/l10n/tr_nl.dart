@@ -439,7 +439,6 @@ const trNl = <String, String>{
   'home.memeOfTheDay': 'Meme van de dag: {name}',
   'home.nameRejected': 'Deze naam is niet toegestaan, kies een andere.',
   'home.streak': '{n} dagen op rij',
-  'home.wins': '{n} overwinningen',
   'home.yourName': 'Jouw naam',
   'howto.attackText': 'tik om te slaan: de juiste aanval gaat vanzelf richting de tegenstander. Houd ingedrukt voor een SMASH.',
   'howto.intro': 'Hoe meer schade (%) de tegenstander heeft, hoe verder hij vliegt als je hem raakt: knal hem van het scherm!',

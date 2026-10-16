@@ -439,7 +439,6 @@ const trDe = <String, String>{
   'home.memeOfTheDay': 'Meme des Tages: {name}',
   'home.nameRejected': 'Dieser Name ist nicht erlaubt, wähl einen anderen.',
   'home.streak': '{n} Tage in Folge',
-  'home.wins': '{n} Siege',
   'home.yourName': 'Dein Name',
   'howto.attackText': 'tippen zum Schlagen: Der passende Angriff geht von selbst auf den Gegner los. Gedrückt halten für einen SMASH.',
   'howto.intro': 'Je mehr Schaden (%) der Gegner hat, desto weiter fliegt er, wenn du triffst: Schleuder ihn aus dem Bildschirm!',

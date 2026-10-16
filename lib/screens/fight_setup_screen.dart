@@ -198,8 +198,10 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                                         color: d == _difficulty
                                             ? PixelColor.purple
                                             : PixelColor.grey,
-                                        onPressed: () =>
-                                            setState(() => _difficulty = d),
+                                        onPressed: () {
+                                          saveDifficulty(d);
+                                          setState(() => _difficulty = d);
+                                        },
                                       ),
                                     ),
                                 ],

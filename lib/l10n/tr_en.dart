@@ -439,7 +439,6 @@ const trEn = <String, String>{
   'home.memeOfTheDay': 'Meme of the day: {name}',
   'home.nameRejected': 'That name isn\'t allowed, pick another one.',
   'home.streak': '{n}-day streak',
-  'home.wins': '{n} wins',
   'home.yourName': 'Your name',
   'howto.attackText': 'tap to hit: the right attack fires off toward the opponent on its own. Hold for a SMASH.',
   'howto.intro': 'The more damage (%) your opponent has, the farther they fly when hit: launch them off the screen!',

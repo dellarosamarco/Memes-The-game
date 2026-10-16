@@ -105,7 +105,8 @@ class PauseOverlay extends StatelessWidget {
                       ],
                     ),
                     // Keyboard keys: not on a phone.
-                    if (defaultTargetPlatform != TargetPlatform.android &&
+                    if (!MemesGame.touchSeen &&
+                        defaultTargetPlatform != TargetPlatform.android &&
                         defaultTargetPlatform != TargetPlatform.iOS) ...[
                       const SizedBox(height: 10),
                       Text(

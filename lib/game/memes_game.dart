@@ -160,6 +160,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
   bool get frozenFighters => countdown > 0 || matchOver;
   bool get isPaused => overlays.isActive(overlayPause);
 
+  /// The player has touched the screen (no keyboard hints then).
+  static bool touchSeen = false;
+
   /// Closes the tutorial card (and remembers it was seen).
   void closeTutorial() {
     overlays.remove(overlayTutorial);
@@ -313,6 +316,8 @@ class MemesGame extends FlameGame with KeyboardEvents {
         overlays.remove(overlayHud);
         _banner?.removeFromParent();
         overlays.add(overlayResults);
+        // Nothing moves behind the results.
+        pauseEngine();
       }
     }
     _updateShake(dt);
@@ -606,15 +611,14 @@ class MemesGame extends FlameGame with KeyboardEvents {
     final arenaL = stage.left * kTile, arenaR = (stage.right + 1) * kTile;
     final arenaTop = stage.mainTop * kTile;
     final pts = matchOver && w != null
-        // The match is decided: settle on the arena (and the winner, if
-        // they're over it; never chase them falling off).
+        // The match is decided: the winner (and the arena, when they're
+        // above it) in the shot.
         ? [
+            w.mid,
             if (w.mid.x > arenaL &&
                 w.mid.x < arenaR &&
                 w.mid.y < arenaTop + kTile)
-              w.mid
-            else
-              Vector2((arenaL + arenaR) / 2, arenaTop - kTile * 2),
+              Vector2(w.mid.x, arenaTop),
           ]
         : [
             for (final f in fighters)
@@ -662,6 +666,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
       (minX + maxX) / 2 + padRight / 2 / vf.zoom,
       (minY + maxY) / 2 + shift,
     );
+    // GAME! sits in the upper part of the screen: the winner goes below it.
+    if (matchOver && w != null) {
+      target.y = w.mid.y - size.y * .18 / vf.zoom;
+    }
     if (punch > 0) target += (_punchAt - target) * (.6 * punch);
     // Can't fit both? The human player always stays in the shot.
     if (player.alive && !matchOver) {

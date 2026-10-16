@@ -439,7 +439,6 @@ const trZh = <String, String>{
   'home.memeOfTheDay': '今日之梗：{name}',
   'home.nameRejected': '这个名字不能用，换一个吧。',
   'home.streak': '连续{n}天',
-  'home.wins': '{n} 胜',
   'home.yourName': '你的名字',
   'howto.attackText': '点击攻击：会自动朝对手打出合适的招式。长按发动 SMASH。',
   'howto.intro': '对手的伤害（%）越高，被你打中时飞得越远：把它轰出屏幕！',

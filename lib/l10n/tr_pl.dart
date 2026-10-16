@@ -439,7 +439,6 @@ const trPl = <String, String>{
   'home.memeOfTheDay': 'Mem dnia: {name}',
   'home.nameRejected': 'Ta nazwa jest niedozwolona, wybierz inną.',
   'home.streak': 'Dni z rzędu: {n}',
-  'home.wins': 'Wygrane: {n}',
   'home.yourName': 'Twoja nazwa',
   'howto.attackText': 'dotknij, by uderzyć: właściwy cios sam poleci w stronę rywala. Przytrzymaj, by zrobić SMASH.',
   'howto.intro': 'Im więcej obrażeń (%) ma rywal, tym dalej leci po trafieniu: wywal go poza ekran!',

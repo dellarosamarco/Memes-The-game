@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,8 +73,14 @@ class LocalStore {
 
   /// Dev aid: `--dart-define=MEMES_RICH=true` adds 2000 likes to spend.
   static const _rich = bool.fromEnvironment('MEMES_RICH');
-  Future<void> addToWallet(int likes) =>
-      _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) + likes);
+
+  /// Bumped whenever the wallet changes (wallet chips listen to it).
+  static final walletChanged = ValueNotifier<int>(0);
+
+  Future<void> addToWallet(int likes) async {
+    await _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) + likes);
+    walletChanged.value++;
+  }
 
   Set<String> get ownedHats => (_prefs.getStringList('hats') ?? []).toSet();
   String? get equippedHat => _prefs.getString('hat');
@@ -84,6 +92,7 @@ class LocalStore {
     if (wallet < price || ownedHats.contains(id)) return false;
     await _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) - price);
     await _prefs.setStringList('hats', [...ownedHats, id]);
+    walletChanged.value++;
     return true;
   }
 
@@ -96,6 +105,7 @@ class LocalStore {
     if (wallet < price || ownedMemes.contains(id)) return false;
     await _prefs.setInt('wallet', (_prefs.getInt('wallet') ?? 0) - price);
     await _prefs.setStringList('memes', [...ownedMemes, id]);
+    walletChanged.value++;
     return true;
   }
 

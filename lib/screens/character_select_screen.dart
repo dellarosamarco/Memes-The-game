@@ -45,7 +45,10 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
         widget.initial?.id ??
         (LocalStore.ready ? LocalStore.instance.lastMeme : null);
     final i = all.indexWhere((c) => c.id == id);
-    return i < 0 ? 0 : i;
+    if (i >= 0 && all[i].isUnlocked) return i;
+    // (Yesterday's free try is locked again: start on a playable meme.)
+    final open = all.indexWhere((c) => c.isUnlocked);
+    return open < 0 ? 0 : open;
   }
 
   void _choose(MemeCharacter c) {
@@ -88,7 +91,8 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
     if (await store.buyMeme(c.id, c.price)) {
       Sound.play('finish');
       setState(() {});
-      if (mounted) await _celebrate(c);
+      await store.setLastMeme(c.id);
+      if (mounted && await _celebrate(c) == true && mounted) _choose(c);
       return;
     }
     Sound.play('hurt', volume: .4);
@@ -104,7 +108,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
   }
 
   /// The new meme pops in, dancing.
-  Future<void> _celebrate(MemeCharacter c) => showDialog<void>(
+  Future<bool?> _celebrate(MemeCharacter c) => showDialog<bool>(
     context: context,
     builder: (ctx) => Dialog(
       backgroundColor: Colors.transparent,
@@ -140,7 +144,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                 color: PixelColor.pink,
                 height: 46,
                 fontSize: 15,
-                onPressed: () => Navigator.pop(ctx),
+                onPressed: () => Navigator.pop(ctx, true),
               ),
             ],
           ),
@@ -199,7 +203,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen> {
                           size: 24,
                         ),
                       ),
-                      WalletChip(likes: LocalStore.instance.wallet),
+                      const WalletChip(),
                     ],
                   ),
                   const SizedBox(height: 6),

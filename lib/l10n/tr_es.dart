@@ -439,7 +439,6 @@ const trEs = <String, String>{
   'home.memeOfTheDay': 'Meme del día: {name}',
   'home.nameRejected': 'Ese nombre no está permitido, elige otro.',
   'home.streak': 'Racha de {n} días',
-  'home.wins': '{n} victorias',
   'home.yourName': 'Tu nombre',
   'howto.attackText': 'toca para golpear: el golpe adecuado sale solo hacia el rival. Mantén pulsado para el SMASH.',
   'howto.intro': 'Cuanto más daño (%) tenga el rival, más lejos vuela al golpearlo: ¡mándalo fuera de la pantalla!',

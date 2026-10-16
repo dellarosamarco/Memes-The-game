@@ -70,7 +70,7 @@ class _MissionsScreenState extends State<MissionsScreen> {
                         size: 24,
                       ),
                     ),
-                    WalletChip(likes: LocalStore.instance.wallet),
+                    const WalletChip(),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -104,9 +104,13 @@ class _MissionsScreenState extends State<MissionsScreen> {
                                 const PixelIcon('star', scale: 2)
                               else
                                 PixelButton(
-                                  label: tr('missions.claim', 'Riscuoti'),
-                                  height: 38,
-                                  fontSize: 13,
+                                  label: allClaimed
+                                      ? tr('missions.claim', 'Riscuoti')
+                                      : '+${Missions.bonus}',
+                                  icon: allClaimed ? null : 'like',
+                                  width: 168,
+                                  height: 40,
+                                  fontSize: 14,
                                   color: allClaimed
                                       ? PixelColor.yellow
                                       : PixelColor.grey,
@@ -190,7 +194,7 @@ class _MissionRow extends StatelessWidget {
           const SizedBox(width: 12),
           if (m.claimed)
             SizedBox(
-              width: 120,
+              width: 168,
               child: PixelText(
                 tr('missions.claimed', 'Fatto!'),
                 size: 14,
@@ -206,9 +210,9 @@ class _MissionRow extends StatelessWidget {
                     })
                   : '+${m.reward}',
               icon: 'like',
-              width: 120,
-              height: 38,
-              fontSize: 13,
+              width: 168,
+              height: 40,
+              fontSize: 14,
               color: m.done ? PixelColor.yellow : PixelColor.grey,
               onPressed: m.done ? () => onClaim(m) : null,
             ),

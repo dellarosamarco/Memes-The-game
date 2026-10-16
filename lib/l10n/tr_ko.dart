@@ -439,7 +439,6 @@ const trKo = <String, String>{
   'home.memeOfTheDay': '오늘의 밈: {name}',
   'home.nameRejected': '사용할 수 없는 이름이에요. 다른 이름을 골라 주세요.',
   'home.streak': '{n}일 연속',
-  'home.wins': '{n}승',
   'home.yourName': '내 이름',
   'howto.attackText': '탭해서 공격: 상황에 맞는 공격이 알아서 상대를 향해 나간다. 꾹 누르면 SMASH.',
   'howto.intro': '상대의 피해(%)가 높을수록 맞았을 때 더 멀리 날아간다: 화면 밖으로 날려 버려!',

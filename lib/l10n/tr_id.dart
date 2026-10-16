@@ -439,7 +439,6 @@ const trId = <String, String>{
   'home.memeOfTheDay': 'Meme hari ini: {name}',
   'home.nameRejected': 'Nama ini tidak diizinkan, pilih yang lain.',
   'home.streak': '{n} hari berturut-turut',
-  'home.wins': '{n} kemenangan',
   'home.yourName': 'Namamu',
   'howto.attackText': 'ketuk untuk menyerang: serangan yang pas otomatis mengarah ke lawan. Tahan untuk SMASH.',
   'howto.intro': 'Makin besar damage (%) lawan, makin jauh dia terpental saat kamu pukul: lempar dia keluar layar!',

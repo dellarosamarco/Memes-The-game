@@ -439,7 +439,6 @@ const trTr = <String, String>{
   'home.memeOfTheDay': 'Günün meme\'i: {name}',
   'home.nameRejected': 'Bu isme izin verilmiyor, başka bir isim seç.',
   'home.streak': '{n} gün üst üste',
-  'home.wins': '{n} galibiyet',
   'home.yourName': 'Adın',
   'howto.attackText': 'vurmak için dokun: doğru vuruş kendiliğinden rakibe doğru gider. SMASH için basılı tut.',
   'howto.intro': 'Rakibin hasarı (%) ne kadar yüksekse, vurduğunda o kadar uzağa uçar: onu ekranın dışına fırlat!',

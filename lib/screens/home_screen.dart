@@ -387,9 +387,7 @@ class _HomeScreenState extends State<HomeScreen>
                       const PixelIcon('trophy', scale: 1.5),
                       const SizedBox(width: 6),
                       PixelText(
-                        tr('home.wins', '{n} vittorie', {
-                          'n': store.stat('wins'),
-                        }),
+                        '${store.stat('wins')}',
                         size: 14,
                         color: kPlum,
                         outline: false,

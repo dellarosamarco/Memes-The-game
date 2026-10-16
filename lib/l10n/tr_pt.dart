@@ -439,7 +439,6 @@ const trPt = <String, String>{
   'home.memeOfTheDay': 'Meme do dia: {name}',
   'home.nameRejected': 'Esse nome não é permitido, escolha outro.',
   'home.streak': '{n} dias seguidos',
-  'home.wins': '{n} vitórias',
   'home.yourName': 'Seu nome',
   'howto.attackText': 'toque para bater: o golpe certo sai sozinho na direção do rival. Segure para o SMASH.',
   'howto.intro': 'Quanto mais dano (%) o rival tiver, mais longe ele voa quando você acerta: jogue ele pra fora da tela!',

@@ -439,7 +439,6 @@ const trJa = <String, String>{
   'home.memeOfTheDay': '今日のミーム：{name}',
   'home.nameRejected': 'この名前は使えません。別の名前にしてください。',
   'home.streak': '{n}日連続',
-  'home.wins': '{n}勝',
   'home.yourName': 'あなたの名前',
   'howto.attackText': 'タップで攻撃：最適な技が自動で相手に向かう。長押しでSMASH。',
   'howto.intro': '相手のダメージ（%）が多いほど、攻撃したときに遠くまでふっとぶ。画面の外までぶっとばせ！',

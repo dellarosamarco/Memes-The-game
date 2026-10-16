@@ -289,8 +289,10 @@ class _Winner extends StatelessWidget {
   final bool hat;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => Container(
     height: 150,
+    // Room for a hat under the title.
+    margin: EdgeInsets.only(top: hat ? 18 : 0),
     child: CharacterSpriteView(
       character: character,
       scale: 2.4,

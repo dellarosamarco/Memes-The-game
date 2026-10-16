@@ -439,7 +439,6 @@ const trRu = <String, String>{
   'home.memeOfTheDay': 'Мем дня: {name}',
   'home.nameRejected': 'Это имя нельзя, выбери другое.',
   'home.streak': 'Дней подряд: {n}',
-  'home.wins': 'Побед: {n}',
   'home.yourName': 'Твоё имя',
   'howto.attackText': 'тапни, чтобы ударить: нужный удар сам полетит в соперника. Удерживай для SMASH.',
   'howto.intro': 'Чем больше урона (%) у соперника, тем дальше он летит от удара: выбей его за экран!',

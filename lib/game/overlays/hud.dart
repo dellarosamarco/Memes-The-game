@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
 
@@ -19,36 +20,42 @@ class Hud extends StatelessWidget {
   Widget build(BuildContext context) {
     // Repaint boundaries: the game canvas repaints every frame, the HUD
     // only when it changes (it used to cost half of the frame time).
-    return RepaintBoundary(
-      child: SafeArea(
-        child: Stack(
-          children: [
-            RepaintBoundary(
-              child: ValueListenableBuilder<int>(
-                valueListenable: game.hudTick,
-                builder: (context, _, _) => Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      FighterCard(fighter: game.player),
-                      const Spacer(),
-                      PixelButton(
-                        icon: 'pause',
-                        color: PixelColor.grey,
-                        height: 46,
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        onPressed: game.togglePause,
-                      ),
-                      const Spacer(),
-                      FighterCard(fighter: game.cpu),
-                    ],
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (e) {
+        if (e.kind == PointerDeviceKind.touch) MemesGame.touchSeen = true;
+      },
+      child: RepaintBoundary(
+        child: SafeArea(
+          child: Stack(
+            children: [
+              RepaintBoundary(
+                child: ValueListenableBuilder<int>(
+                  valueListenable: game.hudTick,
+                  builder: (context, _, _) => Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 6, 10, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FighterCard(fighter: game.player),
+                        const Spacer(),
+                        PixelButton(
+                          icon: 'pause',
+                          color: PixelColor.grey,
+                          height: 46,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          onPressed: game.togglePause,
+                        ),
+                        const Spacer(),
+                        FighterCard(fighter: game.cpu),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            RepaintBoundary(child: _TouchControls(game: game)),
-          ],
+              RepaintBoundary(child: _TouchControls(game: game)),
+            ],
+          ),
         ),
       ),
     );
@@ -538,7 +545,7 @@ class _PadButton extends StatelessWidget {
             decoration: pixelFrame(
               'assets/images/ui/button_$color${down ? '_down' : ''}.png',
               // See-through at rest: the stage behind stays readable.
-              alpha: down ? 1 : .6,
+              alpha: down ? 1 : .45,
             ),
             child: Stack(
               alignment: Alignment.center,

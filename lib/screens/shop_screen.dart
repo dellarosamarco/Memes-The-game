@@ -26,6 +26,11 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Future<void> _act(Hat hat) async {
     final store = LocalStore.instance;
+    // First tap on a hat for sale: try it on.
+    if (!store.ownedHats.contains(hat.id) && _preview?.id != hat.id) {
+      setState(() => _preview = hat);
+      return;
+    }
     if (store.ownedHats.contains(hat.id)) {
       final equipped = store.equippedHat == hat.id;
       await store.equipHat(equipped ? null : hat.id);
