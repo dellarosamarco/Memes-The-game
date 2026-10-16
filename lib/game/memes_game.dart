@@ -603,13 +603,18 @@ class MemesGame extends FlameGame with KeyboardEvents {
 
   void _updateCamera(double dt) {
     final w = winner;
+    final arenaL = stage.left * kTile, arenaR = (stage.right + 1) * kTile;
+    final arenaTop = stage.mainTop * kTile;
     final pts = matchOver && w != null
-        // The match is decided: settle on the winner, over the arena.
+        // The match is decided: settle on the arena (and the winner, if
+        // they're over it; never chase them falling off).
         ? [
-            Vector2(
-              w.mid.x.clamp(stage.left * kTile, (stage.right + 1) * kTile),
-              min(w.mid.y, stage.mainTop * kTile),
-            ),
+            if (w.mid.x > arenaL &&
+                w.mid.x < arenaR &&
+                w.mid.y < arenaTop + kTile)
+              w.mid
+            else
+              Vector2((arenaL + arenaR) / 2, arenaTop - kTile * 2),
           ]
         : [
             for (final f in fighters)
@@ -659,7 +664,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
     );
     if (punch > 0) target += (_punchAt - target) * (.6 * punch);
     // Can't fit both? The human player always stays in the shot.
-    if (player.alive) {
+    if (player.alive && !matchOver) {
       final halfW = size.x / zoom / 2, halfH = size.y / zoom / 2;
       final pm = player.mid;
       final mx = 60.0 / zoom * 2, my = 70.0 / zoom * 2;

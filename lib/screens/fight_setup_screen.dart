@@ -193,7 +193,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                                         height: 46,
                                         fontSize: 14,
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
+                                          horizontal: 16,
                                         ),
                                         color: d == _difficulty
                                             ? PixelColor.purple
@@ -216,7 +216,7 @@ class _FightSetupScreenState extends State<FightSetupScreen> {
                                   height: 54,
                                   fontSize: 12,
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
+                                    horizontal: 14,
                                   ),
                                   color: _items
                                       ? PixelColor.mint
