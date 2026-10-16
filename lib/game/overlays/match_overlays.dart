@@ -110,7 +110,7 @@ class ResultsOverlay extends StatelessWidget {
     }
     final winner = game.winner?.character ?? game.player.character;
     return Container(
-      color: const Color(0xD03A2440),
+      color: const Color(0xF03A2440),
       alignment: Alignment.center,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(12),

@@ -53,6 +53,16 @@ class _ShopScreenState extends State<ShopScreen> {
       Achievements.unlock('shopper');
     } else {
       Sound.play('hurt', volume: .4);
+      if (mounted) {
+        showToast(
+          context,
+          tr(
+            'select.needLikes',
+            'Ti servono ancora {n} like: vinci incontri e completa le missioni!',
+            {'n': hat.price - store.wallet},
+          ),
+        );
+      }
     }
     setState(() => _preview = hat);
   }

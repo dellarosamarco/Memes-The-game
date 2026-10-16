@@ -117,7 +117,7 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                                       tr(
                                         'arcade.reward',
                                         'Premio: +{n} like e un meme sbloccato!',
-                                        {'n': 150},
+                                        {'n': arcadePrize(_difficulty)},
                                       ),
                                       size: 13,
                                       color: const Color(0xFFE08A00),
@@ -134,35 +134,38 @@ class _ArcadeScreenState extends State<ArcadeScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (final d in Difficulty.values)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 3),
-                        child: PixelButton(
-                          label: d.label,
-                          height: 44,
-                          fontSize: 13,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          color: d == _difficulty
-                              ? PixelColor.purple
-                              : PixelColor.grey,
-                          onPressed: () => setState(() {
-                            _difficulty = d;
-                            saveDifficulty(d);
-                            _run = _newRun();
-                          }),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final d in Difficulty.values)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: PixelButton(
+                            label: d.label,
+                            height: 44,
+                            fontSize: 13,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            color: d == _difficulty
+                                ? PixelColor.purple
+                                : PixelColor.grey,
+                            onPressed: () => setState(() {
+                              _difficulty = d;
+                              saveDifficulty(d);
+                              _run = _newRun();
+                            }),
+                          ),
                         ),
+                      const SizedBox(width: 14),
+                      PixelButton(
+                        label: tr('arcade.start', 'Inizia'),
+                        icon: 'play',
+                        width: 180,
+                        onPressed: _start,
                       ),
-                    const SizedBox(width: 14),
-                    PixelButton(
-                      label: tr('arcade.start', 'Inizia'),
-                      icon: 'play',
-                      width: 180,
-                      onPressed: _start,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

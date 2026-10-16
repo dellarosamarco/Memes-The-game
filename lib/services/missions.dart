@@ -185,6 +185,8 @@ class Missions {
   }
 
   static Future<int> claimBonus() async {
+    // (The screen may have stayed open past midnight.)
+    await _rollOver();
     if (!bonusReady) return 0;
     await _s.setBool('missions_bonus', true);
     await _s.addToWallet(bonus);

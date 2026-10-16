@@ -43,6 +43,10 @@ class _HomeScreenState extends State<HomeScreen>
     Sound.music('menu');
     // Once a day: the login reward.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Icons ready before they're needed (no late pop-in on buttons).
+      for (final n in PixelIcon.names) {
+        precacheImage(AssetImage('assets/images/ui/icon_$n.png'), context);
+      }
       await Missions.refresh();
       if (!mounted) return;
       await showDailyReward(context);
@@ -357,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen>
                       const PixelIcon('star', scale: 1.5),
                       const SizedBox(width: 5),
                       PixelText(
-                        tr('home.streak', '{n} giorni di fila', {
+                        tr('home.streak', 'Giorni di fila: {n}', {
                           'n': DailyReward.streak(),
                         }),
                         size: 13,

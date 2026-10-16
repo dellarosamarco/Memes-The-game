@@ -698,8 +698,8 @@ class _BarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const n = 5;
     final w = size.width / n;
-    final on = Paint()..color = const Color(0xFFFF82B4);
-    final off = Paint()..color = const Color(0xFFE6DCE8);
+    final on = Paint()..color = const Color(0xFFFF4F8E);
+    final off = Paint()..color = const Color(0xFFFFFFFF);
     final edge = Paint()
       ..color = kPlum
       ..style = PaintingStyle.stroke

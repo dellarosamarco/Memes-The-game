@@ -90,6 +90,9 @@ class PixelIcon extends StatelessWidget {
   final String name;
   final double scale;
 
+  /// Every icon (to warm the image cache).
+  static Iterable<String> get names => _sizes.keys;
+
   static const _sizes = {
     'heart': (12, 10),
     'heart_empty': (12, 10),

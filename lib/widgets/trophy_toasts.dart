@@ -17,7 +17,8 @@ class TrophyToasts extends StatelessWidget {
           if (list.isEmpty) return const SizedBox.shrink();
           final t = list.first;
           return Align(
-            alignment: const Alignment(0, -0.96),
+            // Bottom left: clear of titles and the results panel.
+            alignment: const Alignment(-0.97, 0.95),
             child: _Toast(key: ValueKey(t.id), trophy: t),
           );
         },

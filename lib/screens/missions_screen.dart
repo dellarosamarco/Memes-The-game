@@ -85,7 +85,10 @@ class _MissionsScreenState extends State<MissionsScreen> {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              const PixelIcon('star', scale: 2),
+                              PixelIcon(
+                                bonusTaken ? 'star' : 'star_empty',
+                                scale: 2,
+                              ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: PixelText(

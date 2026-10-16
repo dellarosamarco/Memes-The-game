@@ -435,7 +435,7 @@
  "home.doubleLikes": " x2 like",
  "home.memeOfTheDay": "Meme del giorno: {name}",
  "home.nameRejected": "Questo nome non è consentito, scegline un altro.",
- "home.streak": "{n} giorni di fila",
+ "home.streak": "Giorni di fila: {n}",
  "home.yourName": "Il tuo nome",
  "howto.attackText": "tocca per colpire: il colpo giusto parte da solo verso l'avversario. Tieni premuto per lo SMASH.",
  "howto.intro": "Più danni (%) ha l'avversario, più vola lontano quando lo colpisci: scaraventalo fuori dallo schermo!",

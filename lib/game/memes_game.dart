@@ -37,6 +37,13 @@ enum Difficulty {
 
 /// Everything that defines a match.
 /// Newcomers start on Easy until their first win, then on Normal.
+/// Likes for clearing the whole Arcade: tougher ladders pay more.
+int arcadePrize(Difficulty d) => switch (d) {
+  Difficulty.easy => 150,
+  Difficulty.normal => 250,
+  Difficulty.hard => 400,
+};
+
 /// The difficulty picked last time (Free fight and Arcade share it).
 Difficulty savedDifficulty() {
   final i = LocalStore.ready
@@ -563,7 +570,7 @@ class MemesGame extends FlameGame with KeyboardEvents {
               }
         : 10 + player.kos * 5;
     // Beating the whole Arcade ladder.
-    if (won && config.arcadeRound == 8) likes += 150;
+    if (won && config.arcadeRound == 8) likes += arcadePrize(config.difficulty);
     var mult = 1.0;
     if (config.player.passive == Passive.jewels) mult *= 2;
     if (config.player.passive == Passive.hustle) mult *= 1.5;
