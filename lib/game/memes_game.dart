@@ -316,8 +316,10 @@ class MemesGame extends FlameGame with KeyboardEvents {
         overlays.remove(overlayHud);
         _banner?.removeFromParent();
         overlays.add(overlayResults);
-        // Nothing moves behind the results.
-        pauseEngine();
+        // Nothing moves behind the results (once the banner is gone).
+        Future<void>.delayed(const Duration(milliseconds: 150), () {
+          if (matchOver) pauseEngine();
+        });
       }
     }
     _updateShake(dt);
@@ -679,9 +681,9 @@ class MemesGame extends FlameGame with KeyboardEvents {
       target.x = target.x.clamp(pm.x - halfW + mx, pm.x + halfW - mx);
       target.y = target.y.clamp(pm.y - halfH + my, pm.y + halfH - my);
     }
-    vf.position =
-        vf.position +
-        (target - vf.position) * min(1.0, dt * (punch > 0 ? 12 : 5));
+    // (Quick after GAME!: the slow-mo would leave it lagging behind.)
+    final follow = punch > 0 || matchOver ? 12 : 5;
+    vf.position = vf.position + (target - vf.position) * min(1.0, dt * follow);
   }
 
   // ------------------------------------------------------------------ input

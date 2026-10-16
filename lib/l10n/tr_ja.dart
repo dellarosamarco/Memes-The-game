@@ -26,7 +26,8 @@ const trJa = <String, String>{
   'c.bike_dog.hurt0': 'チェーンが！',
   'c.bike_dog.hurt1': 'いてっ！',
   'c.bike_dog.hurt2': 'リュックが！',
-  'c.bike_dog.lore': 'リュックを背負って車道を自転車で爆走する犬。まるで通学中。後ろには「POLIS」のパトカー。どっちがどっちを追いかけているのか、誰も知らない。',
+  'c.bike_dog.lore':
+      'リュックを背負って車道を自転車で爆走する犬。まるで通学中。後ろには「POLIS」のパトカー。どっちがどっちを追いかけているのか、誰も知らない。',
   'c.bike_dog.memeAlias': 'ポリスに追われるリュック背負いの自転車犬',
   'c.bike_dog.name': 'チャリ犬',
   'c.bike_dog.passiveDescription': '同じ方向にこぎ続けるほど速くなる。',
@@ -62,7 +63,8 @@ const trJa = <String, String>{
   'c.cheeks_dachshund.hurt0': 'ンムッ！',
   'c.cheeks_dachshund.hurt1': '＊いいねを吐き出す＊',
   'c.cheeks_dachshund.hurt2': 'ンーンー！',
-  'c.cheeks_dachshund.lore': 'ハムスターみたいにほっぺをパンパンにふくらませた、無垢な目のダックスフント。中身は誰も知らない。本人はしゃべらない。というか、しゃべれない。',
+  'c.cheeks_dachshund.lore':
+      'ハムスターみたいにほっぺをパンパンにふくらませた、無垢な目のダックスフント。中身は誰も知らない。本人はしゃべらない。というか、しゃべれない。',
   'c.cheeks_dachshund.memeAlias': 'ほっぺパンパンのダックスフント',
   'c.cheeks_dachshund.name': 'ハムスターダックス',
   'c.cheeks_dachshund.passiveDescription': '攻撃を当てるたびに自分のダメージが1%回復。',
@@ -74,7 +76,8 @@ const trJa = <String, String>{
   'c.chill_dog.hurt0': 'ストレスだわ。',
   'c.chill_dog.hurt1': 'くつろぎの邪魔。',
   'c.chill_dog.hurt2': 'まあ落ち着けよ。',
-  'c.chill_dog.lore': 'クッションの上で頭の後ろに手を組み、足を組んでくつろぐ金髪チワワ。まるで休暇中の社長。ストレスは彼の住所すら知らない。',
+  'c.chill_dog.lore':
+      'クッションの上で頭の後ろに手を組み、足を組んでくつろぐ金髪チワワ。まるで休暇中の社長。ストレスは彼の住所すら知らない。',
   'c.chill_dog.memeAlias': '頭の後ろで手を組んで寝そべるチワワ',
   'c.chill_dog.name': 'まったりチワワ',
   'c.chill_dog.passiveDescription': 'じっとしているとリラックスして毎秒1%回復。',
@@ -86,7 +89,8 @@ const trJa = <String, String>{
   'c.drip_pig.hurt0': 'ブヒッ？！',
   'c.drip_pig.hurt1': 'チェーンが！',
   'c.drip_pig.hurt2': 'フェードが台無し。',
-  'c.drip_pig.lore': 'バーバー仕上げのフェードカット、耳にはAirPods、首には極太の金のチェーン。キミよりオシャレだし、本人もそれをよく分かってる。',
+  'c.drip_pig.lore':
+      'バーバー仕上げのフェードカット、耳にはAirPods、首には極太の金のチェーン。キミよりオシャレだし、本人もそれをよく分かってる。',
   'c.drip_pig.memeAlias': 'フェードカットにAirPodsと金のチェーンのブタ',
   'c.drip_pig.name': 'ドリップ・ブタ',
   'c.drip_pig.passiveDescription': '必殺技のダメージが20%アップ。',
@@ -98,7 +102,8 @@ const trJa = <String, String>{
   'c.ears_dog.hurt0': 'えっと。',
   'c.ears_dog.hurt1': '歯が！',
   'c.ears_dog.hurt2': '＊引きつった笑顔＊',
-  'c.ears_dog.lore': '人間の巨大な耳と、どう見ても人間の歯がずらりと並んだ笑顔のチワワ。中古車のセールスマンみたいにニッコリしてくる。何も買っちゃダメ。',
+  'c.ears_dog.lore':
+      '人間の巨大な耳と、どう見ても人間の歯がずらりと並んだ笑顔のチワワ。中古車のセールスマンみたいにニッコリしてくる。何も買っちゃダメ。',
   'c.ears_dog.memeAlias': '人間の耳と歯を持つチワワ',
   'c.ears_dog.name': 'デカ耳',
   'c.ears_dog.passiveDescription': '誰よりも高くジャンプする。',
@@ -110,7 +115,8 @@ const trJa = <String, String>{
   'c.gta_bean.hurt0': 'あっ。',
   'c.gta_bean.hurt1': 'ンン？！',
   'c.gta_bean.hurt2': 'あー、またか。',
-  'c.gta_bean.lore': 'テレビ界一ドジな男が、なぜかサンアンドレアスの街に迷い込んだ。茶色のジャケットに赤いネクタイ、どうやってここに来たのか分かっていない顔。',
+  'c.gta_bean.lore':
+      'テレビ界一ドジな男が、なぜかサンアンドレアスの街に迷い込んだ。茶色のジャケットに赤いネクタイ、どうやってここに来たのか分かっていない顔。',
   'c.gta_bean.memeAlias': 'GTAサンアンドレアスに入ったMr.ビーン',
   'c.gta_bean.name': 'Mr.サンアンドレアス',
   'c.gta_bean.passiveDescription': 'KOされるたびに4秒間無敵。',
@@ -122,7 +128,8 @@ const trJa = <String, String>{
   'c.helmet_pigeon.hurt0': 'クルッ？！',
   'c.helmet_pigeon.hurt1': 'ヘルメットが！',
   'c.helmet_pigeon.hurt2': 'グルッポー。',
-  'c.helmet_pigeon.lore': 'どうやってかぶったのか誰も知らないゴムのフードを頭にのせた都会のハト。本人は気にもしない。兜をかぶった騎士のように堂々と歩く。',
+  'c.helmet_pigeon.lore':
+      'どうやってかぶったのか誰も知らないゴムのフードを頭にのせた都会のハト。本人は気にもしない。兜をかぶった騎士のように堂々と歩く。',
   'c.helmet_pigeon.memeAlias': '変なヘルメットをかぶったハト',
   'c.helmet_pigeon.name': 'ヘルメット鳩',
   'c.helmet_pigeon.passiveDescription': 'ヘルメットで飛び道具を無効化、攻撃も軽減（-10%）。',
@@ -158,7 +165,8 @@ const trJa = <String, String>{
   'c.pearl_terrier.hurt0': 'なんて無礼な！',
   'c.pearl_terrier.hurt1': '私の真珠が！',
   'c.pearl_terrier.hurt2': '私の若い頃は…',
-  'c.pearl_terrier.lore': 'ボブのウィッグに真珠のネックレス、緑のセーターを着たブルテリア。お正月に「結婚はまだ？」と聞いてくる親戚のおばさんの目でこっちを見てくる。',
+  'c.pearl_terrier.lore':
+      'ボブのウィッグに真珠のネックレス、緑のセーターを着たブルテリア。お正月に「結婚はまだ？」と聞いてくる親戚のおばさんの目でこっちを見てくる。',
   'c.pearl_terrier.memeAlias': 'ボブヘアと真珠のブルテリア',
   'c.pearl_terrier.name': 'レディ・テリア',
   'c.pearl_terrier.passiveDescription': 'バトル後にもらえるいいねが2倍。',
@@ -170,7 +178,8 @@ const trJa = <String, String>{
   'c.pietro_pigeon.hurt0': '不在着信。',
   'c.pietro_pigeon.hurt1': 'ツーツー…',
   'c.pietro_pigeon.hurt2': 'コンバースが！',
-  'c.pietro_pigeon.lore': 'ピエトロはコンバースを履いて二本足で立ち、ビデオ通話をかけてくるハト。何の用かは分からない。でもいつかは出なきゃいけない。',
+  'c.pietro_pigeon.lore':
+      'ピエトロはコンバースを履いて二本足で立ち、ビデオ通話をかけてくるハト。何の用かは分からない。でもいつかは出なきゃいけない。',
   'c.pietro_pigeon.memeAlias': 'Pietro is calling... コンバースを履いたハト',
   'c.pietro_pigeon.name': 'ピエトロ',
   'c.pietro_pigeon.passiveDescription': '加速もブレーキも一瞬。',
@@ -182,7 +191,8 @@ const trJa = <String, String>{
   'c.pigtail_dog.hurt0': 'ダウンが！',
   'c.pigtail_dog.hurt1': '髪が乱れた！',
   'c.pigtail_dog.hurt2': 'おさげはダメ！',
-  'c.pigtail_dog.lore': '黒いおさげ髪に青いダウンジャケット、白い靴下とエナメル靴で人間みたいに立つピンシャー。宿題をやってないまま登校する子の顔をしている。',
+  'c.pigtail_dog.lore':
+      '黒いおさげ髪に青いダウンジャケット、白い靴下とエナメル靴で人間みたいに立つピンシャー。宿題をやってないまま登校する子の顔をしている。',
   'c.pigtail_dog.memeAlias': 'ダウンジャケットとおさげのピンシャー',
   'c.pigtail_dog.name': 'ダウン・ピンシャー',
   'c.pigtail_dog.passiveDescription': 'ダウンが各ストックで最初の弱攻撃を吸収（強攻撃は貫通）。',
@@ -194,7 +204,8 @@ const trJa = <String, String>{
   'c.pink_monkey.hurt0': 'ウキキッ！',
   'c.pink_monkey.hurt1': 'ぬいぐるみが！',
   'c.pink_monkey.hurt2': '＊ふくれっ面＊',
-  'c.pink_monkey.lore': 'ピンクの帽子とTシャツのおサルさん。世界で最後の宝物みたいにぬいぐるみを抱きしめている。目はとびきり可愛い。そして狙いは百発百中。',
+  'c.pink_monkey.lore':
+      'ピンクの帽子とTシャツのおサルさん。世界で最後の宝物みたいにぬいぐるみを抱きしめている。目はとびきり可愛い。そして狙いは百発百中。',
   'c.pink_monkey.memeAlias': 'ピンクの帽子でぬいぐるみを抱くおサル',
   'c.pink_monkey.name': 'ピンクおサル',
   'c.pink_monkey.passiveDescription': '空中ジャンプ3回。',
@@ -206,7 +217,8 @@ const trJa = <String, String>{
   'c.robber_dog.hurt0': 'おい！',
   'c.robber_dog.hurt1': '見たな？',
   'c.robber_dog.hurt2': 'オレじゃねえ。',
-  'c.robber_dog.lore': '黒い目出し帽をかぶり、前足にナイフを持ってソファに座り、横目でこっちを見ている。何が欲しいのか分からないが、必ず手に入れる。',
+  'c.robber_dog.lore':
+      '黒い目出し帽をかぶり、前足にナイフを持ってソファに座り、横目でこっちを見ている。何が欲しいのか分からないが、必ず手に入れる。',
   'c.robber_dog.memeAlias': '目出し帽のチワワ',
   'c.robber_dog.name': '強盗チワワ',
   'c.robber_dog.passiveDescription': '誰よりも足が速い。',
@@ -218,7 +230,8 @@ const trJa = <String, String>{
   'c.rock_monkey.hurt0': 'ウキッ！',
   'c.rock_monkey.hurt1': 'オレの石！',
   'c.rock_monkey.hurt2': '＊うるうる＊',
-  'c.rock_monkey.lore': '世界一うるうるした目のオマキザル。頭の上には石を振りかざしている。「今なんて言った？もう一回言ってみろ」って顔。やめておこう。',
+  'c.rock_monkey.lore':
+      '世界一うるうるした目のオマキザル。頭の上には石を振りかざしている。「今なんて言った？もう一回言ってみろ」って顔。やめておこう。',
   'c.rock_monkey.memeAlias': '石で脅すオマキザル',
   'c.rock_monkey.name': '石持ちおサル',
   'c.rock_monkey.passiveDescription': '弱い攻撃では1ミリも動かない。',
@@ -230,7 +243,8 @@ const trJa = <String, String>{
   'c.rock_patrick.hurt0': '岩がいたい！',
   'c.rock_patrick.hurt1': 'え？',
   'c.rock_patrick.hurt2': 'ボクの岩どこ？',
-  'c.rock_patrick.lore': '海の底で一番ハッピーなヒトデ。頭には兜代わりの岩、ワカメが二房、ガタガタの歯で満面の笑み。考えない。転がる。',
+  'c.rock_patrick.lore':
+      '海の底で一番ハッピーなヒトデ。頭には兜代わりの岩、ワカメが二房、ガタガタの歯で満面の笑み。考えない。転がる。',
   'c.rock_patrick.memeAlias': '岩の兜とワカメのパトリック',
   'c.rock_patrick.name': '岩パトリック',
   'c.rock_patrick.passiveDescription': '石頭：上攻撃のダメージが2倍。',
@@ -242,7 +256,8 @@ const trJa = <String, String>{
   'c.shock_guy.hurt0': 'NO WAY!',
   'c.shock_guy.hurt1': 'マジで？！',
   'c.shock_guy.hurt2': 'ブロ…',
-  'c.shock_guy.lore': '白Tの青年が目を見開いて頭を抱える：ドラマの最終回からレストランの会計まで、あらゆるニュースへの万国共通リアクション。',
+  'c.shock_guy.lore':
+      '白Tの青年が目を見開いて頭を抱える：ドラマの最終回からレストランの会計まで、あらゆるニュースへの万国共通リアクション。',
   'c.shock_guy.memeAlias': '頭を抱える男',
   'c.shock_guy.name': '衝撃ボーイ',
   'c.shock_guy.passiveDescription': '攻撃を受けると2秒間逃げ足が速くなる。',
@@ -266,7 +281,8 @@ const trJa = <String, String>{
   'c.sky_man.hurt0': 'なぜだ？',
   'c.sky_man.hurt1': '空に嫌われてる。',
   'c.sky_man.hurt2': 'ああ、人生…',
-  'c.sky_man.lore': '夕暮れの青い光の中、潤んだ目と開いた口で空を見上げるヒゲの男。すべてを悟った人のミーム、あるいは何も分かってない人のミーム。',
+  'c.sky_man.lore':
+      '夕暮れの青い光の中、潤んだ目と開いた口で空を見上げるヒゲの男。すべてを悟った人のミーム、あるいは何も分かってない人のミーム。',
   'c.sky_man.memeAlias': '絶望して空を見上げる男',
   'c.sky_man.name': '苦悩の画家',
   'c.sky_man.passiveDescription': 'ダメージ100%以上で攻撃力15%アップ。',
@@ -278,7 +294,8 @@ const trJa = <String, String>{
   'c.smile_dog.hurt0': ':)',
   'c.smile_dog.hurt1': ':))',
   'c.smile_dog.hurt2': ':)))',
-  'c.smile_dog.lore': 'ピンボケ写真の中、歯をむき出しにしてカメラに笑いかける黒いピンシャー。幸せそう。たぶん幸せすぎる。あの笑顔を長く見ていられる者はいない。',
+  'c.smile_dog.lore':
+      'ピンボケ写真の中、歯をむき出しにしてカメラに笑いかける黒いピンシャー。幸せそう。たぶん幸せすぎる。あの笑顔を長く見ていられる者はいない。',
   'c.smile_dog.memeAlias': '笑顔の（すぎる）犬',
   'c.smile_dog.name': 'スマイル・ドッグ',
   'c.smile_dog.passiveDescription': '重い：なかなかふっとばない。',
@@ -290,7 +307,8 @@ const trJa = <String, String>{
   'c.sneaker_hen.hurt0': 'コケッ？！',
   'c.sneaker_hen.hurt1': 'オレのダンクが！',
   'c.sneaker_hen.hurt2': 'オレの金が！',
-  'c.sneaker_hen.lore': 'おろしたてのパンダダンクの上にしゃがみ込み、羽の間に100ドル札を挟んだニワトリ。温めているのは卵じゃない。ハイプだ。',
+  'c.sneaker_hen.lore':
+      'おろしたてのパンダダンクの上にしゃがみ込み、羽の間に100ドル札を挟んだニワトリ。温めているのは卵じゃない。ハイプだ。',
   'c.sneaker_hen.memeAlias': 'ドル札とパンダダンクの上のニワトリ',
   'c.sneaker_hen.name': 'ハイプなニワトリ',
   'c.sneaker_hen.passiveDescription': 'バトル後にもらえるいいねが1.5倍。',
@@ -302,7 +320,8 @@ const trJa = <String, String>{
   'c.snow_baby.hurt0': 'オギャー！',
   'c.snow_baby.hurt1': 'ボクの雪だるま！',
   'c.snow_baby.hurt2': '＊ぐすん＊',
-  'c.snow_baby.lore': '薄紫のロンパースを着たぽっちゃり赤ちゃん人形。雪だるまをぎゅっと抱きしめて、ちょっとだけかじってる。絶対に離さない。絶対に。',
+  'c.snow_baby.lore':
+      '薄紫のロンパースを着たぽっちゃり赤ちゃん人形。雪だるまをぎゅっと抱きしめて、ちょっとだけかじってる。絶対に離さない。絶対に。',
   'c.snow_baby.memeAlias': '雪だるまを抱くぽっちゃり赤ちゃん',
   'c.snow_baby.name': '雪だるまベビー',
   'c.snow_baby.passiveDescription': '相手の頭に着地するとバウンドする（4%）。',
@@ -314,7 +333,8 @@ const trJa = <String, String>{
   'c.stare_cat.hurt0': '…',
   'c.stare_cat.hurt1': 'ニャッ？！',
   'c.stare_cat.hurt2': 'O_O',
-  'c.stare_cat.lore': 'カメラから数センチの距離で目を見開く茶トラ猫。キミの閲覧履歴を見てしまったような顔。何も言わない。言う必要がない。',
+  'c.stare_cat.lore':
+      'カメラから数センチの距離で目を見開く茶トラ猫。キミの閲覧履歴を見てしまったような顔。何も言わない。言う必要がない。',
   'c.stare_cat.memeAlias': 'こっちをガン見する猫',
   'c.stare_cat.name': 'ステア・キャット',
   'c.stare_cat.passiveDescription': '空中ジャンプが1回ではなく2回。',
@@ -338,7 +358,8 @@ const trJa = <String, String>{
   'c.suit_dachshund.hurt0': 'ネクタイが！',
   'c.suit_dachshund.hurt1': 'Ka-ouch!',
   'c.suit_dachshund.hurt2': 'クロックスはやめて！',
-  'c.suit_dachshund.lore': '黒いスーツに白シャツ、ネクタイの子ダックス…足元はライトニング・マックィーンの赤いクロックス。結婚式にもピストン・カップにも出られる仕様。',
+  'c.suit_dachshund.lore':
+      '黒いスーツに白シャツ、ネクタイの子ダックス…足元はライトニング・マックィーンの赤いクロックス。結婚式にもピストン・カップにも出られる仕様。',
   'c.suit_dachshund.memeAlias': 'スーツにマックィーンのクロックスのダックス',
   'c.suit_dachshund.name': 'Ka-Chow ダックス',
   'c.suit_dachshund.passiveDescription': '装甲クロックス：受けるダメージ15%減。',
@@ -350,7 +371,8 @@ const trJa = <String, String>{
   'c.timeout_man.hurt0': 'ファウル！',
   'c.timeout_man.hurt1': 'おい、審判！',
   'c.timeout_man.hurt2': 'タイム、タイム。',
-  'c.timeout_man.lore': '水色のポロシャツを着た巨人が、両手でタイムアウトのサイン：長引きすぎたあらゆる議論への完璧な答え。彼がタイムを求めれば、タイムは来る。',
+  'c.timeout_man.lore':
+      '水色のポロシャツを着た巨人が、両手でタイムアウトのサイン：長引きすぎたあらゆる議論への完璧な答え。彼がタイムを求めれば、タイムは来る。',
   'c.timeout_man.memeAlias': 'タイムアウトを求める巨人',
   'c.timeout_man.name': 'ミスター・タイムアウト',
   'c.timeout_man.passiveDescription': '超重量級：一番ふっとびにくい。',
@@ -362,7 +384,8 @@ const trJa = <String, String>{
   'c.tongue_cat.hurt0': 'ペロッ！',
   'c.tongue_cat.hurt1': 'べーっ！',
   'c.tongue_cat.hurt2': 'ズズッ？',
-  'c.tongue_cat.lore': '大きな目でカメラを見つめ、顔の2倍もある舌をベロンと出したキジトラ猫。どうやってあれが口に収まっているのか、誰も知らない。',
+  'c.tongue_cat.lore':
+      '大きな目でカメラを見つめ、顔の2倍もある舌をベロンと出したキジトラ猫。どうやってあれが口に収まっているのか、誰も知らない。',
   'c.tongue_cat.memeAlias': 'ベロがながーい猫',
   'c.tongue_cat.name': 'ベロ出しネコ',
   'c.tongue_cat.passiveDescription': '攻撃が当たると相手を一瞬スローにする。',
@@ -374,7 +397,8 @@ const trJa = <String, String>{
   'c.wig_dog.hurt0': 'ありえない。',
   'c.wig_dog.hurt1': '通報します。',
   'c.wig_dog.hurt2': 'ウィッグはダメ！',
-  'c.wig_dog.lore': '茶色いボブヘアで、今にも星1レビューを書きそうな目をしたチワワ。絶対に間違わないし、間違っていても店長を呼べと言う。',
+  'c.wig_dog.lore':
+      '茶色いボブヘアで、今にも星1レビューを書きそうな目をしたチワワ。絶対に間違わないし、間違っていても店長を呼べと言う。',
   'c.wig_dog.memeAlias': 'ウィッグをかぶったチワワ',
   'c.wig_dog.name': 'ウィッグ・ドッグ',
   'c.wig_dog.passiveDescription': '空中でジャンプ長押しで滑空：超ロング復帰。',
@@ -386,7 +410,8 @@ const trJa = <String, String>{
   'c.wink_cat.hurt0': 'ニャ？',
   'c.wink_cat.hurt1': 'ちょっと、優しく！',
   'c.wink_cat.hurt2': ';(',
-  'c.wink_cat.lore': 'ソファに寝そべり、舌を出してウインクしてくるグレーと白の猫。キミの知らない何かを知っているみたい。その魅力には誰も逆らえない。',
+  'c.wink_cat.lore':
+      'ソファに寝そべり、舌を出してウインクしてくるグレーと白の猫。キミの知らない何かを知っているみたい。その魅力には誰も逆らえない。',
   'c.wink_cat.memeAlias': 'ウインクとあっかんべー',
   'c.wink_cat.name': 'ウインクネコ',
   'c.wink_cat.passiveDescription': 'ウインクで攻撃をかわすことがある（10%）。',

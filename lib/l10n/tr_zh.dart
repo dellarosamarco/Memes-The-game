@@ -9,10 +9,12 @@ const trZh = <String, String>{
   'about.eraseText': '你将失去赞、帽子、奖杯、街机记录和统计数据。此操作无法撤销。',
   'about.eraseTitle': '全部删除？',
   'about.erased': '完成：你的所有数据已删除。',
-  'about.intro': '一款 Smash 风格的像素大乱斗，主角是互联网上最经典的梗：{n} 位斗士、10 个场景，自由对战和街机模式挑战 CPU。',
+  'about.intro':
+      '一款 Smash 风格的像素大乱斗，主角是互联网上最经典的梗：{n} 位斗士、10 个场景，自由对战和街机模式挑战 CPU。',
   'about.memesText': '角色像素图取材自在互联网上走红成梗的图片。本游戏为恶搞作品，与原图作者及所提及角色的版权方无关，也未获得其认可。',
   'about.memesTitle': '关于这些梗',
-  'about.privacyText': '本游戏可离线运行，没有广告，不做追踪，也不会向任何人发送数据：进度和设置只保存在你的设备上。你可以在下方一键清除。',
+  'about.privacyText':
+      '本游戏可离线运行，没有广告，不做追踪，也不会向任何人发送数据：进度和设置只保存在你的设备上。你可以在下方一键清除。',
   'about.privacyTitle': '隐私',
   'about.title': '关于与制作',
   'arcade.champion': '用{name}夺冠！',
@@ -122,7 +124,8 @@ const trZh = <String, String>{
   'c.helmet_pigeon.hurt0': '咕？！',
   'c.helmet_pigeon.hurt1': '我的头盔！',
   'c.helmet_pigeon.hurt2': '咕噜噜-咕。',
-  'c.helmet_pigeon.lore': '一只城市鸽子，头上套着一个橡胶帽，没人知道是怎么套上去的。它本鸽面不改色，像戴着头盔的骑士一样昂首阔步。',
+  'c.helmet_pigeon.lore':
+      '一只城市鸽子，头上套着一个橡胶帽，没人知道是怎么套上去的。它本鸽面不改色，像戴着头盔的骑士一样昂首阔步。',
   'c.helmet_pigeon.memeAlias': '头戴怪头盔的鸽子',
   'c.helmet_pigeon.name': '头盔鸽',
   'c.helmet_pigeon.passiveDescription': '头盔让它免疫飞行道具，并减轻受到的攻击（-10%）。',
