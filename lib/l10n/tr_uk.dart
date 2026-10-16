@@ -29,11 +29,9 @@ const trUk = <String, String>{
   'c.bike_dog.lore': 'Пес крутить педалі посеред трафіку з рюкзаком за спиною, ніби їде до школи. За ним — машина POLIS. Ніхто не знає, хто за ким женеться.',
   'c.bike_dog.memeAlias': 'Пес на велику з рюкзаком, за яким женеться Polis',
   'c.bike_dog.name': 'Пес на велику',
-  'c.bike_dog.passiveDescription':
-      'Що довше крутить педалі в один бік, то швидше їде.',
+  'c.bike_dog.passiveDescription': 'Що довше крутить педалі в один бік, то швидше їде.',
   'c.bike_dog.passiveName': 'Розгін',
-  'c.bike_dog.specialDescription':
-      'Викликає поліцію: патрульна машина мчить на суперника (14%).',
+  'c.bike_dog.specialDescription': 'Викликає поліцію: патрульна машина мчить на суперника (14%).',
   'c.bike_dog.specialName': 'POLIS!',
   'c.bike_dog.specialShout': 'ВІУ-ВІУ ВІУ-ВІУ!',
   'c.bike_dog.tagline': 'Рюкзак за спиною, поліція на хвості.',
@@ -43,11 +41,9 @@ const trUk = <String, String>{
   'c.bottle_patrick.lore': 'Патрік, у якого маківка застрягла в перевернутому бутлі від кулера, щасливий як завжди. Ніхто не сказав йому, що це так не працює.',
   'c.bottle_patrick.memeAlias': 'Патрік із головою в бутлі для води',
   'c.bottle_patrick.name': 'Патрік у бутлі',
-  'c.bottle_patrick.passiveDescription':
-      'Спецприйом перезаряджається вдвічі швидше.',
+  'c.bottle_patrick.passiveDescription': 'Спецприйом перезаряджається вдвічі швидше.',
   'c.bottle_patrick.passiveName': 'Водний баланс',
-  'c.bottle_patrick.specialDescription':
-      'Струмінь із бутля відштовхує суперника.',
+  'c.bottle_patrick.specialDescription': 'Струмінь із бутля відштовхує суперника.',
   'c.bottle_patrick.specialName': 'Водомет',
   'c.bottle_patrick.specialShout': 'БУЛЬ-БУЛЬ!',
   'c.bottle_patrick.tagline': 'Завжди тримає водний баланс. На жаль.',
@@ -57,8 +53,7 @@ const trUk = <String, String>{
   'c.bowl_chick.lore': 'Жовте курча з чорною стрижкою під горщик, рівною як під лінійку, і сповненим гідності профілем. Його перукар — геній.',
   'c.bowl_chick.memeAlias': 'Курча з чорною стрижкою під горщик',
   'c.bowl_chick.name': 'Курча під горщик',
-  'c.bowl_chick.passiveDescription':
-      'Пушинка: довгі повільні стрибки, але й вилітає легко.',
+  'c.bowl_chick.passiveDescription': 'Пушинка: довгі повільні стрибки, але й вилітає легко.',
   'c.bowl_chick.passiveName': 'Пушинка',
   'c.bowl_chick.specialDescription': 'Троє курчат біжать на суперника (по 9%).',
   'c.bowl_chick.specialName': 'Ціп-ціп!',
@@ -70,11 +65,9 @@ const trUk = <String, String>{
   'c.cheeks_dachshund.lore': 'Такса з надутими, як у хом\'яка, щоками й невинним поглядом. Ніхто не знає, що там усередині. Сам він не скаже: не може.',
   'c.cheeks_dachshund.memeAlias': 'Такса з напханими щоками',
   'c.cheeks_dachshund.name': 'Таксохом\'як',
-  'c.cheeks_dachshund.passiveDescription':
-      'Кожен влучний удар знімає з нього 1% шкоди.',
+  'c.cheeks_dachshund.passiveDescription': 'Кожен влучний удар знімає з нього 1% шкоди.',
   'c.cheeks_dachshund.passiveName': 'Бездонні щоки',
-  'c.cheeks_dachshund.specialDescription':
-      'Надуває щоки: відкидає тих, хто поруч (9%), і спливає вгору.',
+  'c.cheeks_dachshund.specialDescription': 'Надуває щоки: відкидає тих, хто поруч (9%), і спливає вгору.',
   'c.cheeks_dachshund.specialName': 'Надуті щоки',
   'c.cheeks_dachshund.specialShout': '*ПФФФФФ*',
   'c.cheeks_dachshund.tagline': 'Щось сховав за щоками. Усе.',
@@ -84,11 +77,9 @@ const trUk = <String, String>{
   'c.chill_dog.lore': 'Світлий чихуахуа розлігся на подушці, лапи за головою, нога на нозі — як бос у відпустці. Стрес навіть не знає його адреси.',
   'c.chill_dog.memeAlias': 'Чихуахуа лежить, закинувши лапи за голову',
   'c.chill_dog.name': 'Чихуахуа на чилі',
-  'c.chill_dog.passiveDescription':
-      'Якщо стоїть на місці, розслабляється й лікує 1% за секунду.',
+  'c.chill_dog.passiveDescription': 'Якщо стоїть на місці, розслабляється й лікує 1% за секунду.',
   'c.chill_dog.passiveName': 'Повний чіл',
-  'c.chill_dog.specialDescription':
-      'Суперник 2 секунди рухається як у слоу-мо.',
+  'c.chill_dog.specialDescription': 'Суперник 2 секунди рухається як у слоу-мо.',
   'c.chill_dog.specialName': 'Режим відпустки',
   'c.chill_dog.specialShout': 'Я У ВІДПУСТЦІ',
   'c.chill_dog.tagline': 'Лапи за головою, нога на нозі. Дзен.',
@@ -98,11 +89,9 @@ const trUk = <String, String>{
   'c.drip_pig.lore': 'Кабанчик із барбершопним фейдом, AirPods у вухах і ось таким товстим золотим ланцюгом. Стилю в нього більше, ніж у тебе, і він це чудово знає.',
   'c.drip_pig.memeAlias': 'Кабанчик із фейдом, AirPods і ланцюгом',
   'c.drip_pig.name': 'Кабанчик Дрип',
-  'c.drip_pig.passiveDescription':
-      'Його спецприйоми завдають на 20% більше шкоди.',
+  'c.drip_pig.passiveDescription': 'Його спецприйоми завдають на 20% більше шкоди.',
   'c.drip_pig.passiveName': 'Золотий ланцюг',
-  'c.drip_pig.specialDescription':
-      '4 секунди нічого не чує: удари його не зсувають.',
+  'c.drip_pig.specialDescription': '4 секунди нічого не чує: удари його не зсувають.',
   'c.drip_pig.specialName': 'Шумодав',
   'c.drip_pig.specialShout': 'НЕ ЧУЮ, Я В AIRPODS',
   'c.drip_pig.tagline': 'Свіжий фейд, AirPods і золотий ланцюг.',
@@ -114,8 +103,7 @@ const trUk = <String, String>{
   'c.ears_dog.name': 'Вухань',
   'c.ears_dog.passiveDescription': 'Стрибає вище за всіх.',
   'c.ears_dog.passiveName': 'Вуха-пружини',
-  'c.ears_dog.specialDescription':
-      'Усмішка настільки біла, що засліплює й сковує всіх поруч (6%).',
+  'c.ears_dog.specialDescription': 'Усмішка настільки біла, що засліплює й сковує всіх поруч (6%).',
   'c.ears_dog.specialName': 'Голлівудська усмішка',
   'c.ears_dog.specialShout': '*СЛІПУЧА УСМІШКА*',
   'c.ears_dog.tagline': 'Людські вуха. Людські зуби. Навіщо?',
@@ -137,8 +125,7 @@ const trUk = <String, String>{
   'c.helmet_pigeon.lore': 'Міський голуб із гумовим ковпачком на голові — ніхто не знає, як він там опинився. А йому хоч би що: крокує гордо, як лицар у шоломі.',
   'c.helmet_pigeon.memeAlias': 'Голуб із дивною каскою на голові',
   'c.helmet_pigeon.name': 'Голуб у касці',
-  'c.helmet_pigeon.passiveDescription':
-      'Каска захищає від снарядів і пом\'якшує удари (-10%).',
+  'c.helmet_pigeon.passiveDescription': 'Каска захищає від снарядів і пом\'якшує удари (-10%).',
   'c.helmet_pigeon.passiveName': 'Захисна каска',
   'c.helmet_pigeon.specialDescription': 'Злітає з ударом крила (8%) і літає 2,5 секунди: тримай СТРИБОК, щоб набрати висоту.',
   'c.helmet_pigeon.specialName': 'Міський політ',
@@ -150,8 +137,7 @@ const trUk = <String, String>{
   'c.masha_man.lore': 'Рожева хустинка й сукенка Маші, але обличчя дорослого чоловіка з вусами й утомленим поглядом. Навіть Ведмідь її боїться.',
   'c.masha_man.memeAlias': 'Маша з чоловічим обличчям',
   'c.masha_man.name': 'Вусата Маша',
-  'c.masha_man.passiveDescription':
-      'Важка рука: smash-атаки відкидають на 25% далі.',
+  'c.masha_man.passiveDescription': 'Важка рука: smash-атаки відкидають на 25% далі.',
   'c.masha_man.passiveName': 'Важка рука',
   'c.masha_man.specialDescription': 'Величезний стрибок, що б\'є всіх поруч (10%). Ідеально, щоб повернутися на арену.',
   'c.masha_man.specialName': 'Стрибок Маші',
@@ -163,15 +149,12 @@ const trUk = <String, String>{
   'c.nerd_cat.lore': 'Кіт у чорних окулярах, із зубами як у бобра й піднятим пальчиком: обличчя того, хто зараз скаже, що, ем, взагалі-то, ти не правий. Уточнення в нього завжди напоготові.',
   'c.nerd_cat.memeAlias': '«Ем, взагалі-то...»',
   'c.nerd_cat.name': 'Кіт-ботан',
-  'c.nerd_cat.passiveDescription':
-      'Отримавши удар, наступним своїм ударом б\'є на 25% сильніше.',
+  'c.nerd_cat.passiveDescription': 'Отримавши удар, наступним своїм ударом б\'є на 25% сильніше.',
   'c.nerd_cat.passiveName': 'Поправочка',
-  'c.nerd_cat.specialDescription':
-      'Хмаринка уточнень, що збиває з пантелику того, в кого влучить (6%).',
+  'c.nerd_cat.specialDescription': 'Хмаринка уточнень, що збиває з пантелику того, в кого влучить (6%).',
   'c.nerd_cat.specialName': 'Ем, взагалі-то...',
   'c.nerd_cat.specialShout': 'ЕМ, ВЗАГАЛІ-ТО...',
-  'c.nerd_cat.tagline':
-      'Окуляри, зуби й піднятий палець: зараз тебе виправлять.',
+  'c.nerd_cat.tagline': 'Окуляри, зуби й піднятий палець: зараз тебе виправлять.',
   'c.pearl_terrier.hurt0': 'Яке хамство!',
   'c.pearl_terrier.hurt1': 'Мої перли!',
   'c.pearl_terrier.hurt2': 'Ось за наших часів...',
@@ -180,8 +163,7 @@ const trUk = <String, String>{
   'c.pearl_terrier.name': 'Леді Тер\'єр',
   'c.pearl_terrier.passiveDescription': 'Лайки за бій подвоюються.',
   'c.pearl_terrier.passiveName': 'Люксові лайки',
-  'c.pearl_terrier.specialDescription':
-      'Потужний удар сумочкою перед собою (11%).',
+  'c.pearl_terrier.specialDescription': 'Потужний удар сумочкою перед собою (11%).',
   'c.pearl_terrier.specialName': 'Удар сумочкою',
   'c.pearl_terrier.specialShout': 'ЯК ВИ СМІЄТЕ?!',
   'c.pearl_terrier.tagline': 'Каре, перли й светрик. Пані.',
@@ -193,8 +175,7 @@ const trUk = <String, String>{
   'c.pietro_pigeon.name': 'П\'єтро',
   'c.pietro_pigeon.passiveDescription': 'Миттєво розганяється й гальмує.',
   'c.pietro_pigeon.passiveName': 'Кеди Converse',
-  'c.pietro_pigeon.specialDescription':
-      'Дзвонить супернику, і той завмирає, щоб відповісти (4%).',
+  'c.pietro_pigeon.specialDescription': 'Дзвонить супернику, і той завмирає, щоб відповісти (4%).',
   'c.pietro_pigeon.specialName': 'Pietro is calling...',
   'c.pietro_pigeon.specialShout': 'PIETRO IS CALLING...',
   'c.pietro_pigeon.tagline': 'Він тобі дзвонить. Відповідай.',
@@ -218,12 +199,10 @@ const trUk = <String, String>{
   'c.pink_monkey.name': 'Рожева мавпочка',
   'c.pink_monkey.passiveDescription': 'Три стрибки в повітрі.',
   'c.pink_monkey.passiveName': 'Мавпяча спритність',
-  'c.pink_monkey.specialDescription':
-      'Кидає плюшеву іграшку: б\'є здалеку (9%).',
+  'c.pink_monkey.specialDescription': 'Кидає плюшеву іграшку: б\'є здалеку (9%).',
   'c.pink_monkey.specialName': 'Кидок плюшем',
   'c.pink_monkey.specialShout': 'ЛОВИ!',
-  'c.pink_monkey.tagline':
-      'Рожева кепочка й плюшевий друг, якого треба захистити.',
+  'c.pink_monkey.tagline': 'Рожева кепочка й плюшевий друг, якого треба захистити.',
   'c.robber_dog.hurt0': 'Гей!',
   'c.robber_dog.hurt1': 'Ти мене бачив?',
   'c.robber_dog.hurt2': 'Це не я.',
@@ -232,8 +211,7 @@ const trUk = <String, String>{
   'c.robber_dog.name': 'Чихуахуа-грабіжник',
   'c.robber_dog.passiveDescription': 'Бігає найшвидше.',
   'c.robber_dog.passiveName': 'Швидка втеча',
-  'c.robber_dog.specialDescription':
-      'Блискавичний невразливий ривок, що зносить суперника (10%).',
+  'c.robber_dog.specialDescription': 'Блискавичний невразливий ривок, що зносить суперника (10%).',
   'c.robber_dog.specialName': 'Пограбування',
   'c.robber_dog.specialShout': 'ЦЕ ПОГРАБУВАННЯ!',
   'c.robber_dog.tagline': 'Балаклава, ніж і жодних докорів сумління.',
@@ -243,8 +221,7 @@ const trUk = <String, String>{
   'c.rock_monkey.lore': 'Мавпочка-капуцин із наймилішими оченятами у світі й каменем, занесеним над головою. Дивиться так, ніби каже: «повтори, що ти сказав». Краще не треба.',
   'c.rock_monkey.memeAlias': 'Капуцин, що погрожує каменем',
   'c.rock_monkey.name': 'Мавпочка з каменем',
-  'c.rock_monkey.passiveDescription':
-      'Слабкі удари не зсувають його ні на міліметр.',
+  'c.rock_monkey.passiveDescription': 'Слабкі удари не зсувають його ні на міліметр.',
   'c.rock_monkey.passiveName': 'Мертва хватка',
   'c.rock_monkey.specialDescription': 'Кидає камінь навісом (11%).',
   'c.rock_monkey.specialName': 'Кидок каменя',
@@ -256,11 +233,9 @@ const trUk = <String, String>{
   'c.rock_patrick.lore': 'Найщасливіша морська зірка на дні: камінь на голові замість шолома, два пучки водоростей і усмішка, повна кривих зубів. Не думає. Котиться.',
   'c.rock_patrick.memeAlias': 'Патрік у кам\'яному шоломі й з водоростями',
   'c.rock_patrick.name': 'Патрік-камінь',
-  'c.rock_patrick.passiveDescription':
-      'Кам\'яна макітра: атака вгору завдає подвійної шкоди.',
+  'c.rock_patrick.passiveDescription': 'Кам\'яна макітра: атака вгору завдає подвійної шкоди.',
   'c.rock_patrick.passiveName': 'Кам\'яна макітра',
-  'c.rock_patrick.specialDescription':
-      'Згортається в кулю й котиться вперед, збиваючи суперника (12%).',
+  'c.rock_patrick.specialDescription': 'Згортається в кулю й котиться вперед, збиваючи суперника (12%).',
   'c.rock_patrick.specialName': 'Котючий камінь',
   'c.rock_patrick.specialShout': 'Я КАМІНЬ!',
   'c.rock_patrick.tagline': 'Кам\'яний шолом, водорості й щербата усмішка.',
@@ -272,8 +247,7 @@ const trUk = <String, String>{
   'c.shock_guy.name': 'Хлопець у шоці',
   'c.shock_guy.passiveDescription': 'Отримавши удар, 2 секунди тікає швидше.',
   'c.shock_guy.passiveName': 'Паніка!',
-  'c.shock_guy.specialDescription':
-      'Шокований зойк, що приголомшує всіх поруч (7%).',
+  'c.shock_guy.specialDescription': 'Шокований зойк, що приголомшує всіх поруч (7%).',
   'c.shock_guy.specialName': 'НЕ ВІРЮ!',
   'c.shock_guy.specialShout': 'НЕ ВІРЮ!!',
   'c.shock_guy.tagline': 'Очі на лобі, рот відкритий: НЕ ВІРЮ.',
@@ -285,12 +259,10 @@ const trUk = <String, String>{
   'c.shrek_kid.name': 'Малюк Огр',
   'c.shrek_kid.passiveDescription': 'Шари цибулі: якщо в нього не влучають 3 секунди, лікує 1% кожні 2 секунди.',
   'c.shrek_kid.passiveName': 'Шари цибулі',
-  'c.shrek_kid.specialDescription':
-      'Гепається об землю з ударною хвилею (9%). У повітрі — пікірує вниз.',
+  'c.shrek_kid.specialDescription': 'Гепається об землю з ударною хвилею (9%). У повітрі — пікірує вниз.',
   'c.shrek_kid.specialName': 'Геть із мого болота!',
   'c.shrek_kid.specialShout': 'ГЕТЬ ІЗ МОГО БОЛОТА!',
-  'c.shrek_kid.tagline':
-      'Стрижка під горщик, сорочка, краватка: перший раз у перший клас.',
+  'c.shrek_kid.tagline': 'Стрижка під горщик, сорочка, краватка: перший раз у перший клас.',
   'c.sky_man.hurt0': 'За що?',
   'c.sky_man.hurt1': 'Небо мене ненавидить.',
   'c.sky_man.hurt2': 'Ех, життя...',
@@ -299,8 +271,7 @@ const trUk = <String, String>{
   'c.sky_man.name': 'Страждальний митець',
   'c.sky_man.passiveDescription': 'Від 100% шкоди й вище б\'є на 15% сильніше.',
   'c.sky_man.passiveName': 'Відчай',
-  'c.sky_man.specialDescription':
-      'За мить із неба на суперника падає промінь світла (11%).',
+  'c.sky_man.specialDescription': 'За мить із неба на суперника падає промінь світла (11%).',
   'c.sky_man.specialName': 'Божа благодать',
   'c.sky_man.specialShout': 'ЗА ЩО?!',
   'c.sky_man.tagline': 'Дивиться вгору й вимагає від всесвіту пояснень.',
@@ -312,8 +283,7 @@ const trUk = <String, String>{
   'c.smile_dog.name': 'Smile Dog',
   'c.smile_dog.passiveDescription': 'Важкий: його важко вибити.',
   'c.smile_dog.passiveName': 'Товстошкірий',
-  'c.smile_dog.specialDescription':
-      'Усміхається: суперник лякається й 2 секунди тікає.',
+  'c.smile_dog.specialDescription': 'Усміхається: суперник лякається й 2 секунди тікає.',
   'c.smile_dog.specialName': 'Проклята усмішка',
   'c.smile_dog.specialShout': 'УСМІХНИСЬ :)',
   'c.smile_dog.tagline': 'Розмита усмішка, яку ти не забудеш.',
@@ -325,8 +295,7 @@ const trUk = <String, String>{
   'c.sneaker_hen.name': 'Курка-хайпбіст',
   'c.sneaker_hen.passiveDescription': 'Лайки за бій множаться на півтора.',
   'c.sneaker_hen.passiveName': 'Хастлер',
-  'c.sneaker_hen.specialDescription':
-      'Кидає яйце, яке вибухає й зносить усіх поруч (12%).',
+  'c.sneaker_hen.specialDescription': 'Кидає яйце, яке вибухає й зносить усіх поруч (12%).',
   'c.sneaker_hen.specialName': 'Яйце-бомба',
   'c.sneaker_hen.specialShout': 'КВО-КВО-КВО!',
   'c.sneaker_hen.tagline': 'Dunk «панда» й сотка баксів під крилом.',
@@ -336,8 +305,7 @@ const trUk = <String, String>{
   'c.snow_baby.lore': 'Пухкенький пупс у бузковому комбінезончику стискає свого сніговика й трішки його покусує. Ніколи його не відпускає. Ніколи.',
   'c.snow_baby.memeAlias': 'Пухкий пупс зі сніговиком',
   'c.snow_baby.name': 'Пупс зі сніговиком',
-  'c.snow_baby.passiveDescription':
-      'Приземляючись супернику на голову, відскакує від неї (4%).',
+  'c.snow_baby.passiveDescription': 'Приземляючись супернику на голову, відскакує від неї (4%).',
   'c.snow_baby.passiveName': 'Пузико-стрибунець',
   'c.snow_baby.specialDescription': 'Лікує 5% і присипляє всіх поруч.',
   'c.snow_baby.specialName': 'Колискова',
@@ -361,23 +329,19 @@ const trUk = <String, String>{
   'c.stitch_shrek.lore': 'Малюк із зеленим обличчям огра в суцільній піжамі синього прибульця, з вухами й усім іншим. Виглядає наймиліше, але якщо стрибне — вкусить.',
   'c.stitch_shrek.memeAlias': 'Малюк-огр у піжамі прибульця',
   'c.stitch_shrek.name': 'Синє огреня',
-  'c.stitch_shrek.passiveDescription':
-      'М\'яка піжамка пом\'якшує удари: відлітає на 12% менше.',
+  'c.stitch_shrek.passiveDescription': 'М\'яка піжамка пом\'якшує удари: відлітає на 12% менше.',
   'c.stitch_shrek.passiveName': 'Піжамка',
-  'c.stitch_shrek.specialDescription':
-      'Стрибає на суперника й кусає його (12%).',
+  'c.stitch_shrek.specialDescription': 'Стрибає на суперника й кусає його (12%).',
   'c.stitch_shrek.specialName': 'Атака прибульця',
   'c.stitch_shrek.specialShout': 'РРРР!',
-  'c.stitch_shrek.tagline':
-      'Мордочка огра, синя піжамка. Експеримент провалено (вдало).',
+  'c.stitch_shrek.tagline': 'Мордочка огра, синя піжамка. Експеримент провалено (вдало).',
   'c.suit_dachshund.hurt0': 'Моя краватка!',
   'c.suit_dachshund.hurt1': 'Ka-ой!',
   'c.suit_dachshund.hurt2': 'Тільки не крокси!',
   'c.suit_dachshund.lore': 'Цуценя такси в чорному костюмі, білій сорочці й краватці... а на лапах — червоні крокси Блискавки Маккуїна. Готовий і до весілля, і до Кубка Поршня.',
   'c.suit_dachshund.memeAlias': 'Такса в костюмі й кроксах Блискавки Маккуїна',
   'c.suit_dachshund.name': 'Ka-Chow Такса',
-  'c.suit_dachshund.passiveDescription':
-      'Бронекрокси: отримує на 15% менше шкоди.',
+  'c.suit_dachshund.passiveDescription': 'Бронекрокси: отримує на 15% менше шкоди.',
   'c.suit_dachshund.passiveName': 'Бронекрокси',
   'c.suit_dachshund.specialDescription': 'Турбо на 2,5 секунди: надшвидкість, перший, кого зіб\'є, відлітає (10%).',
   'c.suit_dachshund.specialName': 'Ka-Chow!',
@@ -391,8 +355,7 @@ const trUk = <String, String>{
   'c.timeout_man.name': 'Містер Тайм-аут',
   'c.timeout_man.passiveDescription': 'Надважкий: вибити його найважче.',
   'c.timeout_man.passiveName': 'Велетень',
-  'c.timeout_man.specialDescription':
-      'Зупиняє гру: суперник на мить завмирає, а він лікує 4%.',
+  'c.timeout_man.specialDescription': 'Зупиняє гру: суперник на мить завмирає, а він лікує 4%.',
   'c.timeout_man.specialName': 'ТАЙМ-АУТ!',
   'c.timeout_man.specialShout': 'ТАЙМ-АУТ!',
   'c.timeout_man.tagline': 'Руки літерою Т, утомлений погляд: досить.',
@@ -402,11 +365,9 @@ const trUk = <String, String>{
   'c.tongue_cat.lore': 'Смугастий кіт дивиться в камеру величезними очима й висуває язика вдвічі довшого за свою морду. Як він там узагалі вміщається — загадка.',
   'c.tongue_cat.memeAlias': 'Кіт із величезним язиком',
   'c.tongue_cat.name': 'Кіт Млем',
-  'c.tongue_cat.passiveDescription':
-      'Його удари ненадовго сповільнюють суперника.',
+  'c.tongue_cat.passiveDescription': 'Його удари ненадовго сповільнюють суперника.',
   'c.tongue_cat.passiveName': 'Слина',
-  'c.tongue_cat.specialDescription':
-      'Язик вистрілює вперед, хапає суперника й притягує до себе (8%).',
+  'c.tongue_cat.specialDescription': 'Язик вистрілює вперед, хапає суперника й притягує до себе (8%).',
   'c.tongue_cat.specialName': 'Лизь!',
   'c.tongue_cat.specialShout': 'БЕ-Е-Е!',
   'c.tongue_cat.tagline': 'Очі на лобі й дуже довгий язик.',
@@ -416,11 +377,9 @@ const trUk = <String, String>{
   'c.wig_dog.lore': 'Чихуахуа з каштановим каре й поглядом того, хто зараз залишить відгук на одну зірку. Ніколи не помиляється, а якщо помиляється — однаково вимагає менеджера.',
   'c.wig_dog.memeAlias': 'Чихуахуа в перуці',
   'c.wig_dog.name': 'Wig Dog',
-  'c.wig_dog.passiveDescription':
-      'Тримай СТРИБОК у повітрі, щоб планувати: дуже далекі повернення.',
+  'c.wig_dog.passiveDescription': 'Тримай СТРИБОК у повітрі, щоб планувати: дуже далекі повернення.',
   'c.wig_dog.passiveName': 'Перука-парашут',
-  'c.wig_dog.specialDescription':
-      'Зойк обурення: ударна хвиля відкидає всіх поруч (11%).',
+  'c.wig_dog.specialDescription': 'Зойк обурення: ударна хвиля відкидає всіх поруч (11%).',
   'c.wig_dog.specialName': 'Покличте менеджера!',
   'c.wig_dog.specialShout': 'ПОКЛИЧТЕ МЕНЕДЖЕРА!',
   'c.wig_dog.tagline': 'Ідеальне каре. Осудливий погляд.',
@@ -430,11 +389,9 @@ const trUk = <String, String>{
   'c.wink_cat.lore': 'Сіро-білий кіт розлігся на дивані й підморгує тобі, висолопивши язика, ніби знає щось, чого не знаєш ти. Перед його чарами не встоїть ніхто.',
   'c.wink_cat.memeAlias': 'Підморгування і язик',
   'c.wink_cat.name': 'Кіт-підморгун',
-  'c.wink_cat.passiveDescription':
-      'Іноді ухиляється від удару, підморгнувши (10%).',
+  'c.wink_cat.passiveDescription': 'Іноді ухиляється від удару, підморгнувши (10%).',
   'c.wink_cat.passiveName': 'Підморгування',
-  'c.wink_cat.specialDescription':
-      'Суперник поруч зачарований: іде до нього й не може атакувати.',
+  'c.wink_cat.specialDescription': 'Суперник поруч зачарований: іде до нього й не може атакувати.',
   'c.wink_cat.specialName': 'Чарівник',
   'c.wink_cat.specialShout': ';)',
   'c.wink_cat.tagline': 'Підморгує, висолопивши язика. Неперевершений.',
@@ -481,18 +438,17 @@ const trUk = <String, String>{
   'home.doubleLikes': ' x2 лайки',
   'home.memeOfTheDay': 'Мем дня: {name}',
   'home.nameRejected': 'Це ім\'я не можна, обери інше.',
+  'home.streak': 'Днів поспіль: {n}',
   'home.wins': 'Перемог: {n}',
   'home.yourName': 'Твоє ім\'я',
   'howto.attackText': 'тапни, щоб ударити: потрібний удар сам полетить у суперника. Утримуй для SMASH.',
   'howto.intro': 'Що більше шкоди (%) у суперника, то далі він летить від удару: виший його за екран!',
   'howto.joystick': 'Джойстик',
-  'howto.joystickText':
-      'рухайся; вгору — стрибок. Вниз на платформі — зістрибнути.',
+  'howto.joystickText': 'рухайся; вгору — стрибок. Вниз на платформі — зістрибнути.',
   'howto.jumpText': 'можна стрибнути ще раз у повітрі; коли стрибки скінчаться, він підкине тебе до арени.',
   'howto.mash': 'Заморожений, приспаний чи приголомшений? Тисни кнопки як скажений, щоб вирватися швидше! (Керування для профі: Налаштування > Допомога: Ні.)',
   'howto.ok': 'Зрозуміло!',
-  'howto.specialText':
-      'коронний прийом твого мема. За межами арени сам поверне тебе назад.',
+  'howto.specialText': 'коронний прийом твого мема. За межами арени сам поверне тебе назад.',
   'howto.title': 'Як битися',
   'hud.cpu': 'CPU',
   'hud.you': 'ТИ',
@@ -527,8 +483,7 @@ const trUk = <String, String>{
   'name.anonymous': 'Анонім',
   'number.decimal': ',',
   'pause.controls': 'Керування',
-  'pause.keys':
-      'Стрілки/WASD рух · Z/ПРОБІЛ стрибок · X/J удар · C/K спец · ESC пауза',
+  'pause.keys': 'Стрілки/WASD рух · Z/ПРОБІЛ стрибок · X/J удар · C/K спец · ESC пауза',
   'pause.quit': 'Вийти',
   'pause.quitArcade': 'Сходження в Arcade почнеться заново.',
   'pause.quitAsk': 'Вийти з бою?',

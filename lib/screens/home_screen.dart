@@ -14,6 +14,7 @@ import 'fight_setup_screen.dart';
 import 'shop_screen.dart';
 import 'trophies_screen.dart';
 import '../l10n/l10n.dart';
+import '../services/daily.dart';
 import '../services/missions.dart';
 import '../widgets/daily_reward.dart';
 import 'missions_screen.dart';
@@ -346,6 +347,25 @@ class _HomeScreenState extends State<HomeScreen>
                   onPressed: () => showSettings(context),
                 ),
               ),
+              // Days in a row: something to keep alive.
+              if (DailyReward.streak() > 0)
+                Positioned(
+                  left: 14,
+                  top: 58,
+                  child: Row(
+                    children: [
+                      const PixelIcon('star', scale: 1.5),
+                      const SizedBox(width: 5),
+                      PixelText(
+                        tr('home.streak', '{n} giorni di fila', {
+                          'n': DailyReward.streak(),
+                        }),
+                        size: 13,
+                        color: const Color(0xFFFFE07A),
+                      ),
+                    ],
+                  ),
+                ),
               Positioned(
                 right: 12,
                 top: 8,
